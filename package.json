@@ -1,0 +1,29 @@
+{
+  "name": "ezlingua",
+  "version": "1.0.0",
+  "description": "App for learning foreign languages",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laboskin/ezlingua.git"
+  },
+  "keywords": [
+    "mongo",
+    "express",
+    "react",
+    "node"
+  ],
+  "author": "Artem Laboskin <laboss@list.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/laboskin/ezlingua/issues"
+  },
+  "homepage": "https://github.com/laboskin/ezlingua#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.10.3"
+  }
+}
