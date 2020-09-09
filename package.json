@@ -4,7 +4,7 @@
   "description": "App for learning foreign languages",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,15 @@
   },
   "homepage": "https://github.com/laboskin/ezlingua#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
+    "config": "^3.3.1",
+    "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
-    "mongoose": "^5.10.3"
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.3",
+    "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }
