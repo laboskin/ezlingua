@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from "../../../components/Header/Header";
 import './style.scss';
-import Footer from "../../../components/Footer/Footer";
+import MobileNav from "../../../components/MobileNav/MobileNav";
 
 
 function App(props) {
@@ -11,7 +11,7 @@ function App(props) {
             <main>
                 {props.children}
             </main>
-            <Footer />
+            <MobileNav />
         </div>
     )
 }

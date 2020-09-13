@@ -6,32 +6,32 @@ import contentIcon from './contentIcon.svg';
 import trainingIcon from './trainingIcon.svg';
 import dictionaryIcon from './dictionaryIcon.svg';
 
-function Footer(props) {
+function MobileNav(props) {
     return (
-        <footer>
+        <div className="MobileNav">
             <NavLink to="/content"
-                     className="footer-item"
-                     activeClassName="footer-item-current">
-                <div className="footer-item-icon">
+                     className="MobileNav-Item"
+                     activeClassName="MobileNav-Item_current">
+                <div className="MobileNav-ItemIcon">
                     <ReactSVG src={contentIcon} />
                 </div>
             </NavLink>
             <NavLink to="/dictionary"
-                     className="footer-item"
-                     activeClassName="footer-item-current">
-                <div className="footer-item-icon">
+                     className="MobileNav-Item"
+                     activeClassName="MobileNav-Item_current">
+                <div className="MobileNav-ItemIcon">
                     <ReactSVG src={dictionaryIcon} />
                 </div>
             </NavLink>
             <NavLink to="/training"
-                     className="footer-item"
-                     activeClassName="footer-item-current">
-                <div className="footer-item-icon">
+                     className="MobileNav-Item"
+                     activeClassName="MobileNav-Item_current">
+                <div className="MobileNav-ItemIcon">
                     <ReactSVG src={trainingIcon} />
 
                 </div>
             </NavLink>
-        </footer>
+        </div>
     )
 }
-export default Footer;
+export default MobileNav;

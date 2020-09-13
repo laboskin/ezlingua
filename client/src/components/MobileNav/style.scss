@@ -1,0 +1,39 @@
+.MobileNav{
+  display: none;
+  position: fixed;
+  bottom: 0;
+  height: 50px;
+  width: 100%;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 2px solid #efefef;
+  background-color: #fff;
+
+  @media screen and (max-width: 768px){
+    display: flex;
+  }
+
+  &-Item{
+    flex: 0 0 auto;
+    height: 50px;
+    width: 50px;
+    padding: 12px;
+
+    &Icon{
+      height: 100%;
+      width: 100%;
+
+      svg{
+        height: 100%;
+        width: 100%;
+      }
+    }
+
+    &_current{
+      svg{
+        fill: #2582e7;
+      }
+    }
+  }
+}
