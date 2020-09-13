@@ -108,7 +108,7 @@ header{
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -221,7 +221,7 @@ header{
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
 }
 .profile-popup-item-icon{
   flex-grow: 0;
