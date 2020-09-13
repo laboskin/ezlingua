@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 464 464">
+    <path style="fill:#ad7d4d;" d="M312,416h56v72H312Z" transform="translate(-24 -24)"/>
+    <path style="fill:#379ec3;" d="M432,248h48v56H432Z" transform="translate(-24 -24)"/>
+    <path style="fill:#379ec3;" d="M32,248H80v56H32Z" transform="translate(-24 -24)"/>
+    <path style="fill:#2f4054;"
+          d="M96,264h0a24,24,0,0,1,24,24V432a24,24,0,0,1-24,24h0a24,24,0,0,1-24-24V288A24,24,0,0,1,96,264Z"
+          transform="translate(-24 -24)"/>
+    <path style="fill:#2f4054;"
+          d="M416,456h0a24,24,0,0,1-24-24V288a24,24,0,0,1,24-24h0a24,24,0,0,1,24,24V432A24,24,0,0,1,416,456Z"
+          transform="translate(-24 -24)"/>
+    <path style="fill:#8acce7;"
+          d="M40,248v-8C40,120.71,136.71,24,256,24h0c119.29,0,216,96.71,216,216v8H440v-8A184,184,0,0,0,256,56h0A184,184,0,0,0,72,240v8Z"
+          transform="translate(-24 -24)"/>
+    <path style="fill:#349966;"
+          d="M368,184V416H216v4a12,12,0,0,1-24,0v-4H180a36,36,0,0,0-36,36V220a36,36,0,0,1,36-36h12v4a12,12,0,0,0,24,0v-4Z"
+          transform="translate(-24 -24)"/>
+    <path style="fill:#eedc9a;"
+          d="M342.54,477.46A35.92,35.92,0,0,0,368,488H216v-4a12,12,0,0,0-24,0v4H180a36,36,0,0,1,0-72h12v4a12,12,0,0,0,24,0v-4H368a36,36,0,0,0-35.77,32,34.52,34.52,0,0,0,0,8,35.56,35.56,0,0,0,5.83,16A36.06,36.06,0,0,0,342.54,477.46Z"
+          transform="translate(-24 -24)"/>
+    <path style="fill:#008051;" d="M216,188V420a12,12,0,0,1-24,0V188a12,12,0,0,0,24,0Z"
+          transform="translate(-24 -24)"/>
+    <path style="fill:#eebe33;" d="M338.06,432a35.56,35.56,0,0,0-5.83,16H232V432Z"
+          transform="translate(-24 -24)"/>
+    <path style="fill:#eebe33;" d="M338.06,472H232V456H332.23A35.56,35.56,0,0,0,338.06,472Z"
+          transform="translate(-24 -24)"/>
+    <path style="fill:#8acce7;"
+          d="M40,288H72V432H40a16,16,0,0,1-16-16V304A16,16,0,0,1,40,288Z"
+          transform="translate(-24 -24)"/>
+    <path style="fill:#8acce7;"
+          d="M472,432H440V288h32a16,16,0,0,1,16,16V416A16,16,0,0,1,472,432Z"
+          transform="translate(-24 -24)"/>
+</svg>
