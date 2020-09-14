@@ -1,10 +1,9 @@
 import React from "react";
 import {NavLink} from "react-router-dom";
 import './style.scss';
-import {ReactSVG} from "react-svg";
-import contentIcon from './contentIcon.svg';
-import trainingIcon from './trainingIcon.svg';
-import dictionaryIcon from './dictionaryIcon.svg';
+import {ReactComponent as IconContent} from './iconContent.svg';
+import {ReactComponent as IconTraining} from './iconTraining.svg';
+import {ReactComponent as IconDictionary} from './iconDictionary.svg';
 
 function MobileNav(props) {
     return (
@@ -13,21 +12,21 @@ function MobileNav(props) {
                      className="MobileNav-Item"
                      activeClassName="MobileNav-Item_current">
                 <div className="MobileNav-ItemIcon">
-                    <ReactSVG src={contentIcon} />
+                    <IconContent />
                 </div>
             </NavLink>
             <NavLink to="/dictionary"
                      className="MobileNav-Item"
                      activeClassName="MobileNav-Item_current">
                 <div className="MobileNav-ItemIcon">
-                    <ReactSVG src={dictionaryIcon} />
+                    <IconDictionary />
                 </div>
             </NavLink>
             <NavLink to="/training"
                      className="MobileNav-Item"
                      activeClassName="MobileNav-Item_current">
                 <div className="MobileNav-ItemIcon">
-                    <ReactSVG src={trainingIcon} />
+                    <IconTraining />
 
                 </div>
             </NavLink>

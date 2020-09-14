@@ -1,12 +1,11 @@
 import React from 'react';
 import './style.scss';
 import logo from './logo.png';
-import plusIcon from './plusIcon.svg';
-import adminIcon from './adminIcon.svg';
-import settingsIcon from './settingsIcon.svg';
-import logoutIcon from './logoutIcon.svg';
+import {ReactComponent as IconPlus} from './iconPlus.svg';
+import {ReactComponent as IconAdmin} from './iconAdmin.svg';
+import {ReactComponent as IconSettings} from './iconSettings.svg';
+import {ReactComponent as IconLogout} from './iconLogout.svg';
 import {Link, NavLink} from "react-router-dom";
-import {ReactSVG} from "react-svg";
 
 // TODO
 import userAvatar from './avatar.jpg';
@@ -76,7 +75,7 @@ function Header() {
                                     <Link className="Header-LanguagePopupItem Header-LanguagePopupItem_add"
                                        to="/user/add-course">
                                         <div className="Header-LanguagePopupItemIcon">
-                                            <ReactSVG src={plusIcon}/>
+                                            <IconPlus />
                                         </div>
                                         <span className="Header-LanguagePopupItemText">
                                             Add
@@ -97,7 +96,7 @@ function Header() {
                                         <Link className="Header-ProfilePopupItem"
                                                  to="/admin">
                                             <div className="Header-ProfilePopupItemIcon">
-                                                <ReactSVG src={adminIcon}/>
+                                                <IconAdmin />
                                             </div>
                                             <span className="Header-ProfilePopupItemText">
                                                 Admin panel
@@ -108,7 +107,7 @@ function Header() {
                                     <Link className="Header-ProfilePopupItem"
                                              to="user/settings">
                                         <div className="Header-ProfilePopupItemIcon">
-                                            <ReactSVG src={settingsIcon}/>
+                                            <IconSettings />
                                         </div>
                                         <span className="Header-ProfilePopupItemText">
                                             Settings
@@ -117,7 +116,7 @@ function Header() {
                                     <Link className="Header-ProfilePopupItem"
                                        to="/user/logout">
                                         <div className="Header-ProfilePopupItemIcon">
-                                            <ReactSVG src={logoutIcon}/>
+                                            <IconLogout />
                                         </div>
                                         <span className="Header-ProfilePopupItemText">
                                             Logout
