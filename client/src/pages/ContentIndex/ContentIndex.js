@@ -1,8 +1,8 @@
 import React from 'react';
 import './style.scss';
-import doneIcon from './doneIcon.svg';
-import {ReactSVG} from "react-svg";
+import {ReactComponent as IconDone} from './iconDone.svg';
 import {Link} from "react-router-dom";
+import MainContainer from "../../hoc/MainContainer/MainContainer";
 
 function ContentIndex() {
 
@@ -16,7 +16,7 @@ function ContentIndex() {
     ];
 
     return (
-        <div className="main-container">
+        <MainContainer maxWidth="900px">
             <div className="page-title">
                 <div className="page-name">
                     <div className="page-name-text">
@@ -37,7 +37,7 @@ function ContentIndex() {
                                         {
                                             content.done && (
                                                 <div className="content-icon">
-                                                    <ReactSVG src={doneIcon} />
+                                                    <IconDone />
                                                 </div>
                                             )
                                         }
@@ -59,7 +59,7 @@ function ContentIndex() {
 
                 </div>
             </div>
-        </div>
+        </MainContainer>
     )
 }
 
