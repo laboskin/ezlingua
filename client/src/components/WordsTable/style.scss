@@ -1,0 +1,118 @@
+.words-table{
+  width: 100%;
+
+}
+.words-row{
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #efefef;
+}
+
+.word-audio{
+  flex-grow: 0;
+  height: 30px;
+  width: 30px;
+  padding: 5px;
+  margin-right: 20px;
+  cursor: pointer;
+}
+.word-audio svg{
+  height: 100%;
+  width: 100%;
+  fill: #afafaf;
+}
+.word-audio:hover svg{
+  fill: #2582e7;
+}
+.word-text{
+  flex-grow: 1;
+  margin-right: 15px;
+}
+.word-original{
+  color: #2582e7;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.word-translation{
+  font-size: 18px;
+  line-height: 1;
+
+}
+.word-vocabulary{
+  flex-grow: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  font-size: 16px;
+  color: #777;
+  margin-right: 20px;
+}
+.word-vocabulary:hover{
+  color: #2582e7;
+}
+.word-progress{
+  flex-grow: 0;
+  margin-right: 10px;
+}
+.word-progress-icon{
+  height: 15px;
+}
+.word-progress-icon svg{
+  height: 100%;
+}
+.word-actions-delete{
+  flex-grow: 0;
+  height: 30px;
+  width: 30px;
+  padding: 7px;
+}
+.word-actions-delete svg{
+  width: 100%;
+  height: 100%;
+  fill: #7e919f;
+}
+.word-actions-delete:hover svg{
+  fill: #e72525;
+}
+.word-actions-refresh, .word-actions-done, .word-actions-delete{
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px){
+  .word-audio{
+    height: 28px;
+    width: 28px;
+    margin-right: 7px;
+  }
+  .word-original{
+    font-size: 15px;
+  }
+  .word-translation{
+    font-size: 15px;
+  }
+  .word-vocabulary{
+    font-size: 13px;
+    margin-right: 12px;
+  }
+  .word-progress{
+    margin-top: 3px;
+    margin-right: 5px;
+  }
+  .word-progress-icon{
+    height: 12px;
+  }
+  .word-progress-icon svg{
+    display: block;
+  }
+}
+@media screen and (max-width: 500px){
+  .words-row{
+    padding: 10px 0;
+  }
+  .word-vocabulary{
+    display: none;
+  }
+}
