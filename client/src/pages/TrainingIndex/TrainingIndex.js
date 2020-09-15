@@ -1,12 +1,11 @@
 import React from 'react';
 import './style.scss';
 import {Link} from "react-router-dom";
-import iconCards from './iconCards.svg';
-import iconWordTranslation from './iconWordTranslation.svg';
-import iconTranslationWord from './iconTranslationWord.svg';
-import iconConstructor from './iconConstructor.svg';
-import iconListening from './iconListening.svg';
-import {ReactSVG} from "react-svg";
+import IconTrainingCards from "../../icons/trainings/IconTrainingCards/IconTrainingCards";
+import IconTrainingConstructor from "../../icons/trainings/IconTrainingConstructor/IconTrainingConstructor";
+import IconTrainingListening from "../../icons/trainings/IconTrainingListening/IconTrainingListening";
+import IconTrainingTranslationWord from "../../icons/trainings/IconTrainingTranslationWord/IconTrainingTranslationWord";
+import IconTrainingWordTranslation from "../../icons/trainings/IconTrainingWordTranslation/IconTrainingWordTranslation";
 
 function TrainingIndex() {
 
@@ -46,7 +45,7 @@ function TrainingIndex() {
                             </div>
                         </div>
                         <div className="training-icon">
-                            <ReactSVG src={iconWordTranslation} />
+                            <IconTrainingWordTranslation />
                         </div>
                     </Link>
                     <Link className="training"
@@ -60,7 +59,7 @@ function TrainingIndex() {
                             </div>
                         </div>
                         <div className="training-icon">
-                            <ReactSVG src={iconTranslationWord}/>
+                            <IconTrainingTranslationWord />
                         </div>
                     </Link>
                     <Link className="training"
@@ -74,7 +73,7 @@ function TrainingIndex() {
                             </div>
                         </div>
                         <div className="training-icon">
-                            <ReactSVG src={iconCards} />
+                            <IconTrainingCards />
                         </div>
                     </Link>
                     <Link className="training"
@@ -88,7 +87,7 @@ function TrainingIndex() {
                             </div>
                         </div>
                         <div className="training-icon">
-                            <ReactSVG src={iconConstructor} />
+                            <IconTrainingConstructor />
 
                         </div>
                     </Link>
@@ -103,7 +102,7 @@ function TrainingIndex() {
                             </div>
                         </div>
                         <div className="training-icon">
-                            <ReactSVG src={iconListening} />
+                            <IconTrainingListening />
                         </div>
                     </Link>
 

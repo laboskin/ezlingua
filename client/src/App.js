@@ -30,6 +30,7 @@ function App() {
             <Switch >
 
                 <Route path="/dictionary/my/:id" component={DictionaryMy}/>
+                <Route path="/dictionary/my/" component={DictionaryMy}/>
                 <Route path="/dictionary/:id" component={DictionaryView}/>
                 <Route path="/dictionary" component={DictionaryIndex}/>
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import './style.scss';
-import {ReactComponent as IconDone} from './iconDone.svg';
 import {Link} from "react-router-dom";
 import MainContainer from "../../hoc/MainContainer/MainContainer";
+import IconContentDone from "../../icons/IconContentDone/IconContentDone";
 
 function ContentIndex() {
 
@@ -37,7 +37,7 @@ function ContentIndex() {
                                         {
                                             content.done && (
                                                 <div className="content-icon">
-                                                    <IconDone />
+                                                    <IconContentDone />
                                                 </div>
                                             )
                                         }

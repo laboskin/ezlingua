@@ -1,10 +1,10 @@
 import React from 'react';
 import './style.scss';
 import logo from './logo.png';
-import {ReactComponent as IconPlus} from './iconPlus.svg';
-import {ReactComponent as IconAdmin} from './iconAdmin.svg';
-import {ReactComponent as IconSettings} from './iconSettings.svg';
-import {ReactComponent as IconLogout} from './iconLogout.svg';
+import IconPlus from "../../icons/IconPlus/IconPlus";
+import IconAdmin from "../../icons/IconAdmin/IconAdmin";
+import IconSettings from "../../icons/IconSettings/IconSettings";
+import IconLogout from "../../icons/IconLogout/IconLogout";
 import {Link, NavLink} from "react-router-dom";
 
 // TODO

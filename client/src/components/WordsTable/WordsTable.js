@@ -1,9 +1,9 @@
 import React from 'react';
 import './style.scss';
 import {Link} from "react-router-dom";
-import IconProgressLowHorizontal from "../../icons/Progress/IconProgressLowHorizontal/IconProgressLowHorizontal";
-import IconProgressMiddleHorizontal from "../../icons/Progress/IconProgressMiddleHorizontal/IconProgressMiddleHorizontal";
-import IconProgressHighHorizontal from "../../icons/Progress/IconProgressHighHorizontal/IconProgressHighHorizontal";
+import IconProgressLowHorizontal from "../../icons/progress/IconProgressLowHorizontal/IconProgressLowHorizontal";
+import IconProgressMiddleHorizontal from "../../icons/progress/IconProgressMiddleHorizontal/IconProgressMiddleHorizontal";
+import IconProgressHighHorizontal from "../../icons/progress/IconProgressHighHorizontal/IconProgressHighHorizontal";
 import IconTrash from "../../icons/IconTrash/IconTrash";
 import IconSpeaker from "../../icons/IconSpeaker/IconSpeaker";
 

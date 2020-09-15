@@ -2,20 +2,16 @@ import React from 'react';
 import MainContainer from "../../hoc/MainContainer/MainContainer";
 import {Link} from "react-router-dom";
 import './style.scss';
-import {ReactComponent as IconAddVocabulary} from './iconAddVocabulary.svg';
-import {ReactComponent as IconRemoveVocabulary} from './iconRemoveVocabulary.svg';
-import {ReactComponent as IconDictionary} from './iconDictionary.svg';
-import {ReactComponent as IconArrowRight} from './iconArrowRight.svg';
-import {ReactComponent as IconProgressLowVertical} from './iconProgressLowVertical.svg';
-import {ReactComponent as IconProgressLowHorizontal} from './iconProgressLowHorizontal.svg';
-import {ReactComponent as IconProgressMiddleVertical} from './iconProgressMiddleVertical.svg';
-import {ReactComponent as IconProgressMiddleHorizontal} from './iconProgressMiddleHorizontal.svg';
-import {ReactComponent as IconProgressHighVertical} from './iconProgressHighVertical.svg';
-import {ReactComponent as IconProgressHighHorizontal} from './iconProgressHighHorizontal.svg';
+import IconPlus from "../../icons/IconPlus/IconPlus";
+import IconDictionaryFilled from "../../icons/IconDictionaryFilled/IconDictionaryFilled";
+import IconArrowRight from "../../icons/IconArrowRight/IconArrowRight";
+import IconProgressLowHorizontal from "../../icons/progress/IconProgressLowHorizontal/IconProgressLowHorizontal";
+import IconProgressMiddleHorizontal from "../../icons/progress/IconProgressMiddleHorizontal/IconProgressMiddleHorizontal";
+import IconProgressHighHorizontal from "../../icons/progress/IconProgressHighHorizontal/IconProgressHighHorizontal";
+import IconProgressLowVertical from "../../icons/progress/IconProgressLowVertical/IconProgressLowVertical";
+import IconProgressMiddleVertical from "../../icons/progress/IconProgressMiddleVertical/IconProgressMiddleVertical";
+import IconProgressHighVertical from "../../icons/progress/IconProgressHighVertical/IconProgressHighVertical";
 import imageWordsFromContent from './imageWordsFromContent.png';
-
-
-
 
 function DictionaryIndex() {
 
@@ -78,7 +74,7 @@ function DictionaryIndex() {
                     <Link className="my-words card"
                           to="dictionary/my">
                         <div className="my-words-icon">
-                            <IconDictionary />
+                            <IconDictionaryFilled />
                         </div>
                         <div className="my-words-text">
                             <div className="my-words-count">
@@ -191,7 +187,7 @@ function DictionaryIndex() {
                                     <div data-vocabulary-id={vocabulary.id}
                                          className="vocabulary-button vocabulary-remove">
                                         <div className="vocabulary-button-icon">
-                                            <IconRemoveVocabulary />
+                                            <IconPlus />
                                         </div>
                                         <div className="vocabulary-button-text">
                                             Remove
@@ -237,7 +233,7 @@ function DictionaryIndex() {
                                         <div data-vocabulary-id={vocabulary.id}
                                              className="vocabulary-button vocabulary-add">
                                             <div className="vocabulary-button-icon">
-                                                <IconAddVocabulary />
+                                                <IconPlus />
                                             </div>
                                             <div className="vocabulary-button-text">
                                                 Learn
