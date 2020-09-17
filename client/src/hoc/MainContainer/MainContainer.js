@@ -6,9 +6,9 @@ function MainContainer(props) {
         padding: '20px 10px',
         backgroundColor: '#fff',
         margin: '0 auto'
-    }
+    };
     return (
-        <div className="wrapper" style={style}>
+        <div style={style}>
             {props.children}
         </div>
     )

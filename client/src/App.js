@@ -37,11 +37,11 @@ function App() {
                 <Route path="/content/:id" component={ContentView}/>
                 <Route path="/content" component={ContentIndex}/>
 
-                <Route path="/training/word-translation" component={TrainingWordTranslation}/>
-                <Route path="/training/translation-word" component={TrainingTranslationWord}/>
-                <Route path="/training/cards" component={TrainingCards}/>
-                <Route path="/training/constructor" component={TrainingConstructor}/>
-                <Route path="/training/listening" component={TrainingListening}/>
+                <Route path="/training/word-translation/:id?" component={TrainingWordTranslation}/>
+                <Route path="/training/translation-word/:id?" component={TrainingTranslationWord}/>
+                <Route path="/training/cards/:id?" component={TrainingCards}/>
+                <Route path="/training/constructor/:id?" component={TrainingConstructor}/>
+                <Route path="/training/listening/:id?" component={TrainingListening}/>
                 <Route path="/training" component={TrainingIndex}/>
 
                 <Route path="/settings" component={Settings}/>
