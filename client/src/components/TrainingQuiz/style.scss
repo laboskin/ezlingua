@@ -1,0 +1,267 @@
+.TrainingQuiz{
+  &-Title{
+    margin-bottom: 20px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
+  &-Name{
+    font-size: 20px;
+    font-weight: 700;
+    color: #37383c;
+  }
+  &-Progress{
+    font-size: 20px;
+    color: #7e919f;
+  }
+
+  &-Card{
+    border: 1px solid #efefef;
+    padding: 20px 10px;
+  }
+  &-Text{
+    padding: 20px 30px;
+    text-align: center;
+    font-size: 32px;
+    color: #37383c;
+
+    &_noTranslation{
+      padding: 20px 30px 51px;
+    }
+
+    &_hasTranslation{
+      padding: 20px 30px 0;
+    }
+  }
+  &-Answer{
+    padding: 0 30px 20px;
+    font-size: 22px;
+    text-align: center;
+    color: #28c38a;
+  }
+  &-Audio{
+    padding: 23px 30px 22px;
+    text-align: center;
+
+    svg{
+      display: block;
+      height: 40px;
+      width: 40px;
+      margin: 0 auto;
+      fill: #afafaf;
+
+      &hover{
+        fill: #2582e7;
+      }
+    }
+  }
+  &-Letters{
+    padding: 10px 20px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  &-Letter{
+    margin: 7px;
+    width: 60px;
+    height: 50px;
+    border-radius: 4px;
+
+    &_completed{
+      background-color: #dcf5eb;
+      color: #28c38a;
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 46px;
+      text-align: center;
+    }
+    &_next{
+      background-color: #f4f6f7;
+      border: 2px solid rgba(37,130,231,.6);
+    }
+    &_empty{
+      background-color: #f4f6f7;
+      border: 1px solid #e6e9ee;
+    }
+  }
+
+  &-LetterOptions{
+    padding: 10px 20px 20px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  &-LetterOption{
+    margin: 7px;
+    width: 60px;
+    height: 50px;
+    border-radius: 4px;
+    background-color: #ebf4fd;
+    color: #2582e7;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 46px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition-property: color,background-color,border-color;
+    transition-duration: 0.3s;
+
+    &Count{
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 0);
+      padding-bottom: 2px;
+      color: #2582e7;
+      font-size: 11px;
+      line-height: 12px;
+      font-weight: 700;
+    }
+
+    &_empty{
+      visibility: hidden;
+    }
+    &_wrong{
+      background-color: #fce4df;
+      color: #ed593b;
+    }
+  }
+
+  &-Options{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: stretch;
+    margin: 0 -4px;
+  }
+  &-Option{
+    border: 1px solid #e6e9ee;
+    border-radius: 5px;
+    margin: 8px 4px;
+    padding: 11px 20px 15px;
+    width: calc(50% - 8px);
+    transition-property: color,background-color,border-color;
+    transition-duration: 0.3s;
+    background-color: #f4f6f7;
+    cursor: not-allowed;
+    color: #37383c;
+    font-size: 18px;
+    line-height: 18px;
+    &_active{
+      cursor: pointer;
+      &:hover{
+        background-color: #ebf4fd;
+        border-color: #ebf4fd;
+        color: #2582e7;
+      }
+    }
+    &_correct{
+      background-color: #dcf5eb;
+      border-color: #dcf5eb;
+      color: #28c38a;
+    }
+    &_wrong{
+      background-color: #fce4df;
+      border-color: #fce4df;
+      color: #ed593b;
+    }
+  }
+
+  &-Buttons{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: stretch;
+    justify-content: center;
+    margin: 0 -4px;
+  }
+  &-Button{
+    border-radius: 5px;
+    margin: 8px 4px;
+    width: calc(50% - 8px);
+    padding: 11px 20px 15px;
+    transition-property: background-color,border-color;
+    transition-duration: 0.3s;
+    cursor: pointer;
+    text-align: center;
+    font-size: 18px;
+
+    &Text{
+      color: inherit;
+      font-size: inherit;
+      line-height: 1em;
+      text-align: inherit;
+      text-decoration: inherit;
+
+      transition-property: color;
+      transition-duration: 0.3s;
+    }
+
+    &_skip{
+      border: 1px solid #e6e9ee;
+      text-align: left;
+      &:hover{
+        background-color: #ebf4fd;
+        border-color: #ebf4fd;
+        color: #2582e7;
+      }
+    }
+    &_exit{
+      font-size: 14px;
+      padding: 13px 20px 17px;
+      text-decoration: underline;
+      color: #2582e7;
+      &:hover{
+        text-decoration: none;
+        color: #2582e7;
+      }
+    }
+    &_next{
+      background-color: #2582e7;
+      border-color: #2582e7;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      svg{
+        display: block;
+        height: 18px;
+        width: 18px;
+        margin-left: 10px;
+        fill: #fff;
+      }
+
+      &:hover{
+        background-color: #297cd6;
+        border-color: #297cd6;
+      }
+    }
+    &_forget{
+      cursor: not-allowed;
+      background-color: #f4f6f7;
+      border: 1px solid #e6e9ee;
+    }
+    &_repeat{
+      background-color: #fff;
+      border: 1px solid #e6e9ee;
+      color: #37383c;
+      &:hover{
+        background-color: #ebf4fd;
+        border-color: #ebf4fd;
+      }
+    }
+    &_correct{
+      background-color: #dcf5eb;
+      color: #28c38a;
+    }
+    &_wrong{
+      background-color: #fce4df;
+      color: #ed593b;
+    }
+  }
+
+
+}
