@@ -22,9 +22,9 @@ import {useSelector} from "react-redux";
 
 
 function App() {
-    const isAuthenticated = false;
-
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const isModalVisible = useSelector((state) => state.modal.visible);
+
     return (
         <React.Fragment>
             {isAuthenticated && (
