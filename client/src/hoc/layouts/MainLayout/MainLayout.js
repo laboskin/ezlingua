@@ -6,9 +6,9 @@ import MobileNav from "../../../components/MobileNav/MobileNav";
 
 function App(props) {
     return (
-        <div className="wrapper">
+        <div className="MainLayout">
             <Header />
-            <main>
+            <main className="MainLayout-Main">
                 {props.children}
             </main>
             <MobileNav />
