@@ -11,6 +11,8 @@ import homepageCertificate from './homepage-certificate.png';
 
 // TODO
 import courseImg from './en.png';
+import {useDispatch} from "react-redux";
+import {showModal} from "../../store/actions/modal";
 
 const languages = [
     {
@@ -30,6 +32,20 @@ function Homepage() {
         window.addEventListener('scroll', scrollHandler);
         return ()=> {window.removeEventListener('scroll', scrollHandler)}
     })
+
+    const dispatch = useDispatch();
+    const loginModalData = {
+        title: 'Login to your account',
+        content: (
+            <div> Login form </div>
+        )
+    };
+    const registerModalData = {
+        title: 'Create new account',
+        content: (
+            <div> Registration form </div>
+        )
+    };
     return (
         <div className="Homepage">
             <header className="Homepage-Header">
@@ -47,7 +63,8 @@ function Homepage() {
                                 <div className="Homepage-HeaderLanguagePopupContainer">
                                     {
                                         languages.map(language => (
-                                            <div className="Homepage-HeaderLanguagePopupItem">
+                                            <div className="Homepage-HeaderLanguagePopupItem"
+                                                 key={language.name}>
                                                 <div className="Homepage-HeaderLanguagePopupItemIcon">
                                                     <img src={language.image} alt=""/>
                                                 </div>
@@ -65,10 +82,12 @@ function Homepage() {
                         </div>
                     </div>
                     <div className="Homepage-HeaderButtons">
-                        <div className="Homepage-HeaderButton Homepage-HeaderButton_signup">
+                        <div className="Homepage-HeaderButton Homepage-HeaderButton_signup"
+                             onClick={() => dispatch(showModal(registerModalData.title, registerModalData.content))}>
                             Start
                         </div>
-                        <div className="Homepage-HeaderButton Homepage-HeaderButton_login">
+                        <div className="Homepage-HeaderButton Homepage-HeaderButton_login"
+                             onClick={() => dispatch(showModal(loginModalData.title, loginModalData.content))}>
                             Sign In
                         </div>
 
@@ -87,10 +106,12 @@ function Homepage() {
                                 className="Homepage-MainBannerDescription_small">Easy, efficient, free.
                             </span>
                         </div>
-                        <div className="Homepage-MainBannerButton Homepage-MainBannerButton_signup">
+                        <div className="Homepage-MainBannerButton Homepage-MainBannerButton_signup"
+                             onClick={() => dispatch(showModal(registerModalData.title, registerModalData.content))}>
                             Start
                         </div>
-                        <div className="Homepage-MainBannerButton Homepage-MainBannerButton_login">
+                        <div className="Homepage-MainBannerButton Homepage-MainBannerButton_login"
+                             onClick={() => dispatch(showModal(loginModalData.title, loginModalData.content))}>
                             Sign in to account
                         </div>
 
