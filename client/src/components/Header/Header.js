@@ -10,8 +10,23 @@ import {Link, NavLink} from "react-router-dom";
 // TODO
 import userAvatar from './avatar.jpg';
 import currentCourseImg from './en.png';
+import {useDispatch} from "react-redux";
+import {logout} from "../../store/actions/auth";
+import {useRequest} from "../../hooks/requestHook";
 
 function Header() {
+    const dispatch = useDispatch();
+    const {request} = useRequest();
+    const logoutHandler = async () => {
+        try {
+            await request('/api/auth/logout', 'POST');
+            if (request) {
+                dispatch(logout());
+            }
+        }
+        catch (e) {
+        }
+    }
     const currentCourse = {
         name: 'English',
         image: currentCourseImg
@@ -59,7 +74,8 @@ function Header() {
                                     <div className="Header-LanguagePopupDelimeter"/>
                                     { otherCourses.map((course) => {
                                         return (
-                                            <Link className="Header-LanguagePopupItem Header-LanguagePopupItem_new"
+                                            <Link key={course.name}
+                                                  className="Header-LanguagePopupItem Header-LanguagePopupItem_new"
                                                      to="/user/change-course">
                                                 <div className="Header-LanguagePopupItemImage">
                                                     <img className=""
@@ -113,15 +129,15 @@ function Header() {
                                             Settings
                                         </span>
                                     </Link>
-                                    <Link className="Header-ProfilePopupItem"
-                                       to="/user/logout">
+                                    <div className="Header-ProfilePopupItem"
+                                       onClick={logoutHandler}>
                                         <div className="Header-ProfilePopupItemIcon">
                                             <IconLogout />
                                         </div>
                                         <span className="Header-ProfilePopupItemText">
                                             Logout
                                         </span>
-                                    </Link>
+                                    </div>
                                 </div>
                                 <div className="Header-ProfilePopupTriangle">
                                     <div className="Header-ProfilePopupDiamond"/>

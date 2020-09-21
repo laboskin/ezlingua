@@ -12,8 +12,9 @@ function Modal() {
     if (!modal.visible) return null;
 
     return (
-        <div className="Modal-Overlay"
-             onClick={(e) => (e.target===e.currentTarget) && dispatch(hideModal())}>
+        <div className="Modal">
+            <div className="Modal-Overlay"
+                 onClick={ () => dispatch(hideModal()) }/>
             <div className="Modal-Window">
                 <div className="Modal-Title">
                     {modal.title}

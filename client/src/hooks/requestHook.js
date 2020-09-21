@@ -8,6 +8,7 @@ export const useRequest = (withAuth = false) => {
 
     const request = useCallback(async (url, method = 'GET', body = null, headers = {}) => {
         setIsLoading(true);
+        setError(null);
         try {
             if (body) {
                 headers['Content-Type'] = 'application/json';
@@ -32,9 +33,9 @@ export const useRequest = (withAuth = false) => {
             setError(e.message);
             throw e;
         }
-    }, [withAuth, auth])
+    }, [])
 
-    const deleteError = useCallback(() => setError(null), []);
+    const clearError = useCallback(() => setError(null), []);
 
-    return { request, isLoading, error, deleteError };
+    return { request, isLoading, error, clearError };
 }
