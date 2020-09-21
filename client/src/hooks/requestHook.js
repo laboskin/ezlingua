@@ -26,13 +26,13 @@ export const useRequest = (withAuth = false) => {
             }
 
             setIsLoading(false);
-
             return data;
         } catch (e) {
             setIsLoading(false);
             setError(e.message);
+            throw e;
         }
-    }, [])
+    }, [withAuth, auth])
 
     const deleteError = useCallback(() => setError(null), []);
 

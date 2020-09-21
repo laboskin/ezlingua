@@ -19,11 +19,15 @@ import TrainingListening from "./pages/TrainingListening/TrainingListening";
 import TrainingIndex from "./pages/TrainingIndex/TrainingIndex";
 import Modal from "./hoc/Modal/Modal";
 import {useSelector} from "react-redux";
+import {useAuth} from "./hooks/authHook";
 
 
 function App() {
+    const isLoading = useAuth();
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const isModalVisible = useSelector((state) => state.modal.visible);
+
+    if (isLoading) return null;
 
     return (
         <React.Fragment>
