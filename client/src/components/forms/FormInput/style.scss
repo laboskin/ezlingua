@@ -1,0 +1,53 @@
+.FormGroup{
+  display: flex;
+  flex-direction: column;
+
+  &_hasError{
+    .FormGroup-Label{
+      color: red;
+    }
+    .FormGroup-Input{
+      border: 2px solid red;
+    }
+  }
+  &-Label{
+    display: block;
+    order: -1;
+    padding-bottom: 3px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.1s;
+    transition-property: color;
+  }
+  &-Input{
+    display: block;
+    width: 100%;
+    height: 40px;
+    padding: 4px 8px 0;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #fcfcfc;
+    font-size: 16px;
+    line-height: 18px;
+    outline: none;
+    transition: 0.1s;
+    transition-property: border-color;
+
+    &:focus{
+      border: 2px solid #2582e7;
+      padding: 3px 7px 0;
+      background-color: #fff;
+
+      &~.LoginForm-Label{
+        color: #2582e7;
+      }
+    }
+  }
+  &-Error{
+    height: 20px;
+    padding-top: 5px;
+    color: red;
+    font-size: 13px;
+    line-height: 13px;
+  }
+}

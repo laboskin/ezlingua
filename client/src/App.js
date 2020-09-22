@@ -56,7 +56,12 @@ function App() {
                 </MainLayout>
             )}
 
-            {!isAuthenticated && <Homepage />}
+            {!isAuthenticated && (
+                <Switch>
+                    <Route exact path="/" component={Homepage} />
+                    <Redirect to="/" />
+                </Switch>
+            )}
             {isModalVisible && <Modal />}
         </React.Fragment>
     )

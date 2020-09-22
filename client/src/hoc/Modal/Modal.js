@@ -1,11 +1,15 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './style.scss';
 import {useDispatch, useSelector} from "react-redux";
 import {hideModal} from "../../store/actions/modal";
+import { disableBodyScroll, clearAllBodyScrollLocks} from 'body-scroll-lock';
 
 
 function Modal() {
-
+    useEffect(() => {
+        disableBodyScroll(document.querySelector('.Modal-Window'));
+        return () => clearAllBodyScrollLocks();
+    })
     const modal = useSelector((state) => state.modal);
     const dispatch = useDispatch();
 

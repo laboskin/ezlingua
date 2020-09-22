@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import './style.scss';
 import homepageLogo from './homepage-logo.png';
 import IconArrowDown from "../../icons/IconArrowDown/IconArrowDown";
@@ -7,12 +7,12 @@ import homepageNotebook from './homepage-notebook.png';
 import homepageBooks from './homepage-books.png';
 import homepagePhone from './homepage-phone.png';
 import homepageCertificate from './homepage-certificate.png';
-
+import {useDispatch} from "react-redux";
+import {showLoginModal, showRegisterModal} from "../../store/actions/modal";
 
 // TODO
 import courseImg from './en.png';
-import {useDispatch} from "react-redux";
-import {showModal} from "../../store/actions/modal";
+
 
 const languages = [
     {
@@ -34,18 +34,6 @@ function Homepage() {
     })
 
     const dispatch = useDispatch();
-    const loginModalData = {
-        title: 'Login to your account',
-        content: (
-            <div> Login form </div>
-        )
-    };
-    const registerModalData = {
-        title: 'Create new account',
-        content: (
-            <div> Registration form </div>
-        )
-    };
     return (
         <div className="Homepage">
             <header className="Homepage-Header">
@@ -83,11 +71,11 @@ function Homepage() {
                     </div>
                     <div className="Homepage-HeaderButtons">
                         <div className="Homepage-HeaderButton Homepage-HeaderButton_signup"
-                             onClick={() => dispatch(showModal(registerModalData.title, registerModalData.content))}>
+                             onClick={() => dispatch(showRegisterModal())}>
                             Start
                         </div>
                         <div className="Homepage-HeaderButton Homepage-HeaderButton_login"
-                             onClick={() => dispatch(showModal(loginModalData.title, loginModalData.content))}>
+                             onClick={() => dispatch(showLoginModal())}>
                             Sign In
                         </div>
 
@@ -107,11 +95,11 @@ function Homepage() {
                             </span>
                         </div>
                         <div className="Homepage-MainBannerButton Homepage-MainBannerButton_signup"
-                             onClick={() => dispatch(showModal(registerModalData.title, registerModalData.content))}>
+                             onClick={() => dispatch(showRegisterModal())}>
                             Start
                         </div>
                         <div className="Homepage-MainBannerButton Homepage-MainBannerButton_login"
-                             onClick={() => dispatch(showModal(loginModalData.title, loginModalData.content))}>
+                             onClick={() => dispatch(showLoginModal())}>
                             Sign in to account
                         </div>
 
