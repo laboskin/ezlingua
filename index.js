@@ -4,6 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const config = require('config')
 const authRouter = require('./routes/auth.routes');
+const courseRouter = require('./routes/course.routes');
 const app = express();
 
 const PORT = config.get('port');
@@ -11,7 +12,11 @@ const MONGO_URI = config.get('mongoUri');
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.urlencoded({extended: true}));
+
 app.use('/api/auth', authRouter);
+app.use('/api/course', courseRouter);
+app.use('/', express.static(path.join(__dirname, 'public')));
 
 if (process.env.NODE_ENV === 'production') {
     app.use('/', express.static(path.join(__dirname, 'client', 'build')))
@@ -20,7 +25,6 @@ if (process.env.NODE_ENV === 'production') {
         res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
     })
 }
-
 async function start() {
     try {
         await mongoose.connect(MONGO_URI, {

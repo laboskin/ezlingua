@@ -14,5 +14,8 @@ const schema = new Schema({
         type: String
     }
 });
+schema.virtual('imageLink').get(function() {
+    return `/img/flags/${this.image}`;
+})
 
 module.exports = model('Language', schema);

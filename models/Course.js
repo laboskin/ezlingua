@@ -1,21 +1,21 @@
 const {Schema, model, Types} = require('mongoose');
+const Language = require('./Language');
 
 const schema = new Schema({
     name: {
         type: String,
         required: true,
     },
-    goalLanguageId: {
+    goalLanguage: {
         type: Types.ObjectId,
-        required: true
+        required: true,
+        ref: Language.modelName
     },
-    originalLanguageId: {
+    sourceLanguage: {
         type: Types.ObjectId,
-        required: true
+        required: true,
+        ref: Language.modelName
     },
-    image: {
-        type: String
-    }
 });
 
 module.exports = model('Course', schema);
