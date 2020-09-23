@@ -7,21 +7,16 @@ import homepageNotebook from './homepage-notebook.png';
 import homepageBooks from './homepage-books.png';
 import homepagePhone from './homepage-phone.png';
 import homepageCertificate from './homepage-certificate.png';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {showLoginModal, showRegisterModal} from "../../store/actions/modal";
-
-// TODO
-import courseImg from './en.png';
-
-
-const languages = [
-    {
-        name: 'English',
-        image: courseImg
-    }
-];
+import {loadCourses, setCurrentLanguage} from "../../store/actions/homepage";
 
 function Homepage() {
+    const dispatch = useDispatch();
+    const isLoading = useSelector(state => state.homepage.loading);
+    const currentLanguage = useSelector(state => state.homepage.currentLanguage);
+    const languages = useSelector(state => state.homepage.sourceLanguages);
+    useEffect(() => {dispatch(loadCourses())}, []);
     const scrollHandler = (event) => {
         if (window.scrollY - window.outerHeight >= -70)
             document.querySelector('.Homepage-HeaderButtons').classList.add('Homepage-HeaderButtons_visible')
@@ -32,8 +27,7 @@ function Homepage() {
         window.addEventListener('scroll', scrollHandler);
         return ()=> {window.removeEventListener('scroll', scrollHandler)}
     })
-
-    const dispatch = useDispatch();
+    if (isLoading) return null;
     return (
         <div className="Homepage">
             <header className="Homepage-Header">
@@ -44,7 +38,7 @@ function Homepage() {
                     <div className="Homepage-HeaderLanguage">
                         <div className="Homepage-HeaderLanguageButton">
                             <div className="Homepage-HeaderLanguageButtonText">
-                                Website language: English
+                                Website language: {currentLanguage.name}
                             </div>
                             <IconArrowDown />
                             <div className="Homepage-HeaderLanguagePopup">
@@ -52,7 +46,8 @@ function Homepage() {
                                     {
                                         languages.map(language => (
                                             <div className="Homepage-HeaderLanguagePopupItem"
-                                                 key={language.name}>
+                                                 key={language.name}
+                                                 onClick={() => dispatch(setCurrentLanguage(language))}>
                                                 <div className="Homepage-HeaderLanguagePopupItemIcon">
                                                     <img src={language.image} alt=""/>
                                                 </div>

@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({message: 'User with this email already exist'});
 
         const passwordHash = await bcrypt.hash(password, 10);
-        const user = new User({email, password: passwordHash, name, courseId: language});
+        const user = new User({email, password: passwordHash, name, course: language});
         user.save();
 
         // Generate access token
@@ -81,7 +81,7 @@ router.post('/refresh', async (req, res) => {
             return res.status(204).clearCookie('refreshToken').json({message: 'Refresh token is expired'});
         }
 
-        refreshTokenModel.remove();
+        setTimeout(() => refreshTokenModel.remove(), 5*1000);
 
         const user = await User.findOne(refreshTokenModel.userId);
         const newAccessToken = generateAccessToken(getAccessPayloadFromUserModel(user));
@@ -102,6 +102,9 @@ router.post('/refresh', async (req, res) => {
 
 router.post('/logout', async (req, res) => {
     try {
+        const refreshToken = req.cookies['refreshToken'];
+        const refreshTokenModel = await RefreshToken.findOne({refreshToken});
+        refreshTokenModel.remove();
         res.clearCookie('refreshToken')
             .status(200)
             .json({message: "Logout success"});

@@ -1,4 +1,5 @@
 const {Schema, model, Types} = require('mongoose');
+const Course = require('./Course');
 
 const schema = new Schema({
     email: {
@@ -14,9 +15,10 @@ const schema = new Schema({
         type: String,
         required: true
     },
-    courseId: {
+    course: {
         type: Types.ObjectId,
-        required: true
+        required: true,
+        ref: Course.modelName
     },
     isAdmin: {
         type: Boolean,

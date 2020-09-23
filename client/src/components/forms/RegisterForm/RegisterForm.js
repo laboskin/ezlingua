@@ -1,7 +1,7 @@
 import React from "react";
 import './style.scss';
 import {useRequest} from "../../../hooks/requestHook";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {login} from "../../../store/actions/auth";
 import {hideModal, showLoginModal} from "../../../store/actions/modal";
 import {useForm} from "react-hook-form";
@@ -10,16 +10,13 @@ import {yupResolver} from "@hookform/resolvers";
 import FormInput from "../FormInput/FormInput";
 
 function RegisterForm(props) {
-    const languages = [
-        {
-            value: 1,
-            text: 'English'
-        },
-        {
-            value: 2,
-            text: 'Russian'
-        }
-    ];
+    const courses = useSelector(state => state.homepage.courses);
+    const currentLanguage = useSelector(state => state.homepage.currentLanguage);
+    const languages = courses.filter(course => course.sourceLanguage.id === currentLanguage.id)
+        .map(course => ({
+            value: course.id,
+            text: course.name
+        }));
     const validationSchema = yup.object().shape({
         language: yup.string(),
         name: yup.string()
