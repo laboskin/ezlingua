@@ -2,10 +2,10 @@ const {Router} = require('express');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
-const config = require('config');
 const User = require('../models/User');
 const RefreshToken = require('../models/RefreshToken');
 const router = Router();
+const config = require('config');
 const jwtConfig = config.get('jwtConfig')
 
 router.post('/register', async (req, res) => {

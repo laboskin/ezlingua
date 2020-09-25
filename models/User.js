@@ -1,5 +1,6 @@
 const {Schema, model, Types} = require('mongoose');
 const Course = require('./Course');
+const Word = require('./Word');
 
 const schema = new Schema({
     email: {
@@ -20,6 +21,10 @@ const schema = new Schema({
         required: true,
         ref: Course.modelName
     },
+    words: [{
+        type: Types.ObjectId,
+        ref: Word.modelName
+    }],
     isAdmin: {
         type: Boolean,
         required: true,
