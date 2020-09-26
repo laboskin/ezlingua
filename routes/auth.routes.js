@@ -126,7 +126,6 @@ function getAccessPayloadFromUserModel(user) {
     return {
         userId: user.id,
         email: user.email,
-        courseId: user.courseId,
         name: user.name,
         isAdmin: user.isAdmin
     }

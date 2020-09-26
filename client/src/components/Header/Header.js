@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './style.scss';
 import logo from './logo.png';
 import IconPlus from "../../icons/IconPlus/IconPlus";
@@ -10,12 +10,18 @@ import {Link, NavLink} from "react-router-dom";
 // TODO
 import userAvatar from './avatar.jpg';
 import currentCourseImg from './en.png';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../store/actions/auth";
 import {useRequest} from "../../hooks/requestHook";
+import {changeCourse, loadCourses} from "../../store/actions/user";
 
 function Header() {
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(loadCourses());
+    }, [dispatch])
+
     const {request} = useRequest();
     const logoutHandler = async () => {
         try {
@@ -27,21 +33,8 @@ function Header() {
         catch (e) {
         }
     }
-    const currentCourse = {
-        name: 'English',
-        image: currentCourseImg
-
-    };
-    const otherCourses = [
-        {
-            name: 'English',
-            image: currentCourseImg
-        },
-        {
-            name: 'English 2',
-            image: currentCourseImg
-        }
-    ];
+    const currentCourse = useSelector(state => state.user.courses.currentCourse);
+    const userCourses = useSelector(state => state.user.courses.userCourses);
     const userIsAdmin = true;
     return (
         <header className="Header">
@@ -55,55 +48,57 @@ function Header() {
                     <NavLink className="Header-NavButton" to="/training">Training</NavLink>
                 </div>
                 <div className="Header-User">
-                    <div className="Header-Language">
-                        <img className=""
-                             src={currentCourse.image}
-                             alt=""/>
-                            <div className="Header-LanguagePopup">
-                                <div className="Header-LanguagePopupContainer">
-                                    <div className="Header-LanguagePopupItem Header-LanguagePopupItem_current">
-                                        <div className="Header-LanguagePopupItemImage">
-                                            <img className=""
-                                                 src={currentCourse.image}
-                                                 alt=""/>
-                                        </div>
-                                        <span className="Header-LanguagePopupItemText">
+                    {
+                        currentCourse && (
+                            <div className="Header-Language">
+                                <img className=""
+                                     src={currentCourse.image}
+                                     alt=""/>
+                                <div className="Header-LanguagePopup">
+                                    <div className="Header-LanguagePopupContainer">
+                                        <div className="Header-LanguagePopupItem Header-LanguagePopupItem_current">
+                                            <div className="Header-LanguagePopupItemImage">
+                                                <img className=""
+                                                     src={currentCourse.image}
+                                                     alt=""/>
+                                            </div>
+                                            <span className="Header-LanguagePopupItemText">
                                             {currentCourse.name}
                                         </span>
-                                    </div>
-                                    <div className="Header-LanguagePopupDelimeter"/>
-                                    { otherCourses.map((course) => {
-                                        return (
-                                            <Link key={course.name}
-                                                  className="Header-LanguagePopupItem Header-LanguagePopupItem_new"
-                                                     to="/user/change-course">
-                                                <div className="Header-LanguagePopupItemImage">
-                                                    <img className=""
-                                                         src={course.image}
-                                                         alt=""/>
-                                                </div>
-                                                <span className="Header-LanguagePopupItemText">
+                                        </div>
+                                        <div className="Header-LanguagePopupDelimeter"/>
+                                        { userCourses.map((course) => {
+                                            return (
+                                                <div key={course.name} className="Header-LanguagePopupItem Header-LanguagePopupItem_new"
+                                                     onClick={() => dispatch(changeCourse(course.id))}>
+                                                    <div className="Header-LanguagePopupItemImage">
+                                                        <img className=""
+                                                             src={course.image}
+                                                             alt=""/>
+                                                    </div>
+                                                    <span className="Header-LanguagePopupItemText">
                                                 {course.name}
                                             </span>
-                                            </Link>
+                                                </div>
+                                            )}
                                         )}
-                                    )}
-                                    <Link className="Header-LanguagePopupItem Header-LanguagePopupItem_add"
-                                       to="/user/add-course">
-                                        <div className="Header-LanguagePopupItemIcon">
-                                            <IconPlus />
-                                        </div>
-                                        <span className="Header-LanguagePopupItemText">
+                                        <Link className="Header-LanguagePopupItem Header-LanguagePopupItem_add"
+                                              to="/user/add-course">
+                                            <div className="Header-LanguagePopupItemIcon">
+                                                <IconPlus />
+                                            </div>
+                                            <span className="Header-LanguagePopupItemText">
                                             Add
                                         </span>
-                                    </Link>
-                                </div>
-                                <div className="Header-LanguagePopupTriangle">
-                                    <div className="Header-LanguagePopupDiamond"/>
+                                        </Link>
+                                    </div>
+                                    <div className="Header-LanguagePopupTriangle">
+                                        <div className="Header-LanguagePopupDiamond"/>
+                                    </div>
                                 </div>
                             </div>
-                    </div>
-
+                        )
+                    }
                     <div className="Header-Profile">
                         <img className="" src={userAvatar} alt=""/>
                             <div className="Header-ProfilePopup">

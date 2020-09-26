@@ -49,7 +49,7 @@ router.get('/user',
     jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
     try {
-        const user = await User.findById(req.user.userId).populate('words', 'course').populate('course', 'id sourceLanguage');
+        const user = await User.findById(req.user.userId).populate('words.model', 'course').populate('course', 'id sourceLanguage');
         const allCourses = (await Course.find({sourceLanguage: user.course.sourceLanguage}).populate('goalLanguage', 'image')).map(course => ({
             id: course.id,
             name: course.name,
@@ -57,9 +57,9 @@ router.get('/user',
         }));
         const result = {};
 
-        result.current = allCourses.find(course => course.id === user.course.id);
+        result.currentCourse = allCourses.find(course => course.id === user.course.id);
 
-        const userCourseIds = user.words.map(word => word.course);
+        const userCourseIds = user.words.map(word => word.model.course);
         result.userCourses = allCourses.filter(course => course.id !== user.course.id && userCourseIds.includes(course.id));
 
         result.otherCourses = allCourses.filter(course => course.id !== user.course.id && !userCourseIds.includes(course.id))
@@ -70,5 +70,40 @@ router.get('/user',
         res.status(500).json({message: 'Server error'});
     }
 });
+
+router.post('/user',
+    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
+    async (req, res) => {
+        try {
+            const newCourseId = req.body.courseId;
+            const user = await User.findById(req.user.userId).populate('words.model', 'course').populate('course', 'id sourceLanguage');
+            const allCourses = (await Course.find({sourceLanguage: user.course.sourceLanguage}).populate('goalLanguage', 'image')).map(course => ({
+                id: course.id,
+                name: course.name,
+                image: course.goalLanguage.imageLink
+            }));
+
+            if (!allCourses.find(course => course.id === newCourseId))
+                res.status(404).json({message: 'Wrong course id provided'});
+
+            user.course = newCourseId;
+            await user.save();
+
+            const result = {};
+
+            result.currentCourse = allCourses.find(course => course.id === newCourseId);
+
+            const userCourseIds = user.words.map(word => word.model.course);
+            result.userCourses = allCourses.filter(course => course.id !== newCourseId && userCourseIds.includes(course.id));
+
+            result.otherCourses = allCourses.filter(course => course.id !== newCourseId && !userCourseIds.includes(course.id))
+
+            res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
 
 module.exports = router;

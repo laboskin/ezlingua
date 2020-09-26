@@ -18,8 +18,6 @@ export function loadCourses() {
         }, []);
         dispatch(setSourceLanguages(sourceLanguages));
 
-        //localStorage.setItem('homepageLanguage', 'ru');
-        //console.log(localStorage.getItem('homepageLanguage'));
         let currentLanguage;
         if (localStorage.getItem('homepageLanguageId'))
             currentLanguage = courses.find(course => course.sourceLanguage.id === localStorage.getItem('homepageLanguageId')).sourceLanguage

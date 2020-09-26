@@ -22,8 +22,35 @@ const schema = new Schema({
         ref: Course.modelName
     },
     words: [{
-        type: Types.ObjectId,
-        ref: Word.modelName
+        model:{
+            type: Types.ObjectId,
+            ref: Word.modelName
+        },
+        trainingCards: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
+        trainingConstructor: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
+        trainingListening: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
+        trainingTranslationWord: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
+        trainingWordTranslation: {
+            type: Boolean,
+            required: true,
+            default: false
+        }
     }],
     isAdmin: {
         type: Boolean,

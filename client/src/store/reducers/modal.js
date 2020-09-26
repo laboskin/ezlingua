@@ -19,8 +19,8 @@ export default function modalReducer(state = initialState, action) {
             }
         case MODAL_HIDE:
             return {
-                visible: false,
-                ...initialState
+                ...initialState,
+                visible: false
             }
         default:
             return state
