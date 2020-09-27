@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const config = require('config')
 const authRouter = require('./routes/auth.routes');
 const courseRouter = require('./routes/course.routes');
+const dictionaryRouter = require('./routes/dictionary.routes');
 const app = express();
 
 const PORT = config.get('port');
@@ -16,6 +17,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use('/api/auth', authRouter);
 app.use('/api/course', courseRouter);
+app.use('/api/dictionary', dictionaryRouter);
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 if (process.env.NODE_ENV === 'production') {

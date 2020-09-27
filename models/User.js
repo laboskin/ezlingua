@@ -1,6 +1,7 @@
 const {Schema, model, Types} = require('mongoose');
 const Course = require('./Course');
 const Word = require('./Word');
+const Vocabulary = require('./Vocabulary');
 
 const schema = new Schema({
     email: {
@@ -21,10 +22,20 @@ const schema = new Schema({
         required: true,
         ref: Course.modelName
     },
+    isAdmin: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     words: [{
         model:{
             type: Types.ObjectId,
             ref: Word.modelName
+        },
+        vocabulary: {
+            type: Types.ObjectId,
+            ref: Vocabulary.modelName,
+            required: false
         },
         trainingCards: {
             type: Boolean,
@@ -52,11 +63,6 @@ const schema = new Schema({
             default: false
         }
     }],
-    isAdmin: {
-        type: Boolean,
-        required: true,
-        default: false
-    }
 });
 
 module.exports = model('User', schema);
