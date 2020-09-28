@@ -1,6 +1,7 @@
 const {Schema, model, Types} = require('mongoose');
 const Course = require('./Course');
 const Word = require('./Word');
+const VocabularyGroup = require('./VocabularyGroup');
 
 const schema = new Schema({
     name: {
@@ -12,8 +13,10 @@ const schema = new Schema({
         required: true,
         ref: Course.modelName
     },
-    groupId: {
-        type: Types.ObjectId
+    vocabularyGroup: {
+        type: Types.ObjectId,
+        required: true,
+        ref: VocabularyGroup.modelName
     },
     image: {
         type: String
@@ -23,5 +26,9 @@ const schema = new Schema({
         ref: Word.modelName
     }],
 });
+
+schema.virtual('imageLink').get(function() {
+    return `/img/vocabularies/${this.image || 'nophoto.svg'}`;
+})
 
 module.exports = model('Vocabulary', schema);
