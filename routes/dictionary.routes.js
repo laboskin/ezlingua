@@ -56,5 +56,29 @@ router.get('/all-vocabularies',
         }
     });
 
+router.get('/user-progress',
+    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId);
 
+            const result = {};
+            result.new = 0;
+            result.learning = 0;
+            result.learned = 0;
+
+            user.words.forEach(word => {
+                if (word.trainingCards && word.trainingConstructor && word.trainingListening && word.trainingTranslationWord && word.trainingWordTranslation)
+                    result.learned++;
+                else if (!(word.trainingCards || word.trainingConstructor || word.trainingListening || word.trainingTranslationWord || word.trainingWordTranslation))
+                    return result.new++;
+                else result.learning++;
+            })
+
+            res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
 module.exports = router;

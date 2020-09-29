@@ -1,10 +1,19 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Header from "../../../components/Header/Header";
 import './style.scss';
 import MobileNav from "../../../components/MobileNav/MobileNav";
+import {useDispatch, useSelector} from "react-redux";
+import {loadCourses} from "../../../store/actions/user";
 
+function MainLayout(props) {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(loadCourses());
+    }, [dispatch]);
 
-function App(props) {
+    const currentCourse = useSelector(state => state.user.courses.currentCourse);
+    if (!currentCourse) return null;
+
     return (
         <div className="MainLayout">
             <Header />
@@ -16,4 +25,4 @@ function App(props) {
     )
 }
 
-export default App;
+export default MainLayout;

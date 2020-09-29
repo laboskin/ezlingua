@@ -1,26 +1,21 @@
-import React, {useEffect} from 'react';
+import React from 'react';
+import {Link, NavLink} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
 import './style.scss';
 import logo from './logo.png';
 import IconPlus from "../../icons/IconPlus/IconPlus";
 import IconAdmin from "../../icons/IconAdmin/IconAdmin";
 import IconSettings from "../../icons/IconSettings/IconSettings";
 import IconLogout from "../../icons/IconLogout/IconLogout";
-import {Link, NavLink} from "react-router-dom";
-
-// TODO
-import userAvatar from './avatar.jpg';
-import currentCourseImg from './en.png';
-import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../store/actions/auth";
 import {useRequest} from "../../hooks/requestHook";
-import {changeCourse, loadCourses} from "../../store/actions/user";
+import {changeCourse} from "../../store/actions/user";
+
+
+import userAvatar from './avatar.jpg'; // TODO
 
 function Header() {
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(loadCourses());
-    }, [dispatch])
 
     const {request} = useRequest();
     const logoutHandler = async () => {
@@ -35,7 +30,8 @@ function Header() {
     }
     const currentCourse = useSelector(state => state.user.courses.currentCourse);
     const userCourses = useSelector(state => state.user.courses.userCourses);
-    const userIsAdmin = true;
+    const userIsAdmin = true; // TODO
+
     return (
         <header className="Header">
             <div className="Header-Container">

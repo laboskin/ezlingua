@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import MainContainer from "../../hoc/MainContainer/MainContainer";
 import {Link} from "react-router-dom";
 import './style.scss';
@@ -11,54 +11,25 @@ import IconProgressHighHorizontal from "../../icons/progress/IconProgressHighHor
 import IconProgressLowVertical from "../../icons/progress/IconProgressLowVertical/IconProgressLowVertical";
 import IconProgressMiddleVertical from "../../icons/progress/IconProgressMiddleVertical/IconProgressMiddleVertical";
 import IconProgressHighVertical from "../../icons/progress/IconProgressHighVertical/IconProgressHighVertical";
-import imageWordsFromContent from './imageWordsFromContent.png';
+import {useDispatch, useSelector} from "react-redux";
+import {clearProgress, clearVocabularies, loadProgress, loadVocabularies} from "../../store/actions/dictionary";
 
 function DictionaryIndex() {
-
-    const vocabularyGroups = [
-        {
-            id: 1,
-            name: 'First group'
-        },
-        {
-            id: 2,
-            name: 'Second group'
+    const dispatch = useDispatch();
+    const currentCourse = useSelector(state => state.user.courses.currentCourse);
+    const vocabularyGroups = useSelector(state => state.dictionary.vocabularyGroups);
+    const userVocabularies = useSelector(state => state.dictionary.userVocabularies);
+    const progress = useSelector(state => state.dictionary.progress);
+    useEffect(()=> {
+        dispatch(loadVocabularies());
+        dispatch(loadProgress());
+        return () => {
+            dispatch(clearVocabularies());
+            dispatch(clearProgress());
         }
-    ];
-    const vocabularies = [
-        {
-            id: 1,
-            name: 'One',
-            image: 'https://avatars.mds.yandex.net/get-pdb/1927216/8c4d6664-6bd5-4f72-91b9-42c5d21e2b4a/s1200?webp=false',
-            groupId: 1
-        },
-        {
-            id: 2,
-            name: 'One',
-            image: 'https://avatars.mds.yandex.net/get-pdb/1927216/8c4d6664-6bd5-4f72-91b9-42c5d21e2b4a/s1200?webp=false',
-            groupId: 2
-        },
-        {
-            id: 3,
-            name: 'One',
-            image: 'https://avatars.mds.yandex.net/get-pdb/1927216/8c4d6664-6bd5-4f72-91b9-42c5d21e2b4a/s1200?webp=false',
-            groupId: 2
-        },
-        {
-            id: 4,
-            name: 'One',
-            image: 'https://avatars.mds.yandex.net/get-pdb/1927216/8c4d6664-6bd5-4f72-91b9-42c5d21e2b4a/s1200?webp=false',
-            groupId: 2
-        },
-    ];
-    const userVocabulariesIds = [
-        1, 3
-    ];
-    const userVocabularies = vocabularies.filter(vocabulary => userVocabulariesIds.includes(vocabulary.id));
-    const vocabulariesByGroup = vocabularyGroups.map(group => ({
-        vocabularies: vocabularies.filter(v => !userVocabulariesIds.includes(v.id) && v.groupId === group.id),
-        ...group
-    })).filter(group => group.vocabularies.length !== 0);
+    }, [dispatch, currentCourse]);
+
+    if (!userVocabularies || !vocabularyGroups || !progress) return null;
 
     return (
         <MainContainer maxWidth="1000px">
@@ -78,7 +49,7 @@ function DictionaryIndex() {
                         </div>
                         <div className="my-words-text">
                             <div className="my-words-count">
-                                0 words
+                                {progress.new + progress.learning + progress.learned} words
                             </div>
                             <div className="my-words-link">
                                 Show
@@ -98,7 +69,7 @@ function DictionaryIndex() {
                                     New
                                 </div>
                                 <div className="my-progress-words-count">
-                                    0 words
+                                    {progress.new} words
                                 </div>
                             </div>
                         </div>
@@ -114,7 +85,7 @@ function DictionaryIndex() {
                                     Learning
                                 </div>
                                 <div className="my-progress-words-count">
-                                    0 words
+                                    {progress.learning} words
                                 </div>
                             </div>
                         </div>
@@ -130,7 +101,7 @@ function DictionaryIndex() {
                                     Learned
                                 </div>
                                 <div className="my-progress-words-count">
-                                    0 words
+                                    {progress.learned} words
                                 </div>
                             </div>
                         </div>
@@ -152,21 +123,6 @@ function DictionaryIndex() {
                     </div>
                 </div>
                 <div className="section-grid">
-                    <div className="vocabulary card">
-                        <Link to="dictionary/my/-1"
-                              className="vocabulary-image">
-                            <img src={imageWordsFromContent} alt=""/>
-                        </Link>
-                        <Link to="dictionary/my/-1"
-                              className="vocabulary-text">
-                            <div className="vocabulary-title">
-                                Words from content
-                            </div>
-                            <div className="vocabulary-count">
-                                0 words
-                            </div>
-                        </Link>
-                    </div>
                     {
                         userVocabularies.map(vocabulary => (
                                 <div key={vocabulary.id} className="vocabulary card">
@@ -181,7 +137,7 @@ function DictionaryIndex() {
                                             {vocabulary.name}
                                         </div>
                                         <div className="vocabulary-count">
-                                            0 words
+                                            {vocabulary.count} words
                                         </div>
                                     </Link>
                                     <div data-vocabulary-id={vocabulary.id}
@@ -203,15 +159,13 @@ function DictionaryIndex() {
                     <div className="hidden-vocabulary"/>
                 </div>
             </div>
-
             {
-                vocabulariesByGroup.map(group => (
+                vocabularyGroups.map(group => (
                     <div key={group.id} className="section">
                         <div className="section-title">
                             <div className="section-name">
                                 {group.name}
                             </div>
-
                         </div>
                         <div className="section-grid">
                             {
@@ -227,7 +181,7 @@ function DictionaryIndex() {
                                                 {vocabulary.name}
                                             </div>
                                             <div className="vocabulary-count">
-                                                0 words
+                                                {vocabulary.count} words
                                             </div>
                                         </Link>
                                         <div data-vocabulary-id={vocabulary.id}
