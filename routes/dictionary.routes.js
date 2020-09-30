@@ -148,4 +148,34 @@ router.get('/user-vocabulary/:id',
         }
     });
 
+router.get('/user-words',
+    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId).populate('words.model words.vocabulary');
+
+            const result = [];
+            user.words.forEach(word => {
+                if (word.model.course === user.course) {
+                    result.push({
+                        id: word.model.id,
+                        original: word.model.original,
+                        translation: word.model.translation,
+                        isNew: word.isNew || undefined,
+                        isLearning: word.isLearning || undefined,
+                        isLearned: word.isLearned || undefined,
+                        vocabulary: word.vocabulary && {
+                            id: word.vocabulary.id,
+                            name: word.vocabulary.name,
+                            image: word.vocabulary.image
+                        } || undefined
+                    })
+                }
+            });
+            res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
 module.exports = router;
