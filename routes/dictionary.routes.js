@@ -68,11 +68,12 @@ router.get('/user-progress',
             result.learned = 0;
 
             user.words.forEach(word => {
-                if (word.trainingCards && word.trainingConstructor && word.trainingListening && word.trainingTranslationWord && word.trainingWordTranslation)
+                if (word.isNew)
+                    result.new++
+                else if (word.isLearning)
+                    result.learning++;
+                else
                     result.learned++;
-                else if (!(word.trainingCards || word.trainingConstructor || word.trainingListening || word.trainingTranslationWord || word.trainingWordTranslation))
-                    return result.new++;
-                else result.learning++;
             })
 
             res.json(result);
@@ -81,4 +82,37 @@ router.get('/user-progress',
             res.status(500).json({message: 'Server error'});
         }
     });
+
+
+router.get('/vocabulary/:id',
+    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId);
+            const vocabulary = await Vocabulary.findOne({_id: req.params.id, course: user.course}).populate('words');
+
+            if (!vocabulary) return res.status(404).json({message: 'Vocabulary not found'});
+
+            const result = {};
+            result.id = vocabulary.id;
+            result.name = vocabulary.name;
+            result.image = vocabulary.imageLink;
+            result.userVocabulary = user.words.find(word => word.vocabulary === vocabulary.id);
+
+            const userWordIds = user.words.filter(word => word.vocabulary === vocabulary.id).map(word => word.model);
+
+            result.words = vocabulary.words.map(word => ({
+                id: word.id,
+                original: word.original,
+                translation: word.translation,
+                userWord: userWordIds.includes(word.id) || undefined
+            }));
+
+            res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
 module.exports = router;
