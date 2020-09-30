@@ -115,4 +115,37 @@ router.get('/vocabulary/:id',
         }
     });
 
+router.get('/user-vocabulary/:id',
+    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId).populate('words.model');
+            const vocabulary = await Vocabulary.findOne({_id: req.params.id, course: user.course});
+
+            if (!vocabulary) return res.status(404).json({message: 'Vocabulary not found'});
+
+            const result = {};
+            result.id = vocabulary.id;
+            result.name = vocabulary.name;
+            result.image = vocabulary.imageLink;
+            result.words = []
+            user.words.forEach(word => {
+                if (word.vocabulary && word.vocabulary === vocabulary.id) {
+                    result.words.push({
+                        id: word.model.id,
+                        original: word.model.original,
+                        translation: word.model.translation,
+                        isNew: word.isNew || undefined,
+                        isLearning: word.isLearning || undefined,
+                        isLearned: word.isLearned || undefined,
+                    })
+                }
+            });
+            res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
 module.exports = router;
