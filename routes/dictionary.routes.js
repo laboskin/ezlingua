@@ -178,4 +178,59 @@ router.get('/user-words',
             res.status(500).json({message: 'Server error'});
         }
     });
+
+router.post('/learn-word/:id',
+    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId);
+
+            const word = Word.findById(req.params.id);
+            if (!word) return res.status(404).json({message: 'Word not found'});
+            const userWord = { model: word.id };
+
+            if (req.body.vocabulary) {
+                const vocabulary = await Vocabulary.findById(req.body.vocabulary);
+                if (vocabulary && vocabulary.words.includes(word.id)) {
+                    if (user.words.find(w => w.model === word.id && w.vocabulary === vocabulary.id))
+                        return res.status(404).json({message: 'Word has been added already'});
+                    userWord.vocabulary = vocabulary.id;
+                }
+            }
+
+            user.words.push(userWord);
+            await user.save();
+            res.status(201).json({message: 'Word was successfully added'});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+router.post('/learn-vocabulary/:id',
+    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId);
+            if (user.words.find(word => word.vocabulary === req.params.id))
+                return res.status(404).json({message: 'Vocabulary has been added already'});
+
+            const vocabulary = await Vocabulary.findById(req.params.id);
+            if (!vocabulary)
+                return res.status(404).json({message: 'Vocabulary not found'});
+
+            vocabulary.words.forEach(word => {
+                user.words.push({
+                    model: word,
+                    vocabulary: vocabulary.id
+                })
+            });
+
+            user.save()
+            res.status(201).json({message: 'Vocabulary was successfully added'});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
 module.exports = router;
