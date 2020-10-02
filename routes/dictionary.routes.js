@@ -7,25 +7,28 @@ const User = require('../models/User');
 const Word = require('../models/Word');
 const Vocabulary = require('../models/Vocabulary');
 
+router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }))
+
 router.get('/all-vocabularies',
-    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
         try {
             const user = await User.findById(req.user.userId);
             const allVocabularies = await Vocabulary.find({course: user.course}).populate('vocabularyGroup');
 
-            const userVocabularyIds = user.words.map(word => word.vocabulary);
+            const userVocabularyIds = Object.keys(user.words.reduce((acc, word) => {
+                if (word.vocabulary) acc[word.vocabulary] = true;
+                return acc;
+            }, {}));
 
             const result = {};
 
             result.userVocabularies = allVocabularies.filter(vocabulary => userVocabularyIds.includes(vocabulary.id))
                 .map(vocabulary => ({
-                    id: vocabulary.id,
-                    name: vocabulary.name,
-                    image: vocabulary.imageLink,
-                    count: userVocabularyIds.filter(id => id === vocabulary.id).length
-                }))
-
+                        id: vocabulary.id,
+                        name: vocabulary.name,
+                        image: vocabulary.imageLink,
+                        count: user.words.filter(word => word.vocabulary && word.vocabulary.toString() === vocabulary.id).length
+                    }));
             result.vocabularyGroups = Object.values(allVocabularies.filter(vocabulary => !userVocabularyIds.includes(vocabulary.id))
                 .reduce((groups,vocabulary) => {
                     if (!groups[vocabulary.vocabularyGroup.id])
@@ -57,7 +60,6 @@ router.get('/all-vocabularies',
     });
 
 router.get('/user-progress',
-    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
         try {
             const user = await User.findById(req.user.userId);
@@ -83,9 +85,7 @@ router.get('/user-progress',
         }
     });
 
-
 router.get('/vocabulary/:id',
-    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
         try {
             const user = await User.findById(req.user.userId);
@@ -116,7 +116,6 @@ router.get('/vocabulary/:id',
     });
 
 router.get('/user-vocabulary/:id',
-    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
         try {
             const user = await User.findById(req.user.userId).populate('words.model');
@@ -130,9 +129,9 @@ router.get('/user-vocabulary/:id',
             result.image = vocabulary.imageLink;
             result.words = []
             user.words.forEach(word => {
-                if (word.vocabulary && word.vocabulary === vocabulary.id) {
+                if (word.vocabulary && word.vocabulary.toString() === vocabulary.id) {
                     result.words.push({
-                        id: word.model.id,
+                        id: word.id,
                         original: word.model.original,
                         translation: word.model.translation,
                         isNew: word.isNew || undefined,
@@ -141,6 +140,8 @@ router.get('/user-vocabulary/:id',
                     })
                 }
             });
+            if (vocabulary.words.length > result.words.length)
+                result.fullVocabulary = vocabulary.words.length;
             res.json(result);
         } catch (e) {
             console.log(e)
@@ -149,16 +150,15 @@ router.get('/user-vocabulary/:id',
     });
 
 router.get('/user-words',
-    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
         try {
             const user = await User.findById(req.user.userId).populate('words.model words.vocabulary');
 
             const result = [];
             user.words.forEach(word => {
-                if (word.model.course === user.course) {
+                if (word.model.course.toString() === user.course.toString()) {
                     result.push({
-                        id: word.model.id,
+                        id: word.id,
                         original: word.model.original,
                         translation: word.model.translation,
                         isNew: word.isNew || undefined,
@@ -180,7 +180,6 @@ router.get('/user-words',
     });
 
 router.post('/learn-word/:id',
-    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
         try {
             const user = await User.findById(req.user.userId);
@@ -207,8 +206,25 @@ router.post('/learn-word/:id',
         }
     });
 
+router.post('/remove-word/:id',
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId);
+
+            if (!user.words.find(word => word.id.toString() === req.params.id))
+                res.status(404).json({message: 'Word not found'});
+
+            user.words = user.words.filter(word => word.id.toString() !== req.params.id);
+            await user.save();
+
+            res.status(201).json({message: 'Word was successfully removed'});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
 router.post('/learn-vocabulary/:id',
-    jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
         try {
             const user = await User.findById(req.user.userId);
@@ -228,6 +244,24 @@ router.post('/learn-vocabulary/:id',
 
             user.save()
             res.status(201).json({message: 'Vocabulary was successfully added'});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+router.post('/remove-vocabulary/:id',
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId);
+
+            if (!user.words.find(word => !word.vocabulary || word.vocabulary.toString() === req.params.id))
+                res.status(404).json({message: 'Vocabulary not found'});
+
+            user.words = user.words.filter(word => !word.vocabulary || word.vocabulary.toString() !== req.params.id);
+            await user.save();
+
+            res.status(201).json({message: 'Vocabulary was successfully removed'});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
