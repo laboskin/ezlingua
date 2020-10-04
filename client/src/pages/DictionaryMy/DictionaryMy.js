@@ -1,24 +1,47 @@
-import React from 'react';
+ import React, {useEffect} from 'react';
+ import {useDispatch, useSelector} from "react-redux";
+ import {Link, useParams} from "react-router-dom";
+ import './style.scss';
 import MainContainer from "../../hoc/MainContainer/MainContainer";
-import './style.scss';
 import IconArrowRight from "../../icons/IconArrowRight/IconArrowRight";
 import IconGoBack from "../../icons/IconGoBack/IconGoBack";
 import IconProgressLowHorizontal from "../../icons/progress/IconProgressLowHorizontal/IconProgressLowHorizontal";
 import IconProgressMiddleHorizontal from "../../icons/progress/IconProgressMiddleHorizontal/IconProgressMiddleHorizontal";
 import IconProgressHighHorizontal from "../../icons/progress/IconProgressHighHorizontal/IconProgressHighHorizontal";
-import {Link} from "react-router-dom";
 import WordsTable from "../../components/WordsTable/WordsTable";
+ import {clearUserVocabulary, clearUserWords, loadUserVocabulary, loadUserWords} from "../../store/actions/dictionary";
+
 
 function DictionaryMy() {
+    const dispatch = useDispatch();
+    const updated = useSelector(state => state.dictionary.updated);
+    const currentCourse = useSelector(state => state.user.courses.currentCourse);
+    const { id: vocabularyId } = useParams();
 
-    const words = [
-        {
-            original: 'original',
-            translation: 'translation',
-            vocabularyId: 1,
-            vocabularyName: 'Vocabulary'
+    const userWords = useSelector(state => state.dictionary.userWords);
+    const userVocabulary = useSelector(state => state.dictionary.userVocabulary);
+
+    useEffect(() => {
+        if (vocabularyId)
+            dispatch(loadUserVocabulary(vocabularyId));
+        else
+            dispatch(loadUserWords())
+    }, [dispatch, currentCourse, updated, vocabularyId]);
+
+    useEffect(() => {
+        return () => {
+            if (vocabularyId)
+                dispatch(clearUserVocabulary());
+            else
+                dispatch(clearUserWords())
         }
-    ];
+    }, [dispatch, currentCourse, vocabularyId]);
+
+
+    if (vocabularyId && !userVocabulary) return null;
+    if (!vocabularyId && !userWords) return null;
+
+    const words = vocabularyId?userVocabulary.words:userWords;
 
     return (
         <MainContainer maxWidth="900px">
@@ -28,20 +51,26 @@ function DictionaryMy() {
                         <IconGoBack />
                     </Link>
                 </div>
-                {/*<div className="page-image">
-                    <img src={vocabularyImage} alt=""/>
-                </div>*/}
+                {userVocabulary && (
+                    <div className="page-image">
+                        <img src={userVocabulary.image} alt=""/>
+                    </div>
+                )}
                 <div className="page-name">
                     <div className="page-name-text">
-                        My vocabulary: 0 words
+                        <span>{`My vocabulary${userVocabulary?`: ${userVocabulary.name}`:''}`}</span> - {`${words.length} words`}
                     </div>
                 </div>
-                {/*<Link to={`dictionary /${vocabularyId}`}
-                   className="page-vocabulary-add">
-                    <div className="page-vocabulary-add-text">
-                        Show all 100 words
-                    </div>
-                </Link>*/}
+                {
+                    userVocabulary && userVocabulary.fullVocabulary && (
+                        <Link to={`/dictionary/${vocabularyId}`}
+                              className="page-vocabulary-add">
+                            <div className="page-vocabulary-add-text">
+                                Show all {userVocabulary.fullVocabulary} words
+                            </div>
+                        </Link>
+                    )
+                }
             </div>
             <div className="page-filter">
                 <div className="words-search">
@@ -55,14 +84,6 @@ function DictionaryMy() {
                                 <div className="training-filter-popup-item-current">
                                     <div>All</div>
                                 </div>
-                                <div data-training="Word-translation"
-                                     className="training-filter-popup-item">
-                                    <div>Word-translation</div>
-                                </div>
-                                <div data-training="Translation-word"
-                                     className="training-filter-popup-item">
-                                    <div>Translation-word</div>
-                                </div>
                                 <div data-training="Cards"
                                      className="training-filter-popup-item">
                                     <div>Cards</div>
@@ -74,6 +95,14 @@ function DictionaryMy() {
                                 <div data-training="Listening"
                                      className="training-filter-popup-item">
                                     <div>Listening</div>
+                                </div>
+                                <div data-training="Translation-word"
+                                     className="training-filter-popup-item">
+                                    <div>Translation-word</div>
+                                </div>
+                                <div data-training="Word-translation"
+                                     className="training-filter-popup-item">
+                                    <div>Word-translation</div>
                                 </div>
                             </div>
                             <div className="training-filter-popup-triangle">
@@ -103,7 +132,7 @@ function DictionaryMy() {
                         </div>
                     </div>
                 </div>
-                <Link to="/training/" className="words-training">
+                <Link to={`/training/${vocabularyId || ''}`} className="words-training">
                     <div className="words-training-text">
                         Training
                     </div>
