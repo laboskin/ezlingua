@@ -1,0 +1,91 @@
+.VocabularyTitle{
+  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  min-height: 36px;
+
+  @media screen and (max-width: 500px){
+    flex-wrap: wrap;
+  }
+
+  &-Image{
+    display: block;
+    flex: 0 0 auto;
+    height: 36px;
+    width: 36px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 12px;
+  }
+
+  &-Name{
+    flex: 1 1 auto;
+    min-width: 200px;
+    margin-right: 15px;
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: 700;
+    color: #37383c;
+
+    @media screen and (max-width: 500px){
+      flex: 1 1 200px;
+    }
+  }
+
+  &-Button{
+    flex: 0 0 auto;
+    border-radius: 4px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+    cursor: pointer;
+
+    @media screen and (max-width: 500px){
+      margin: 10px auto 0;
+    }
+
+    &_blue{
+      background-color: #eef5fd;
+      color: #2582e7;
+
+      &:hover{
+        background-color: #dcebfb;
+        color: #2582e7;
+      }
+
+      svg{
+        fill: #2582e7;
+      }
+    }
+
+    &_gray{
+      background-color: #f5f6f7;
+      color: #98a7b2;
+
+      &:hover{
+        background-color: #eaedf0;
+        color: #98a7b2;
+      }
+
+      svg{
+        fill: #98a7b2;
+      }
+    }
+
+    &Text{
+      font-weight: 600;
+    }
+
+    svg{
+      display: block;
+      height: 15px;
+      width: 15px;
+      margin-right: 12px;
+    }
+
+
+  }
+}
