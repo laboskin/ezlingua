@@ -97,15 +97,15 @@ router.get('/vocabulary/:id',
             result.id = vocabulary.id;
             result.name = vocabulary.name;
             result.image = vocabulary.imageLink;
-            result.userVocabulary = user.words.find(word => word.vocabulary === vocabulary.id);
 
-            const userWordIds = user.words.filter(word => word.vocabulary === vocabulary.id).map(word => word.model);
+            const userWordIds = user.words.filter(word => word.vocabulary && word.vocabulary.toString() === vocabulary.id).map(word => word.model.toString());
+            result.isUserVocabulary = userWordIds.length > 0 || undefined;
 
             result.words = vocabulary.words.map(word => ({
                 id: word.id,
                 original: word.original,
                 translation: word.translation,
-                userWord: userWordIds.includes(word.id) || undefined
+                isUserWord: userWordIds.includes(word.id.toString()) || undefined
             }));
 
             res.json(result);
@@ -184,17 +184,17 @@ router.post('/learn-word/:id',
         try {
             const user = await User.findById(req.user.userId);
 
-            const word = Word.findById(req.params.id);
+            const word = await Word.findById(req.params.id);
             if (!word) return res.status(404).json({message: 'Word not found'});
             const userWord = { model: word.id };
 
             if (req.body.vocabulary) {
                 const vocabulary = await Vocabulary.findById(req.body.vocabulary);
-                if (vocabulary && vocabulary.words.includes(word.id)) {
-                    if (user.words.find(w => w.model === word.id && w.vocabulary === vocabulary.id))
-                        return res.status(404).json({message: 'Word has been added already'});
-                    userWord.vocabulary = vocabulary.id;
-                }
+                if (!vocabulary || !vocabulary.words.find(w => w.toString() === word.id.toString()))
+                    return res.status(404).json({message: 'Wrong vocabulary id'});
+                if (user.words.find(w => w.model === word.id && w.vocabulary === vocabulary.id))
+                    return res.status(404).json({message: 'Word has been added already'});
+                userWord.vocabulary = vocabulary.id;
             }
 
             user.words.push(userWord);
