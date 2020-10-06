@@ -1,0 +1,169 @@
+.DictionaryProgress{
+  &-Title{
+    margin-bottom: 5px;
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    &Name{
+      font-size: 20px;
+      font-weight: 700;
+      color: #37383c;
+    }
+  }
+
+  &-Cards{
+    margin: 0 -10px;
+    padding-bottom: 10px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: stretch;
+  }
+  &-Card{
+    margin: 10px;
+    padding: 16px;
+    height: 120px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px 0 rgba(0,0,0,.12), 0 0 1px 0 rgba(0,0,0,.12);
+    background-color: #fff;
+
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+  }
+
+  &-Words{
+    flex: 0 0 320px;
+    justify-content: flex-start;
+    &Icon{
+      height: 48px;
+      flex-grow: 0;
+      flex-shrink: 0;
+      margin: 0 30px 0 20px;
+
+      svg{
+        height: 100%;
+        fill: #7e919f;
+      }
+    }
+    &Count{
+      color: #000;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    &Link{
+      color: #2582e7;
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+
+  &-Progress{
+    flex: 1 0 auto;
+    justify-content: space-around;
+  }
+
+  &-Stats{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    margin-right: 10px;
+
+    &Icon{
+      height: 32px;
+      margin-right: 15px;
+      svg{
+        height: 100%;
+      }
+    }
+    &Text{
+      color: #37383c;
+    }
+    &Title{
+      font-size: 17px;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    &Count{
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1;
+    }
+  }
+
+  &-LinkTraining{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    padding: 8px;
+
+    &Text{
+      font-size: 16px;
+      font-weight: 500;
+      margin-right: 10px;
+      color: #2582e7;
+    }
+
+    &Icon{
+      height: 16px;
+
+      svg{
+        height: 100%;
+        fill: #2582e7;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 900px){
+  .DictionaryProgress-Words{
+    flex: 0 0 240px;
+  }
+  .DictionaryProgress-WordsIcon{
+    margin-left: 0;
+  }
+  .DictionaryProgress-LinkTraining{
+    display: none;
+  }
+}
+@media screen and (max-width: 700px){
+  .DictionaryProgress-Words{
+    flex: 0 0 calc(100% - 20px);
+    justify-content: center;
+  }
+  .DictionaryProgress-WordsIcon{
+    margin-right: 20px;
+  }
+  .DictionaryProgress-WordsText{
+    margin-right: 30px;
+  }
+  .DictionaryProgress-Progress{
+    flex: 0 0 calc(100% - 20px);
+  }
+}
+@media screen and (max-width: 500px){
+  .DictionaryProgress-Words, .DictionaryProgress-Progress{
+    padding: 24px 10px;
+    height: auto;
+  }
+  .DictionaryProgress-Stats{
+    flex-flow: column nowrap;
+    align-items: center;
+    margin-top: 4px;
+  }
+  .DictionaryProgress-StatsIcon{
+    height: 20px;
+    transform: rotate(90deg) scale(2);
+    transform-origin: center;
+    margin-right: 0;
+    margin-bottom: 7px;
+  }
+  .DictionaryProgress-StatsText{
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+  }
+}
