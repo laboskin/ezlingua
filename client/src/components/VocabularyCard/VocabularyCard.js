@@ -9,16 +9,11 @@ function VocabularyCard(props) {
     const dispatch = useDispatch();
     const link = `/dictionary/${props.isUserVocabulary?'my':''}/${props.vocabularyId}`;
 
-    const classNames = props.className && props.className.split(' ') || [];
-    classNames.push('VocabularyCard');
-
-    if (props.hidden) {
-        classNames.push('VocabularyCard_hidden');
-        return <div className={classNames.join(' ')}/>;
-    }
+    if (props.hidden)
+        return <div className="VocabularyCard VocabularyCard_hidden"/>;
 
     return (
-        <div className={classNames.join(' ')}>
+        <div className="VocabularyCard">
             <Link to={link}
                   className="VocabularyCard-Image">
                 <img src={props.vocabularyImage}

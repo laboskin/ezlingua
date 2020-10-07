@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {Link, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {clearVocabulary, loadVocabulary} from "../../store/actions/dictionary";
 import MainContainer from "../../hoc/MainContainer/MainContainer";
 import WordsTable from "../../components/WordsTable/WordsTable";
