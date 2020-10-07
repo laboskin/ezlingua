@@ -1,0 +1,91 @@
+.VocabularyCard{
+  flex: 1 0 200px;
+  margin: 10px;
+
+  position: relative;
+  box-shadow: 0 3px 6px 0 rgba(0,0,0,.12), 0 0 1px 0 rgba(0,0,0,.12);
+  border-radius: 8px;
+  background-color: #fff;
+  overflow: hidden;
+
+  &_hidden{
+    height: 0;
+    margin: 0 10px;
+  }
+
+  &-Image{
+    width: 100%;
+    padding-bottom: 56.25%;
+    position: relative;
+
+    img{
+      width: 100%;
+      object-fit: cover;
+      display: block;
+      position: absolute;
+      height: 100%;
+      background-color: #fff;
+    }
+  }
+
+  &-Text{
+    padding: 15px 15px;
+    max-width: 100%;
+    position: relative;
+  }
+
+  &-Title{
+    height: 34px;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 5px;
+    word-wrap: break-word;
+  }
+
+  &-Count{
+    color: #afafaf;
+    line-height: 1;
+  }
+
+  &-Button{
+    height: 40px;
+    background-color: #fff;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-top: 1px solid #efefef;
+
+    &_learn{
+      color: #2582e7;
+      svg{
+        fill: #2582e7;
+      }
+    }
+
+    &_remove{
+      color: #e72525;
+      svg{
+        fill: #e72525;
+        transform: rotate(45deg);
+        transform-origin: center;
+      }
+    }
+
+    &Icon{
+      height: 15px;
+      margin-right: 10px;
+      svg{
+        height: 100%;
+      }
+    }
+
+    &Text{
+      font-size: 15px;
+      color: inherit;
+    }
+  }
+
+}
