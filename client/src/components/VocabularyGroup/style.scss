@@ -1,0 +1,17 @@
+.VocabularyGroup{
+  padding-bottom: 30px;
+
+  &-Title{
+    margin-bottom: 5px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #37383c;
+  }
+  &-Cards{
+    display: flex;
+    flex-flow: row wrap;
+    margin: 0 -10px;
+    justify-content: space-around;
+    align-items: stretch;
+  }
+}
