@@ -46,7 +46,7 @@ function App() {
                         <Route path="/training/cards/:id?" component={TrainingCards}/>
                         <Route path="/training/constructor/:id?" component={TrainingConstructor}/>
                         <Route path="/training/listening/:id?" component={TrainingListening}/>
-                        <Route path="/training" component={TrainingIndex}/>
+                        <Route path="/training/:id?" component={TrainingIndex}/>
 
                         <Route path="/settings" component={Settings}/>
 

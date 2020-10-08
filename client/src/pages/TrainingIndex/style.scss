@@ -1,99 +1,87 @@
-.main-container{
-  max-width: 700px;
-  padding: 20px 10px;
-  background-color: #fff;
-  margin: 0 auto;
-}
-.page-title{
-  margin-bottom: 20px;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-}
-.page-name{
-  margin-right: 15px;
-}
-.page-name-text{
-  font-size: 20px;
-  font-weight: 700;
-  color: #37383c;
-}
-.page-filter{
+.TrainingIndex{
+  &-Title{
+    margin-bottom: 20px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    &Name{
+      margin-right: 15px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #37383c;
 
-}
+      @media screen and (max-width: 460px){
+        margin-bottom: 10px;
+      }
+    }
+    &Filter{
+      flex: 0 0 200px;
 
-.section{
-  width: 100%;
-  padding-bottom: 30px;
-}
-
-.section-grid{
-  display: flex;
-  flex-flow: row wrap;
-  margin: 0 -10px;
-  justify-content: flex-start;
-  align-items: stretch;
-}
-
-.training{
-  box-shadow: 0 3px 6px 0 rgba(0,0,0,.12), 0 0 1px 0 rgba(0,0,0,.12);
-  border-radius: 8px;
-  background-color: #fff;
-  margin: 0 10px 20px;
-  transition: background-color 0.3s;
-
-  flex: 1 0 calc(33% - 20px);
-  min-height: 100px;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-.training:hover{
-  background-color: #ebf4fd;
-}
-.training.training-large{
-  flex: 2 0 calc(66% - 20px);
-}
-.training-text{
-  padding: 15px 5px 5px 15px;
-  max-width: 100%;
-  position: relative;
-}
-.training-title{
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1;
-  margin-bottom: 10px;
-  word-wrap: break-word;
-
-}
-.training-count{
-  color: #afafaf;
-  line-height: 1;
-}
-.training-icon{
-  align-self: flex-end;
-  margin: 10px 15px;
-  height: 50px;
-  width: 50px;
-  flex: 0 0 auto;
-}
-
-
-@media screen and (max-width: 680px){
-  .training{
-    flex: 1 0 calc(50% - 20px);
+      @media screen and (max-width: 460px){
+        flex: 0 0 100%;
+      }
+    }
   }
-  .training.training-large{
-    flex: 2 0 calc(100% - 20px);
+  &-Cards{
+    padding-bottom: 30px;
+    display: flex;
+    flex-flow: row wrap;
+    margin: 0 -10px;
+    justify-content: flex-start;
+    align-items: stretch;
   }
-}
-@media screen and (max-width: 460px){
-  .page-name{
-    margin-bottom: 10px;
-  }
-  .page-filter{
-    flex: 0 0 100%;
+  &-Card{
+    box-shadow: 0 3px 6px 0 rgba(0,0,0,.12), 0 0 1px 0 rgba(0,0,0,.12);
+    border-radius: 8px;
+    background-color: #fff;
+    margin: 0 10px 20px;
+    transition: background-color 0.3s;
+
+    flex: 1 0 calc(33% - 20px);
+    min-height: 100px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    cursor: pointer;
+
+    @media screen and (max-width: 680px){
+      flex: 1 0 calc(50% - 20px);
+    }
+
+    &_large{
+      flex: 2 0 calc(66% - 20px);
+
+      @media screen and (max-width: 680px){
+        flex: 2 0 calc(100% - 20px);
+      }
+    }
+    &:hover{
+      background-color: #ebf4fd;
+    }
+
+    &Text{
+      padding: 15px 5px 5px 15px;
+      max-width: 100%;
+      position: relative;
+    }
+    &Title{
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1;
+      margin-bottom: 10px;
+      word-wrap: break-word;
+    }
+    &Count{
+      color: #afafaf;
+      line-height: 1;
+    }
+    &Icon{
+      align-self: flex-end;
+      margin: 10px 15px;
+      height: 50px;
+      width: 50px;
+      flex: 0 0 auto;
+    }
   }
 }
