@@ -4,6 +4,8 @@ import VocabularyCard from "../VocabularyCard/VocabularyCard";
 
 function VocabularyGroup(props) {
 
+    if (!props.vocabularies.length)
+        return null;
     return (
         <div className="VocabularyGroup">
             <div className="VocabularyGroup-Title">

@@ -7,7 +7,7 @@ import {learnVocabulary, removeVocabulary} from "../../store/actions/dictionary"
 
 function VocabularyCard(props) {
     const dispatch = useDispatch();
-    const link = `/dictionary/${props.isUserVocabulary?'my':''}/${props.vocabularyId}`;
+    const link = `/dictionary/${props.isUserVocabulary?'my/':''}${props.vocabularyId}`;
 
     if (props.hidden)
         return <div className="VocabularyCard VocabularyCard_hidden"/>;
@@ -19,7 +19,7 @@ function VocabularyCard(props) {
                 <img src={props.vocabularyImage}
                      alt=""/>
             </Link>
-            <Link to={{link}}
+            <Link to={link}
                   className="VocabularyCard-Text">
                 <div className="VocabularyCard-Title">
                     {props.vocabularyName}

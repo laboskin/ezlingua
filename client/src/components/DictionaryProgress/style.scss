@@ -1,16 +1,9 @@
 .DictionaryProgress{
   &-Title{
     margin-bottom: 5px;
-    width: 100%;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;
-    &Name{
-      font-size: 20px;
-      font-weight: 700;
-      color: #37383c;
-    }
+    font-size: 20px;
+    font-weight: 700;
+    color: #37383c;
   }
 
   &-Cards{

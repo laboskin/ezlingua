@@ -29,9 +29,7 @@ function DictionaryProgress() {
     return (
         <div className="DictionaryProgress">
             <div className="DictionaryProgress-Title">
-                <div className="DictionaryProgress-TitleName">
-                    My dictionary
-                </div>
+                My dictionary
             </div>
             <div className="DictionaryProgress-Cards">
                 <Link className="DictionaryProgress-Card DictionaryProgress-Words"
