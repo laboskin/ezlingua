@@ -8,18 +8,22 @@ export function loadCourses() {
     return async (dispatch, getState) => {
         const {auth: {token}} = getState();
         const response = await request('/api/course/user', 'GET', null, {}, token);
-        dispatch(setCurrentCourse(response.currentCourse));
-        dispatch(setUserCourses(response.userCourses));
-        dispatch(setOtherCourses(response.otherCourses))
+        if (response) {
+            dispatch(setCurrentCourse(response.currentCourse));
+            dispatch(setUserCourses(response.userCourses));
+            dispatch(setOtherCourses(response.otherCourses))
+        }
     }
 }
 export function changeCourse(courseId) {
     return async (dispatch, getState) => {
         const {auth: {token}} = getState();
         const response = await request('/api/course/user', 'POST', {courseId}, {}, token);
-        dispatch(setCurrentCourse(response.currentCourse));
-        dispatch(setUserCourses(response.userCourses));
-        dispatch(setOtherCourses(response.otherCourses))
+        if (response) {
+            dispatch(setCurrentCourse(response.currentCourse));
+            dispatch(setUserCourses(response.userCourses));
+            dispatch(setOtherCourses(response.otherCourses))
+        }
     }
 }
 export function setCurrentCourse(course) {
