@@ -53,4 +53,65 @@ router.get('/available-vocabularies/',
         }
     });
 
+router.get('/cards/:id?',
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId).populate('words.model');
+
+            const userWords = shuffleArray(user.words.filter(word => {
+                if (req.params.id && (!word.vocabulary || word.vocabulary.toString() !== req.params.id))
+                    return false;
+                return (word.model.course === user.course && !word.isLearned && !word.trainingCards);
+            }));
+
+            const result = [];
+            userWords.every(word => {
+                if (result.length >= 10)
+                    return false;
+                result.push({
+                    id: word.id,
+                    original: word.model.original,
+                    translation: word.model.translation
+                });
+            });
+
+            res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+router.put('/cards/:id?',
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId);
+
+            const userAnswers = req.body;
+
+            user.words.map(word => {
+                if (userAnswers.includes(word.id.toString()))
+                    word.trainingCards = true;
+            });
+
+            await user.save();
+
+            res.json({message: 'Training has been completed'});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+
+
+function shuffleArray(array) {
+    const result = [...array];
+    for (let i = result.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+}
+
 module.exports = router;
