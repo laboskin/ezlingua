@@ -5,7 +5,6 @@ const config = require('config');
 const jwtConfig = config.get('jwtConfig')
 const User = require('../models/User');
 const Word = require('../models/Word');
-const Vocabulary = require('../models/Vocabulary');
 
 router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }))
 
@@ -253,6 +252,61 @@ router.put('/translation-word/:id?',
             user.words.map(word => {
                 if (userAnswers.includes(word.id.toString()))
                     word.trainingTranslationWord = true;
+            });
+
+            await user.save();
+
+            res.json({message: 'Training has been completed'});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+router.get('/listening/:id?',
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId).populate('words.model');
+            const sameCourseWords = await Word.find({course: user.course});
+
+            const userWords = shuffleArray(user.words.filter(word => {
+                if (req.params.id && (!word.vocabulary || word.vocabulary.toString() !== req.params.id))
+                    return false;
+                return (word.model.course.toString() === user.course.toString() && !word.isLearned && !word.trainingListening);
+            }));
+
+            const result = [];
+            userWords.every(word => {
+                if (result.length >= 10)
+                    return false;
+
+                const options = shuffleArray(sameCourseWords.filter(w => w.original !== word.original && w.translation !== word.translation)).slice(0, 3).map(w => w.translation);
+
+                result.push({
+                    id: word.id,
+                    original: word.model.original,
+                    translation: word.model.translation,
+                    options: shuffleArray([word.model.translation, ...options])
+                });
+            });
+
+            res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+router.put('/listening/:id?',
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId);
+
+            const userAnswers = req.body;
+
+            user.words.map(word => {
+                if (userAnswers.includes(word.id.toString()))
+                    word.trainingListening = true;
             });
 
             await user.save();
