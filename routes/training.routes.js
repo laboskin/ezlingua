@@ -82,27 +82,6 @@ router.get('/cards/:id?',
         }
     });
 
-router.put('/cards/:id?',
-    async (req, res) => {
-        try {
-            const user = await User.findById(req.user.userId);
-
-            const userAnswers = req.body;
-
-            user.words.map(word => {
-                if (userAnswers.includes(word.id.toString()))
-                    word.trainingCards = true;
-            });
-
-            await user.save();
-
-            res.json({message: 'Training has been completed'});
-        } catch (e) {
-            console.log(e)
-            res.status(500).json({message: 'Server error'});
-        }
-    });
-
 router.get('/constructor/:id?',
     async (req, res) => {
         try {
@@ -126,27 +105,6 @@ router.get('/constructor/:id?',
             });
 
             res.json(result);
-        } catch (e) {
-            console.log(e)
-            res.status(500).json({message: 'Server error'});
-        }
-    });
-
-router.put('/constructor/:id?',
-    async (req, res) => {
-        try {
-            const user = await User.findById(req.user.userId);
-
-            const userAnswers = req.body;
-
-            user.words.map(word => {
-                if (userAnswers.includes(word.id.toString()))
-                    word.trainingConstructor = true;
-            });
-
-            await user.save();
-
-            res.json({message: 'Training has been completed'});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
@@ -187,27 +145,6 @@ router.get('/word-translation/:id?',
         }
     });
 
-router.put('/word-translation/:id?',
-    async (req, res) => {
-        try {
-            const user = await User.findById(req.user.userId);
-
-            const userAnswers = req.body;
-
-            user.words.map(word => {
-                if (userAnswers.includes(word.id.toString()))
-                    word.trainingWordTranslation = true;
-            });
-
-            await user.save();
-
-            res.json({message: 'Training has been completed'});
-        } catch (e) {
-            console.log(e)
-            res.status(500).json({message: 'Server error'});
-        }
-    });
-
 router.get('/translation-word/:id?',
     async (req, res) => {
         try {
@@ -236,27 +173,6 @@ router.get('/translation-word/:id?',
             });
 
             res.json(result);
-        } catch (e) {
-            console.log(e)
-            res.status(500).json({message: 'Server error'});
-        }
-    });
-
-router.put('/translation-word/:id?',
-    async (req, res) => {
-        try {
-            const user = await User.findById(req.user.userId);
-
-            const userAnswers = req.body;
-
-            user.words.map(word => {
-                if (userAnswers.includes(word.id.toString()))
-                    word.trainingTranslationWord = true;
-            });
-
-            await user.save();
-
-            res.json({message: 'Training has been completed'});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
@@ -297,16 +213,37 @@ router.get('/listening/:id?',
         }
     });
 
-router.put('/listening/:id?',
+router.put('/:trainingName/',
     async (req, res) => {
         try {
+            let fieldName;
+            switch(req.params.trainingName) {
+                case 'cards':
+                    fieldName = 'trainingCards';
+                    break;
+                case 'constructor':
+                    fieldName = 'trainingConstructor';
+                    break;
+                case 'listening':
+                    fieldName = 'trainingListening';
+                    break;
+                case 'translation-word':
+                    fieldName = 'trainingTranslationWord';
+                    break;
+                case 'word-translation':
+                    fieldName = 'trainingWordTranslation';
+                    break;
+                default:
+                    throw new Error('Wrong training name');
+            }
+
             const user = await User.findById(req.user.userId);
 
             const userAnswers = req.body;
 
             user.words.map(word => {
                 if (userAnswers.includes(word.id.toString()))
-                    word.trainingListening = true;
+                    word[fieldName] = true;
             });
 
             await user.save();
@@ -317,10 +254,6 @@ router.put('/listening/:id?',
             res.status(500).json({message: 'Server error'});
         }
     });
-
-
-
-
 
 function shuffleArray(array) {
     const result = [...array];

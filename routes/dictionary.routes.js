@@ -62,7 +62,7 @@ router.get('/all-vocabularies',
 router.get('/user-progress',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.userId).populate('words.model', 'course');
 
             const result = {};
             result.new = 0;
@@ -70,6 +70,8 @@ router.get('/user-progress',
             result.learned = 0;
 
             user.words.forEach(word => {
+                if (word.model.course.toString() !== user.course.toString())
+                    return;
                 if (word.isNew)
                     result.new++
                 else if (word.isLearning)
