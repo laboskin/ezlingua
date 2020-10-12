@@ -6,7 +6,7 @@ import {
     TRAINING_ANSWER_CORRECT,
     TRAINING_ANSWER_WRONG,
     TRAINING_COMPLETE,
-    TRAINING_CLEAR
+    TRAINING_CLEAR, TRAINING_ANSWER_MISTAKE, TRAINING_ANSWER_SKIP
 
 } from '../actions/actionTypes';
 
@@ -53,6 +53,33 @@ export default function modalReducer(state = initialState, action) {
                 })
             }
         case TRAINING_ANSWER_WRONG:
+            return {
+                ...state,
+                isAnswered: true,
+                words: state.words.map((word, idx) => {
+                    if (idx !== state.step -1)
+                        return word;
+                    return {
+                        ...word,
+                        correct: false
+                    }
+                })
+            }
+        case TRAINING_ANSWER_MISTAKE:
+            return {
+                ...state,
+                isAnswered: true,
+                words: state.words.map((word, idx) => {
+                    if (idx !== state.step -1)
+                        return word;
+                    return {
+                        ...word,
+                        correct: false,
+                        mistake: action.option
+                    }
+                })
+            }
+        case TRAINING_ANSWER_SKIP:
             return {
                 ...state,
                 isAnswered: true,

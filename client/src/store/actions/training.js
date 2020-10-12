@@ -6,7 +6,7 @@ import {
     TRAINING_ANSWER_CORRECT,
     TRAINING_ANSWER_WRONG,
     TRAINING_COMPLETE,
-    TRAINING_CLEAR
+    TRAINING_CLEAR, TRAINING_ANSWER_MISTAKE, TRAINING_ANSWER_SKIP
 
 
 } from './actionTypes';
@@ -87,11 +87,22 @@ export function answerWrong() {
         type: TRAINING_ANSWER_WRONG
     }
 }
+export function answerMistake(option) {
+    return {
+        type: TRAINING_ANSWER_MISTAKE,
+        option
+    }
+}
+export function answerSkip() {
+    return {
+        type: TRAINING_ANSWER_SKIP,
+    }
+}
 export function completeTraining(trainingName) {
     return async (dispatch, getState) => {
         const {auth: {token}, training: {words}} = getState();
         const answers = words.filter(word => word.correct).map(word => word.id);
-        const response = await request(`/api/training/${trainingName}/`, 'PUT', answers, {}, token);
+        const response = await request(`/api/training/${trainingName}/`, 'POST', answers, {}, token);
         if (response) {
             dispatch({
                 type: TRAINING_COMPLETE
@@ -110,6 +121,18 @@ export function cardsForceRepeat() {
     return dispatch => {
         dispatch(cardsRepeat());
         dispatch(nextStep());
+    }
+}
+
+export function wordTranslationSelectOption(option) {
+    return (dispatch, getState) => {
+        const {training: {words, step}} = getState();
+        if (option === words[step-1].translation)
+            dispatch(answerCorrect());
+        else {
+            dispatch(answerMistake(option));
+            dispatch(answerWrong());
+        }
     }
 }
 
