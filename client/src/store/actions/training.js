@@ -124,10 +124,10 @@ export function cardsForceRepeat() {
     }
 }
 
-export function wordTranslationSelectOption(option) {
+export function selectOption(trainingName, option) {
     return (dispatch, getState) => {
         const {training: {words, step}} = getState();
-        if (option === words[step-1].translation)
+        if (option === words[step-1][trainingName==='translation-word'?'original':'translation'])
             dispatch(answerCorrect());
         else {
             dispatch(answerMistake(option));
