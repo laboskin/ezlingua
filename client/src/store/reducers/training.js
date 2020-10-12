@@ -1,16 +1,24 @@
 import {
     TRAINING_SET_AVAILABLE_VOCABULARIES,
     TRAINING_SET_COUNT,
-    TRAINING_START_CARDS,
-    TRAINING_START_CONSTRUCTOR,
-    TRAINING_START_LISTENING,
-    TRAINING_START_TRANSLATION_WORD, TRAINING_START_WORD_TRANSLATION
+    TRAINING_CARDS_START,
+    TRAINING_CONSTRUCTOR_START,
+    TRAINING_LISTENING_START,
+    TRAINING_TRANSLATION_WORD_START,
+    TRAINING_WORD_TRANSLATION_START,
+    TRAINING_NEXT_STEP,
+    TRAINING_ANSWER_CORRECT,
+    TRAINING_ANSWER_WRONG, TRAINING_COMPLETE, TRAINING_CLEAR
 
 } from '../actions/actionTypes';
 
 const initialState = {
     count: null,
-    availableVocabularies: null
+    availableVocabularies: null,
+    words: null,
+    step: null,
+    isAnswered: null,
+    isCompleted: null,
 }
 
 export default function modalReducer(state = initialState, action) {
@@ -25,30 +33,74 @@ export default function modalReducer(state = initialState, action) {
                 ...state,
                 availableVocabularies: action.vocabularies || initialState.availableVocabularies
             }
-        case TRAINING_START_CARDS:
+        case TRAINING_CARDS_START:
+            return {
+                ...state,
+                words: action.words,
+                step: 1,
+                isAnswered: false,
+                isCompleted: false
+            }
+        case TRAINING_CONSTRUCTOR_START:
             return {
                 ...state,
                 words: action.words
             }
-        case TRAINING_START_CONSTRUCTOR:
+        case TRAINING_LISTENING_START:
             return {
                 ...state,
                 words: action.words
             }
-        case TRAINING_START_LISTENING:
+        case TRAINING_TRANSLATION_WORD_START:
             return {
                 ...state,
                 words: action.words
             }
-        case TRAINING_START_TRANSLATION_WORD:
+        case TRAINING_WORD_TRANSLATION_START:
             return {
                 ...state,
                 words: action.words
             }
-        case TRAINING_START_WORD_TRANSLATION:
+        case TRAINING_ANSWER_CORRECT:
             return {
                 ...state,
-                words: action.words
+                isAnswered: true,
+                words: state.words.map((word, idx) => {
+                    if (idx !== state.step -1)
+                        return word;
+                    return {
+                        ...word,
+                        correct: true
+                    }
+                })
+            }
+        case TRAINING_ANSWER_WRONG:
+            return {
+                ...state,
+                isAnswered: true,
+                words: state.words.map((word, idx) => {
+                    if (idx !== state.step -1)
+                        return word;
+                    return {
+                        ...word,
+                        correct: false
+                    }
+                })
+            }
+        case TRAINING_NEXT_STEP:
+            return {
+                ...state,
+                step: state.step + 1,
+                isAnswered: false
+            }
+        case TRAINING_COMPLETE:
+            return {
+                ...state,
+                isCompleted: true
+            }
+        case TRAINING_CLEAR:
+            return {
+                ...initialState
             }
         default:
             return state
