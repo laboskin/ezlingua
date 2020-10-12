@@ -73,6 +73,7 @@ router.get('/cards/:id?',
                     original: word.model.original,
                     translation: word.model.translation
                 });
+                return true;
             });
 
             res.json(result);
@@ -102,6 +103,7 @@ router.get('/constructor/:id?',
                     original: word.model.original,
                     translation: word.model.translation
                 });
+                return true;
             });
 
             res.json(result);
@@ -136,6 +138,7 @@ router.get('/word-translation/:id?',
                     translation: word.model.translation,
                     options: shuffleArray([word.model.translation, ...options])
                 });
+                return true;
             });
 
             res.json(result);
@@ -170,6 +173,7 @@ router.get('/translation-word/:id?',
                     translation: word.model.translation,
                     options: shuffleArray([word.model.original, ...options])
                 });
+                return true;
             });
 
             res.json(result);
@@ -204,6 +208,7 @@ router.get('/listening/:id?',
                     translation: word.model.translation,
                     options: shuffleArray([word.model.translation, ...options])
                 });
+                return true;
             });
 
             res.json(result);
