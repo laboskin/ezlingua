@@ -1,14 +1,12 @@
 import {
     TRAINING_SET_AVAILABLE_VOCABULARIES,
     TRAINING_SET_COUNT,
-    TRAINING_CARDS_START,
-    TRAINING_CONSTRUCTOR_START,
-    TRAINING_LISTENING_START,
-    TRAINING_TRANSLATION_WORD_START,
-    TRAINING_WORD_TRANSLATION_START,
+    TRAINING_START,
     TRAINING_NEXT_STEP,
     TRAINING_ANSWER_CORRECT,
-    TRAINING_ANSWER_WRONG, TRAINING_COMPLETE, TRAINING_CLEAR
+    TRAINING_ANSWER_WRONG,
+    TRAINING_COMPLETE,
+    TRAINING_CLEAR
 
 
 } from './actionTypes';
@@ -50,77 +48,21 @@ export function clearAvailableVocabularies(){
     }
 }
 
-export function loadCards(vocabularyId = null){
+export function startTraining(trainingName, vocabularyId = null){
     return async (dispatch, getState) => {
         const {auth: {token}} = getState();
-        const response = await request(`/api/training/cards/${vocabularyId || ''}`, 'GET', null, {}, token);
+        const response = await request(`/api/training/${trainingName}/${vocabularyId || ''}`, 'GET', null, {}, token);
         if (response) {
             dispatch({
-                type: TRAINING_CARDS_START,
+                type: TRAINING_START,
                 words: response
             });
         }
     }
 }
-export function cardsKnow() {
-    return answerCorrect();
-}
-export function cardsRepeat() {
-    return answerWrong();
-}
-export function cardsForceRepeat() {
-    return dispatch => {
-        dispatch(cardsRepeat());
-        dispatch(nextStep());
-    }
-}
-
-export function loadConstructor(vocabularyId = null){
-    return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
-        const response = await request(`/api/training/constructor/${vocabularyId}`, 'GET', null, {}, token);
-        if (response) {
-            dispatch({
-                type: TRAINING_CONSTRUCTOR_START,
-                words: response
-            });
-        }
-    }
-}
-export function loadListening(vocabularyId = null){
-    return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
-        const response = await request(`/api/training/listening/${vocabularyId}`, 'GET', null, {}, token);
-        if (response) {
-            dispatch({
-                type: TRAINING_LISTENING_START,
-                words: response
-            });
-        }
-    }
-}
-export function loadTranslationWord(vocabularyId = null){
-    return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
-        const response = await request(`/api/training/translation-word/${vocabularyId}`, 'GET', null, {}, token);
-        if (response) {
-            dispatch({
-                type: TRAINING_TRANSLATION_WORD_START,
-                words: response
-            });
-        }
-    }
-}
-export function loadWordTranslation(vocabularyId = null){
-    return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
-        const response = await request(`/api/training/word-translation/${vocabularyId}`, 'GET', null, {}, token);
-        if (response) {
-            dispatch({
-                type: TRAINING_WORD_TRANSLATION_START,
-                words: response
-            });
-        }
+export function clearTraining() {
+    return {
+        type: TRAINING_CLEAR
     }
 }
 
@@ -157,8 +99,17 @@ export function completeTraining(trainingName) {
         }
     }
 }
-export function clearTraining() {
-    return {
-        type: TRAINING_CLEAR
+
+export function cardsKnow() {
+    return answerCorrect();
+}
+export function cardsRepeat() {
+    return answerWrong();
+}
+export function cardsForceRepeat() {
+    return dispatch => {
+        dispatch(cardsRepeat());
+        dispatch(nextStep());
     }
 }
+

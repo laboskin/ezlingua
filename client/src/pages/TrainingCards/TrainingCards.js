@@ -4,12 +4,13 @@ import TrainingResults from "../../components/TrainingResults/TrainingResults";
 import TrainingQuiz from "../../components/TrainingQuiz/TrainingQuiz";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams, useHistory} from "react-router-dom";
-import {clearTraining, loadCards} from "../../store/actions/training";
+import {clearTraining, startTraining} from "../../store/actions/training";
 
 function TrainingCards() {
     const dispatch = useDispatch();
     const history = useHistory();
     const {id: vocabularyId} = useParams();
+    const trainingName = 'cards';
 
     const currentCourse = useSelector(state => state.user.currentCourse);
     const words = useSelector(state => state.training.words);
@@ -18,7 +19,7 @@ function TrainingCards() {
     const isCompleted = useSelector(state => state.training.isCompleted);
 
     useEffect(() => {
-        dispatch(loadCards(vocabularyId));
+        dispatch(startTraining(trainingName, vocabularyId));
         return () => {
             dispatch(clearTraining());
         }
@@ -37,6 +38,8 @@ function TrainingCards() {
             {!isCompleted && (
                 <TrainingQuiz
                     title="Cards"
+                    trainingName={trainingName}
+                    vocabularyId={vocabularyId}
                     step={step}
                     totalSteps={words.length}
                     question={words[step-1].original}
@@ -48,8 +51,9 @@ function TrainingCards() {
             {isCompleted && (
                 <TrainingResults
                     title="Cards"
+                    trainingName={trainingName}
+                    vocabularyId={vocabularyId}
                     words={words}
-                    handleReload={() => dispatch(loadCards(vocabularyId))   }
                 />
             )}
         </MainContainer>

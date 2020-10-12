@@ -1,14 +1,12 @@
 import {
     TRAINING_SET_AVAILABLE_VOCABULARIES,
     TRAINING_SET_COUNT,
-    TRAINING_CARDS_START,
-    TRAINING_CONSTRUCTOR_START,
-    TRAINING_LISTENING_START,
-    TRAINING_TRANSLATION_WORD_START,
-    TRAINING_WORD_TRANSLATION_START,
+    TRAINING_START,
     TRAINING_NEXT_STEP,
     TRAINING_ANSWER_CORRECT,
-    TRAINING_ANSWER_WRONG, TRAINING_COMPLETE, TRAINING_CLEAR
+    TRAINING_ANSWER_WRONG,
+    TRAINING_COMPLETE,
+    TRAINING_CLEAR
 
 } from '../actions/actionTypes';
 
@@ -33,33 +31,13 @@ export default function modalReducer(state = initialState, action) {
                 ...state,
                 availableVocabularies: action.vocabularies || initialState.availableVocabularies
             }
-        case TRAINING_CARDS_START:
+        case TRAINING_START:
             return {
                 ...state,
                 words: action.words,
                 step: 1,
                 isAnswered: false,
                 isCompleted: false
-            }
-        case TRAINING_CONSTRUCTOR_START:
-            return {
-                ...state,
-                words: action.words
-            }
-        case TRAINING_LISTENING_START:
-            return {
-                ...state,
-                words: action.words
-            }
-        case TRAINING_TRANSLATION_WORD_START:
-            return {
-                ...state,
-                words: action.words
-            }
-        case TRAINING_WORD_TRANSLATION_START:
-            return {
-                ...state,
-                words: action.words
             }
         case TRAINING_ANSWER_CORRECT:
             return {
