@@ -52,7 +52,6 @@ router.get('/available-vocabularies/',
         }
     });
 
-
 router.get('/cards/:id?',
     async (req, res) => {
         try {
@@ -98,10 +97,16 @@ router.get('/constructor/:id?',
             userWords.every(word => {
                 if (result.length >= 10)
                     return false;
+                const letterOptions = shuffleArray(word.split('').reduce((acc, letter) => {
+                    if (acc.find(l => l.text === letter))
+                        return acc.map(l => l.text !== letter?l:{text: l.text, count: l.count+1});
+                    return [...acc, {text: letter, count: 1}];
+                }, []));
                 result.push({
                     id: word.id,
                     original: word.model.original,
-                    translation: word.model.translation
+                    translation: word.model.translation,
+                    letterOptions
                 });
                 return true;
             });
@@ -130,7 +135,7 @@ router.get('/word-translation/:id?',
                 if (result.length >= 10)
                     return false;
 
-                const options = shuffleArray(sameCourseWords.filter(w => w.original !== word.original && w.translation !== word.translation)).slice(0, 3).map(w => w.translation);
+                const options = shuffleArray(sameCourseWords.filter(w => w.original !== word.model.original && w.translation !== word.model.translation)).slice(0, 3).map(w => w.translation);
 
                 result.push({
                     id: word.id,
@@ -165,7 +170,7 @@ router.get('/translation-word/:id?',
                 if (result.length >= 10)
                     return false;
 
-                const options = shuffleArray(sameCourseWords.filter(w => w.original !== word.original && w.translation !== word.translation)).slice(0, 3).map(w => w.original);
+                const options = shuffleArray(sameCourseWords.filter(w => w.original !== word.model.original && w.translation !== word.model.translation)).slice(0, 3).map(w => w.original);
 
                 result.push({
                     id: word.id,
@@ -200,7 +205,7 @@ router.get('/listening/:id?',
                 if (result.length >= 10)
                     return false;
 
-                const options = shuffleArray(sameCourseWords.filter(w => w.original !== word.original && w.translation !== word.translation)).slice(0, 3).map(w => w.translation);
+                const options = shuffleArray(sameCourseWords.filter(w => w.original !== word.model.original && w.translation !== word.model.translation)).slice(0, 3).map(w => w.translation);
 
                 result.push({
                     id: word.id,
@@ -218,7 +223,7 @@ router.get('/listening/:id?',
         }
     });
 
-router.put('/:trainingName/',
+router.post('/:trainingName/',
     async (req, res) => {
         try {
             let fieldName;
