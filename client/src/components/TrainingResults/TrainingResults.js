@@ -1,10 +1,12 @@
 import React from 'react';
-import {Link, useParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 import './style.scss';
 import IconArrowRight from "../../icons/IconArrowRight/IconArrowRight";
+import {useDispatch} from "react-redux";
+import {startTraining} from "../../store/actions/training";
 
 function TrainingResults(props) {
-    const {id: vocabularyId = ''} = useParams();
+    const dispatch = useDispatch();
 
     return (
         <div className="TrainingResult">
@@ -35,13 +37,13 @@ function TrainingResults(props) {
             </div>
             <div className="TrainingResult-Buttons">
                 <Link className="TrainingResult-Button TrainingResult-Button_exit"
-                      to={`/training/${vocabularyId}`}>
+                      to={`/training/${props.vocabularyId || ''}`}>
                     <div className="TrainingResult-ButtonText">
                         Exit
                     </div>
                 </Link>
                 <div className="TrainingResult-Button TrainingResult-Button_continue"
-                     onClick={props.handleReload}>
+                     onClick={() => dispatch(startTraining(props.trainingName, props.vocabularyId))}>
                     <div className="TrainingResult-ButtonText">
                         Continue
                     </div>
