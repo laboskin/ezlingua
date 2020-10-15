@@ -6,7 +6,11 @@ import {
     TRAINING_ANSWER_CORRECT,
     TRAINING_ANSWER_WRONG,
     TRAINING_COMPLETE,
-    TRAINING_CLEAR, TRAINING_ANSWER_MISTAKE, TRAINING_ANSWER_SKIP
+    TRAINING_CLEAR,
+    TRAINING_ANSWER_MISTAKE,
+    TRAINING_ANSWER_SKIP,
+    TRAINING_ANSWER_CLEAR_LETTER_MISTAKE,
+    TRAINING_ANSWER_LETTER_MISTAKE, TRAINING_ANSWER_LETTER_CORRECT
 
 
 } from './actionTypes';
@@ -121,6 +125,45 @@ export function cardsForceRepeat() {
     return dispatch => {
         dispatch(cardsRepeat());
         dispatch(nextStep());
+    }
+}
+
+export function constructorSelect(letter) {
+    return (dispatch, getState) => {
+        const {training: {words, step, isAnswered}} = getState();
+        const word = words[step-1];
+        if (!isAnswered && !word.letterMistake) {
+            if (letter === word.original[word.letterGuessed].toLowerCase()) {
+                dispatch(constructorCorrect());
+                if (word.letterGuessed + 1 === word.original.length) {
+                    if (word.letterMistakesCount <= 2)
+                        dispatch(answerCorrect());
+                    else
+                        dispatch(answerWrong());
+                }
+            }
+            else {
+                dispatch(constructorMakeMistake(letter));
+                setTimeout(() => dispatch(constructorClearMistake()), 500);
+            }
+        }
+    }
+}
+export function constructorCorrect() {
+    return {
+        type: TRAINING_ANSWER_LETTER_CORRECT
+    }
+
+}
+export function constructorMakeMistake(letter) {
+    return {
+        type: TRAINING_ANSWER_LETTER_MISTAKE,
+        letter
+    }
+}
+export function constructorClearMistake() {
+    return {
+        type: TRAINING_ANSWER_CLEAR_LETTER_MISTAKE,
     }
 }
 

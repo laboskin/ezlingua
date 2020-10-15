@@ -6,7 +6,11 @@ import {
     TRAINING_ANSWER_CORRECT,
     TRAINING_ANSWER_WRONG,
     TRAINING_COMPLETE,
-    TRAINING_CLEAR, TRAINING_ANSWER_MISTAKE, TRAINING_ANSWER_SKIP
+    TRAINING_CLEAR,
+    TRAINING_ANSWER_MISTAKE,
+    TRAINING_ANSWER_SKIP,
+    TRAINING_ANSWER_LETTER_MISTAKE,
+    TRAINING_ANSWER_CLEAR_LETTER_MISTAKE, TRAINING_ANSWER_LETTER_CORRECT
 
 } from '../actions/actionTypes';
 
@@ -76,6 +80,51 @@ export default function modalReducer(state = initialState, action) {
                         ...word,
                         correct: false,
                         mistake: action.option
+                    }
+                })
+            }
+        case TRAINING_ANSWER_LETTER_CORRECT:
+            return {
+                ...state,
+                words: state.words.map((word, idx) => {
+                    if (idx !== state.step -1)
+                        return word;
+                    return {
+                        ...word,
+                        letterGuessed: word.letterGuessed + 1,
+                        letterOptions: word.letterOptions.map(letter => {
+                            if (letter.text !== word.original[word.letterGuessed].toLowerCase())
+                                return letter;
+                            return {
+                                ...letter,
+                                count: letter.count - 1
+                            }
+                        })
+                    }
+                })
+            }
+        case TRAINING_ANSWER_LETTER_MISTAKE:
+            return {
+                ...state,
+                words: state.words.map((word, idx) => {
+                    if (idx !== state.step -1)
+                        return word;
+                    return {
+                        ...word,
+                        letterMistakesCount: word.letterMistakesCount+1,
+                        letterMistake: action.letter
+                    }
+                })
+            }
+        case TRAINING_ANSWER_CLEAR_LETTER_MISTAKE:
+            return {
+                ...state,
+                words: state.words.map((word, idx) => {
+                    if (idx !== state.step -1)
+                        return word;
+                    return {
+                        ...word,
+                        letterMistake: null
                     }
                 })
             }

@@ -97,16 +97,18 @@ router.get('/constructor/:id?',
             userWords.every(word => {
                 if (result.length >= 10)
                     return false;
-                const letterOptions = shuffleArray(word.split('').reduce((acc, letter) => {
-                    if (acc.find(l => l.text === letter))
-                        return acc.map(l => l.text !== letter?l:{text: l.text, count: l.count+1});
-                    return [...acc, {text: letter, count: 1}];
+                const letterOptions = shuffleArray(word.model.original.split('').reduce((acc, letter) => {
+                    if (acc.find(l => l.text === letter.toLowerCase()))
+                        return acc.map(l => l.text !== letter.toLowerCase()?l:{text: l.text, count: l.count+1});
+                    return [...acc, {text: letter.toLowerCase(), count: 1}];
                 }, []));
                 result.push({
                     id: word.id,
                     original: word.model.original,
                     translation: word.model.translation,
-                    letterOptions
+                    letterOptions,
+                    letterGuessed: 0,
+                    letterMistakesCount: 0,
                 });
                 return true;
             });
