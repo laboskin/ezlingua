@@ -1,225 +1,246 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import IconArrowRight from "../../icons/IconArrowRight/IconArrowRight";
-import {Link} from "react-router-dom";
+import {Link, useParams, useLocation, useHistory} from "react-router-dom";
 import IconSpeaker from "../../icons/IconSpeaker/IconSpeaker";
 import './style.scss';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
     answerSkip,
     cardsForceRepeat,
     cardsKnow,
     cardsRepeat, constructorSelect,
     nextStep,
-    selectOption
+    selectOption, startTraining
 } from "../../store/actions/training";
 
-function TrainingQuiz(props) {
+function TrainingQuiz() {
     const dispatch = useDispatch();
+    const history = useHistory();
+    const currentCourse = useSelector(state => state.user.currentCourse);
+    const trainingName = useLocation().pathname.split('/')[2];
+    const {id: vocabularyId = ''} = useParams();
+    const words = useSelector(state => state.training.words);
+    const step = useSelector(state => state.training.step);
+    const isAnswered = useSelector(state => state.training.isAnswered);
+
+    useEffect(() => {
+        dispatch(startTraining(trainingName, vocabularyId));
+    }, [dispatch, trainingName, vocabularyId, currentCourse]);
+    if (!words) {
+        return null;
+    }
+    if (words.length === 0) {
+        history.push('/training');
+        return null;
+    }
+
+    const word = words[step - 1];
+    let title;
+    switch(trainingName) {
+        case 'cards':
+            title = 'Cards';
+            break;
+        case 'constructor':
+            title = 'Constructor';
+            break;
+        case 'listening':
+            title = 'Listening';
+            break;
+        case 'translation-word':
+            title = 'Translation-word';
+            break;
+        case 'word-translation':
+            title = 'Word-translation';
+            break;
+        default:
+            return null;
+    }
+
 
     return (
         <div className="TrainingQuiz">
             <div className="TrainingQuiz-Title">
                 <div className="TrainingQuiz-Name">
-                    {props.title}
+                    {title}
                 </div>
                 <div className="TrainingQuiz-Progress">
-                    {props.step}/{props.totalSteps}
+                    {step}/{words.length}
                 </div>
             </div>
             <div className="TrainingQuiz-Card">
-                {
-                    ['Translation-word', 'Word-translation'].includes(props.title) && (
-                        <div className="TrainingQuiz-Text">
-                            {props.question}
+                {trainingName === 'cards' && (
+                    <React.Fragment>
+                        <div className={`TrainingQuiz-Text ${isAnswered?'TrainingQuiz-Text_hasTranslation':'TrainingQuiz-Text_noTranslation'}`}>
+                            {word.original}
                         </div>
-                    )
-                }
-                {
-                    props.title === 'Cards' && (
-                        <React.Fragment>
-                            <div className={`TrainingQuiz-Text ${props.isAnswered?'TrainingQuiz-Text_hasTranslation':'TrainingQuiz-Text_noTranslation'}`}>
-                                {props.question}
-                            </div>
-                            {
-                                props.isAnswered && (
-                                    <div className="TrainingQuiz-Answer">
-                                        {props.answer}
-                                    </div>
-                                )
-                            }
-                        </React.Fragment>
-
-                    )
-                }
-                {
-                    props.title === 'Listening' && (
-                        <React.Fragment>
-                            {!props.isAnswered && (
-                                <div className="TrainingQuiz-Audio">
-                                    <IconSpeaker />
-                                </div>
-                            )}
-                            {props.isAnswered && (
-                                <div className="TrainingQuiz-Text">
-                                    {props.answer}
-                                </div>
-                            )}
-                        </React.Fragment>
-                    )
-                }
-                {
-                    props.title === 'Constructor' && (
-                        <React.Fragment>
-                            <div className="TrainingQuiz-Text">
-                                {props.question}
-                            </div>
-                            <div className="TrainingQuiz-Letters">
-                                {
-                                    props.answer.split('').map((letter, idx) => {
-                                        if (props.isAnswered || props.letterGuessed > idx)
-                                            return (
-                                                <div className="TrainingQuiz-Letter TrainingQuiz-Letter_completed">
-                                                    {letter}
-                                                </div>
-                                            )
-                                        if (props.letterGuessed === idx)
-                                            return <div className="TrainingQuiz-Letter TrainingQuiz-Letter_next" />
-
-                                        return <div className="TrainingQuiz-Letter TrainingQuiz-Letter_empty" />;
-                                    })
-                                }
-                            </div>
-                        </React.Fragment>
-                    )
-                }
-                {props.title === 'Constructor' && (
-                    <div className="TrainingQuiz-LetterOptions">
                         {
-                            props.letterOptions.map(letter => (
-                                <div className={`TrainingQuiz-LetterOption ${letter.count === 0?'TrainingQuiz-LetterOption_empty':''} ${letter.text === props.letterMistake?'TrainingQuiz-LetterOption_wrong':''}`}
-                                     onClick={letter.count>0 && (() => dispatch(constructorSelect(letter.text)))}>
-                                    {letter.text}
-                                    {
-                                        letter.count > 1 && (
+                            isAnswered && (
+                                <div className="TrainingQuiz-Answer">
+                                    {word.translation}
+                                </div>
+                            )
+                        }
+                    </React.Fragment>
+                )}
+                {trainingName === 'constructor' && (
+                    <React.Fragment>
+                        <div className="TrainingQuiz-Text">
+                            {word.translation}
+                        </div>
+                        <div className="TrainingQuiz-Letters">
+                            {
+                                word.original.split('').map((letter, idx) => {
+                                    if (isAnswered || word.letterGuessed > idx)
+                                        return (
+                                            <div className="TrainingQuiz-Letter TrainingQuiz-Letter_completed">
+                                                {letter}
+                                            </div>
+                                        )
+                                    if (word.letterGuessed === idx)
+                                        return <div className="TrainingQuiz-Letter TrainingQuiz-Letter_next" />
+
+                                    return <div className="TrainingQuiz-Letter TrainingQuiz-Letter_empty" />;
+                                })
+                            }
+                        </div>
+                        <div className="TrainingQuiz-LetterOptions">
+                            {
+                                word.letterOptions.map(letter => (
+                                    <div className={`TrainingQuiz-LetterOption ${letter.count === 0?'TrainingQuiz-LetterOption_empty':''} ${letter.text === word.letterMistake?'TrainingQuiz-LetterOption_wrong':''}`}
+                                         onClick={letter.count>0 && (() => dispatch(constructorSelect(letter.text)))}>
+                                        {letter.text}
+                                        {letter.count > 1 && (
                                             <div className="TrainingQuiz-LetterOptionCount">
                                                 &times;{letter.count}
                                             </div>
-                                        )
-                                    }
-                                </div>
-                            ))
-                        }
+                                        )}
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </React.Fragment>
+                )}
+                {trainingName === 'listening' && (
+                    <React.Fragment>
+                        {!isAnswered && (
+                            <div className="TrainingQuiz-Audio">
+                                <IconSpeaker />
+                            </div>
+                        )}
+                        {isAnswered && (
+                            <div className="TrainingQuiz-Text">
+                                {word.translation}
+                            </div>
+                        )}
+                    </React.Fragment>
+                )}
+                {trainingName === 'translation-word' && (
+                    <div className="TrainingQuiz-Text">
+                        {word.translation}
+                    </div>
+                )}
+                {trainingName === 'word-translation' && (
+                    <div className="TrainingQuiz-Text">
+                        {word.original}
                     </div>
                 )}
             </div>
 
-            {['Listening', 'Translation-word', 'Word-translation'].includes(props.title) && (
+            {['listening', 'translation-word', 'word-translation'].includes(trainingName) && (
                 <div className="TrainingQuiz-Options">
-                    {props.isAnswered &&
-                    props.options.map(option => (
-                            <div className={`TrainingQuiz-Option ${option===props.answer?'TrainingQuiz-Option_correct':''} ${option===props.mistake?'TrainingQuiz-Option_wrong':''}`}>
+                    {word.options.map(option => {
+                        if (isAnswered)
+                            return (
+                                <div className={`TrainingQuiz-Option 
+                                ${option === word.original || option === word.translation?'TrainingQuiz-Option_correct':''} 
+                                ${option === word.mistake?'TrainingQuiz-Option_wrong':''}`}>
+                                    {option}
+                                </div>
+                            );
+                        return (
+                            <div className="TrainingQuiz-Option TrainingQuiz-Option_active" onClick={() => dispatch(selectOption(trainingName, option))}>
                                 {option}
                             </div>
-                        )
-                    )}
-                    {!props.isAnswered &&
-                    props.options.map(option => (
-                            <div className="TrainingQuiz-Option TrainingQuiz-Option_active" onClick={() => dispatch(selectOption(props.trainingName, option))}>
-                                {option}
-                            </div>
-                        )
-                    )}
+                        );
+                    })}
                 </div>
             )}
 
             <div className="TrainingQuiz-Buttons">
-                {['Constructor', 'Listening', 'Translation-word', 'Word-translation'].includes(props.title) && (
+                {trainingName === 'cards' && (
                     <React.Fragment>
-                        <Link className="TrainingQuiz-Button TrainingQuiz-Button_exit"
-                              to={`/training/${props.vocabularyId || ''}`}>
-                            <div className="TrainingQuiz-ButtonText">
-                                Exit
-                            </div>
-                        </Link>
-                        {
-                            !props.isAnswered && (
-                                <div className="TrainingQuiz-Button TrainingQuiz-Button_skip" onClick={() => dispatch(answerSkip())}>
+                        {!isAnswered && (
+                            <React.Fragment>
+                                <div className="TrainingQuiz-Button TrainingQuiz-Button_wrong" onClick={() => dispatch(cardsRepeat())}>
                                     <div className="TrainingQuiz-ButtonText">
-                                        skip
+                                        I don't know
                                     </div>
                                 </div>
-                            )
-                        }
-                        {
-                            props.isAnswered && (
-                                <div className="TrainingQuiz-Button TrainingQuiz-Button_next" onClick={() => dispatch(nextStep(props.trainingName))}>
+                                <div className="TrainingQuiz-Button TrainingQuiz-Button_correct" onClick={() => dispatch(cardsKnow())}>
+                                    <div className="TrainingQuiz-ButtonText">
+                                        I know
+                                    </div>
+                                </div>
+                            </React.Fragment>
+                        )}
+                        {isAnswered && (
+                            <React.Fragment>
+                                {!word.correct && (
+                                    <div className="TrainingQuiz-Button TrainingQuiz-Button_forget">
+                                        <div className="TrainingQuiz-ButtonText">
+                                            On repeat
+                                        </div>
+                                    </div>
+                                )}
+                                {word.correct && (
+                                    <div className="TrainingQuiz-Button TrainingQuiz-Button_repeat" onClick={() => dispatch(cardsForceRepeat())}>
+                                        <div className="TrainingQuiz-ButtonText">
+                                            Repeat
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="TrainingQuiz-Button TrainingQuiz-Button_next" onClick={() => dispatch(nextStep(trainingName))}>
                                     <div className="TrainingQuiz-ButtonText">
                                         Next
                                     </div>
                                     <IconArrowRight />
                                 </div>
-                            )
-                        }
-                    </React.Fragment>
-                )}
-                {props.title === 'Cards' && (
-                    <React.Fragment>
-                        {
-                            !props.isAnswered && (
-                                <React.Fragment>
-                                    <div className="TrainingQuiz-Button TrainingQuiz-Button_wrong" onClick={() => dispatch(cardsRepeat())}>
-                                        <div className="TrainingQuiz-ButtonText">
-                                            I don't know
-                                        </div>
-                                    </div>
-                                    <div className="TrainingQuiz-Button TrainingQuiz-Button_correct" onClick={() => dispatch(cardsKnow())}>
-                                        <div className="TrainingQuiz-ButtonText">
-                                            I know
-                                        </div>
-                                    </div>
-                                </React.Fragment>
-                            )
-                        }
-                        {
-                            props.isAnswered && (
-                                <React.Fragment>
-                                    {
-                                        props.isRepeat && (
-                                            <div className="TrainingQuiz-Button TrainingQuiz-Button_forget">
-                                                <div className="TrainingQuiz-ButtonText">
-                                                    On repeat
-                                                </div>
-                                            </div>
-                                        )
-                                    }
-                                    {
-                                        !props.isRepeat && (
-                                            <div className="TrainingQuiz-Button TrainingQuiz-Button_repeat" onClick={() => dispatch(cardsForceRepeat())}>
-                                                <div className="TrainingQuiz-ButtonText">
-                                                    Repeat
-                                                </div>
-                                            </div>
-                                        )
-                                    }
-                                    <div className="TrainingQuiz-Button TrainingQuiz-Button_next" onClick={() => dispatch(nextStep(props.trainingName))}>
-                                        <div className="TrainingQuiz-ButtonText">
-                                            Next
-                                        </div>
-                                        <IconArrowRight />
-                                    </div>
-                                </React.Fragment>
-                            )
-                        }
+                            </React.Fragment>
+                        )}
                         <Link className="TrainingQuiz-Button TrainingQuiz-Button_exit"
-                              to={`/training/${props.vocabularyId}`}>
+                              to={`/training/${vocabularyId}`}>
                             <div className="TrainingQuiz-ButtonText">
                                 Exit
                             </div>
                         </Link>
                     </React.Fragment>
                 )}
+                {['constructor', 'listening', 'translation-word', 'word-translation'].includes(trainingName) && (
+                    <React.Fragment>
+                        <Link className="TrainingQuiz-Button TrainingQuiz-Button_exit"
+                              to={`/training/${vocabularyId}`}>
+                            <div className="TrainingQuiz-ButtonText">
+                                Exit
+                            </div>
+                        </Link>
+                        {!isAnswered && (
+                            <div className="TrainingQuiz-Button TrainingQuiz-Button_skip" onClick={() => dispatch(answerSkip())}>
+                                <div className="TrainingQuiz-ButtonText">
+                                    skip
+                                </div>
+                            </div>
+                        )}
+                        {isAnswered && (
+                            <div className="TrainingQuiz-Button TrainingQuiz-Button_next" onClick={() => dispatch(nextStep(trainingName))}>
+                                <div className="TrainingQuiz-ButtonText">
+                                    Next
+                                </div>
+                                <IconArrowRight />
+                            </div>
+                        )}
+                    </React.Fragment>
+                )}
             </div>
-
         </div>
     )
 }
