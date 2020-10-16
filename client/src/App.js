@@ -11,15 +11,11 @@ import DictionaryView from "./pages/DictionaryView/DictionaryView";
 import DictionaryMy from "./pages/DictionaryMy/DictionaryMy";
 import ContentView from "./pages/ContentView/ContentView";
 import ContentIndex from "./pages/ContentIndex/ContentIndex";
-import TrainingWordTranslation from "./pages/TrainingWordTranslation/TrainingWordTranslation";
-import TrainingTranslationWord from "./pages/TrainingTranslationWord/TrainingTranslationWord";
-import TrainingCards from "./pages/TrainingCards/TrainingCards";
-import TrainingConstructor from "./pages/TrainingConstructor/TrainingConstructor";
-import TrainingListening from "./pages/TrainingListening/TrainingListening";
 import TrainingIndex from "./pages/TrainingIndex/TrainingIndex";
 import Modal from "./hoc/Modal/Modal";
 import {useSelector} from "react-redux";
 import {useAuth} from "./hooks/authHook";
+import TrainingPage from "./pages/TrainingPage/TrainingPage";
 
 
 function App() {
@@ -41,11 +37,11 @@ function App() {
                         <Route path="/content/:id" component={ContentView}/>
                         <Route path="/content" component={ContentIndex}/>
 
-                        <Route path="/training/word-translation/:id?" component={TrainingWordTranslation}/>
-                        <Route path="/training/translation-word/:id?" component={TrainingTranslationWord}/>
-                        <Route path="/training/cards/:id?" component={TrainingCards}/>
-                        <Route path="/training/constructor/:id?" component={TrainingConstructor}/>
-                        <Route path="/training/listening/:id?" component={TrainingListening}/>
+                        <Route path="/training/cards/:id?" component={TrainingPage}/>
+                        <Route path="/training/constructor/:id?" component={TrainingPage}/>
+                        <Route path="/training/listening/:id?" component={TrainingPage}/>
+                        <Route path="/training/translation-word/:id?" component={TrainingPage}/>
+                        <Route path="/training/word-translation/:id?" component={TrainingPage}/>
                         <Route path="/training/:id?" component={TrainingIndex}/>
 
                         <Route path="/settings" component={Settings}/>

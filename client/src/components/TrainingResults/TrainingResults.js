@@ -1,8 +1,8 @@
 import React from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import {Link, useLocation, useParams} from "react-router-dom";
 import './style.scss';
 import IconArrowRight from "../../icons/IconArrowRight/IconArrowRight";
-import {useDispatch, useSelector} from "react-redux";
 import {startTraining} from "../../store/actions/training";
 
 function TrainingResults() {
@@ -28,6 +28,8 @@ function TrainingResults() {
         case 'word-translation':
             title = 'Word-translation';
             break;
+        default:
+            return null;
     }
 
     return (
