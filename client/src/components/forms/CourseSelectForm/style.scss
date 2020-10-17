@@ -1,0 +1,45 @@
+.CourseSelectForm{
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 -10px;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  &-Course{
+    box-shadow: 0 3px 6px 0 rgba(0,0,0,.12), 0 0 1px 0 rgba(0,0,0,.12);
+    border-radius: 8px;
+    background-color: #fff;
+    margin: 10px;
+    padding: 15px;
+    flex: 1 0 150px;
+    transition: background-color 0.3s;
+
+    &:hover{
+      background-color: #ebf4fd;
+    }
+
+    &_hidden{
+      flex: 1 0 150px;
+      height: 0;
+      margin: 0 10px;
+    }
+  }
+
+  &-Image{
+    padding: 20px 30px;
+    max-width: 200px;
+    margin: 0 auto;
+
+    img{
+      width: 100%;
+    }
+  }
+
+  &-Text{
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: #37383c;
+    margin-bottom: 10px;
+  }
+}

@@ -5,6 +5,7 @@ import {
 import RegisterForm from "../../components/forms/RegisterForm/RegisterForm";
 import LoginForm from "../../components/forms/LoginForm/LoginForm";
 import React from "react";
+import CourseSelectForm from "../../components/forms/CourseSelectForm/CourseSelectForm";
 
 export function showModal(title, content) {
     return {
@@ -20,6 +21,9 @@ export function showLoginModal() {
 
 export function showRegisterModal() {
     return dispatch => dispatch(showModal('Create new account', <RegisterForm />));
+}
+export function showCourseSelectModal() {
+    return dispatch => dispatch(showModal('Available courses', <CourseSelectForm />));
 }
 
 export function hideModal() {

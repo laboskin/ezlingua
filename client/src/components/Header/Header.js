@@ -12,7 +12,8 @@ import {useRequest} from "../../hooks/requestHook";
 import {changeCourse} from "../../store/actions/user";
 
 
-import userAvatar from './avatar.jpg'; // TODO
+import userAvatar from './avatar.jpg';
+import {showCourseSelectModal} from "../../store/actions/modal";
 
 function Header() {
     const dispatch = useDispatch();
@@ -78,15 +79,15 @@ function Header() {
                                                 </div>
                                             )}
                                         )}
-                                        <Link className="Header-LanguagePopupItem Header-LanguagePopupItem_add"
-                                              to="/user/add-course">
+                                        <div className="Header-LanguagePopupItem Header-LanguagePopupItem_add"
+                                              onClick={() => dispatch(showCourseSelectModal())}>
                                             <div className="Header-LanguagePopupItemIcon">
                                                 <IconPlus />
                                             </div>
                                             <span className="Header-LanguagePopupItemText">
                                             Add
                                         </span>
-                                        </Link>
+                                        </div>
                                     </div>
                                     <div className="Header-LanguagePopupTriangle">
                                         <div className="Header-LanguagePopupDiamond"/>
