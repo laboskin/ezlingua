@@ -1,0 +1,54 @@
+.ContentCard{
+  box-shadow: 0 3px 6px 0 rgba(0,0,0,.12), 0 0 1px 0 rgba(0,0,0,.12);
+  border-radius: 8px;
+  background-color: #fff;
+  margin: 10px;
+  flex: 1 0 200px;
+  transition: background-color 0.3s;
+
+  &_hidden{
+    flex: 1 0 200px;
+    margin: 10px;
+    height: 0;
+  }
+
+  &-Image{
+    width: 100%;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    padding-bottom: 56.25%;
+    position: relative;
+
+    img{
+      width: 100%;
+      border-top-right-radius: 8px;
+      border-top-left-radius: 8px;
+      object-fit: cover;
+      display: block;
+      position: absolute;
+      height: 100%;
+      background-color: #fff;
+    }
+  }
+
+  &-Text{
+    padding: 15px 15px 20px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  &-Icon{
+    height: 20px;
+    width: 20px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    float: right;
+
+    svg{
+      display: block;
+      width: 100%;
+      height: 100%;
+      fill: #28c38a;
+    }
+  }
+}
