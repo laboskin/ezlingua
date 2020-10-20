@@ -54,6 +54,26 @@ router.get('/one/:id',
         }
     });
 
+router.post('/get-translations',
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId).populate('course');
+            await user.populate('course.goalLanguage', 'code').populate('course.sourceLanguage', 'code').execPopulate();
+
+            const langFrom = user.course.goalLanguage.code;
+            const langTo = user.course.sourceLanguage.code;
+            const text = req.body.text;
+
+            let result = await getTranslations(langFrom, langTo, text);
+            if (!result.length)
+                result = [await getTranslation(langFrom, langTo, text)];
+
+            res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
 
 async function splitTextIntoSentences(text) {
     const paragraphs = text.split('\n');
