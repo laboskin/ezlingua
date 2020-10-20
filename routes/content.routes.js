@@ -54,16 +54,6 @@ router.get('/one/:id',
         }
     });
 
-router.get('/test',
-    async (req, res) => {
-        try {
-
-            res.json(result);
-        } catch (e) {
-            console.log(e)
-            res.status(500).json({message: 'Server error'});
-        }
-    });
 
 async function splitTextIntoSentences(text) {
     const paragraphs = text.split('\n');
@@ -98,7 +88,7 @@ async function splitTextIntoSentences(text) {
         const sentence = entry[1];
         let position = 1;
 
-        sentence.split(' ').forEach((sentencePart) => {
+        sentence.split(' ').forEach(sentencePart => {
             if (sentencePart.trim().length === 0)
                 return;
 
@@ -159,27 +149,32 @@ async function splitTextIntoSentences(text) {
 }
 
 async function getTranslations(langFrom, langTo, text) {
-    const data = [{Text: text}];
-    const response = await axios.post(`${azureConfig.endpoint}/dictionary/lookup?api-version=3.0&from=${langFrom}&to=${langTo}`, data, {
+    const response = await axios.post(`${azureConfig.endpoint}/dictionary/lookup?api-version=3.0&from=${langFrom}&to=${langTo}`, [{Text: text}], {
         headers: {
             'Content-type': 'application/json',
             'Ocp-Apim-Subscription-Key': azureConfig.key,
             'X-ClientTraceId': uuidv4()
         }
     });
-    return response.data;
+    return response.data[0].translations.map(translation => ({
+        text: translation.normalizedTarget,
+        confidence: translation.confidence
+    }))
+        .sort((a, b) => b.confidence - a.confidence).filter((translation, idx) => idx < 5);
 }
 
 async function getTranslation(langFrom, langTo, text) {
-    const data = [{Text: text}];
-    const response = await axios.post(`${azureConfig.endpoint}/translate?api-version=3.0&from=${langFrom}&to=${langTo}`, data, {
+    const response = await axios.post(`${azureConfig.endpoint}/translate?api-version=3.0&from=${langFrom}&to=${langTo}`, [{Text: text}], {
         headers: {
             'Content-type': 'application/json',
             'Ocp-Apim-Subscription-Key': azureConfig.key,
             'X-ClientTraceId': uuidv4()
         }
     });
-    return response.data;
+    return {
+        text: response.data[0].translations[0].text,
+        confidence: 1
+    };
 }
 
 
