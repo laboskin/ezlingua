@@ -20,7 +20,7 @@ router.get('/all/',
             const result = contents.map(content => ({
                 id: content.id,
                 name: content.name,
-                image: content.image,
+                image: content.imageLink,
                 spans: content.spans,
                 isUserContent: user.contents.find(c => c.toString() === content.id.toString()) || undefined
             }));
@@ -36,8 +36,7 @@ router.get('/one/:id',
     async (req, res) => {
         try {
             const user = await User.findById(req.user.userId);
-            const content = await Content.find({course: user.course, id: req.params.id});
-
+            const content = await Content.findOne({course: user.course, _id: req.params.id});
             if (!content)
                 return res.status(404).json({message: 'Content not found'});
 
@@ -45,7 +44,7 @@ router.get('/one/:id',
             result.id = content.id;
             result.name = content.name;
             result.image = content.image;
-            result.spans = content.spans;
+            result.sentences = content.sentences;
 
             res.json(result);
         } catch (e) {
@@ -76,96 +75,91 @@ router.post('/get-translations',
     });
 
 async function splitTextIntoSentences(text) {
-    const paragraphs = text.split('\n');
-    const sentences = {};
-    let sentencesCount = 1;
-    let lettersCount = 0;
-    let paragraphsCount = 0;
+    const paragraphs = text.split('\n').filter(paragraph => paragraph.trim().length !== 0);
+    const data = paragraphs.map(paragraph => ({Text: paragraph}));
 
-    const response = await axios.post(`${azureConfig.endpoint}/breaksentence?api-version=3.0`, [{Text: text}], {
+    const response = await axios.post(`${azureConfig.endpoint}/breaksentence?api-version=3.0`, data, {
         headers: {
             'Content-type': 'application/json',
             'Ocp-Apim-Subscription-Key': azureConfig.key,
             'X-ClientTraceId': uuidv4()
         }
     });
-    const sentLens = response.data[0]['sentLen'];
 
-    sentLens.forEach(sentLen => {
-        sentences[sentencesCount] = paragraphs[paragraphsCount].substr(lettersCount, sentLen).trim();
-        sentencesCount++;
-        lettersCount += sentLen;
-        if (lettersCount >= paragraphs[paragraphsCount].length) {
-            paragraphsCount++;
-            sentencesCount++;
-            lettersCount = 0;
+    const sentences = [];
+    paragraphs.forEach((paragraph, paragraphId, paragraphArray) => {
+        let currentCharPosition = 0;
+        const sentenceLengths = response.data[paragraphId]['sentLen'];
+        sentenceLengths.forEach(sentLen => {
+            const parts = [];
+            paragraph.slice(currentCharPosition, currentCharPosition + sentLen)
+                .trim()
+                .split(' ')
+                .forEach(part => {
+                if (part.trim().length === 0)
+                    return;
+
+                let prefix = '';
+                part.split('').every((symbol, idx) => {
+                    if (symbol.toLowerCase() !== symbol.toUpperCase()) {
+                        if (idx > 0)
+                            prefix = part.slice(0, idx)
+                        return false;
+                    }
+                    return true;
+                });
+
+                let suffix = '';
+                part.split('').reverse().every((symbol, idx) => {
+                    if (symbol.toLowerCase() !== symbol.toUpperCase()) {
+                        if (idx > 0)
+                            suffix = part.slice(part.length - idx);
+                        return false;
+                    }
+                    return true;
+                });
+
+                if (prefix) {
+                    parts.push({
+                        position: parts.length,
+                        hasTranslation: false,
+                        spaceAfter: false,
+                        text: prefix
+                    });
+                }
+
+                if (prefix.length + suffix.length < part.length) {
+                    parts.push({
+                        position: parts.length,
+                        hasTranslation: true,
+                        spaceAfter: !suffix,
+                        text: part.slice(prefix.length, part.length - suffix.length)
+                    });
+                }
+                if (suffix) {
+                    parts.push({
+                        position: parts.length,
+                        hasTranslation: false,
+                        spaceAfter: true,
+                        text: suffix
+                    });
+                }
+            })
+            sentences.push({
+                position: sentences.length,
+                parts
+            });
+            currentCharPosition += sentLen;
+        });
+        if (paragraphId !== paragraphArray.length - 1) {
+            sentences.push({
+                position: sentences.length,
+                isEmpty: true
+            });
         }
     });
 
-    const spans = [];
-    Object.entries(sentences).forEach(entry => {
-        const sentencePosition = entry[0];
-        const sentence = entry[1];
-        let position = 1;
-
-        sentence.split(' ').forEach(sentencePart => {
-            if (sentencePart.trim().length === 0)
-                return;
-
-            let prefix = '';
-            sentencePart.split('').every((symbol, idx) => {
-                if (symbol.toLowerCase() !== symbol.toUpperCase()) {
-                    if (idx > 0)
-                        prefix = sentencePart.slice(0, idx)
-                    return false;
-                }
-                return true;
-            });
-
-            let suffix = '';
-            sentencePart.split('').reverse().every((symbol, idx) => {
-                if (symbol.toLowerCase() !== symbol.toUpperCase()) {
-                    if (idx > 0)
-                        suffix = sentencePart.slice(sentencePart.length - idx);
-                    return false;
-                }
-                return true;
-            });
-
-            if (prefix) {
-                spans.push({
-                    sentencePosition,
-                    position,
-                    hasTranslation: false,
-                    spaceAfter: false,
-                    text: prefix
-                });
-                position++;
-            }
-
-            if (prefix.length + suffix.length < sentencePart.length) {
-                spans.push({
-                    sentencePosition,
-                    position,
-                    hasTranslation: true,
-                    spaceAfter: !suffix,
-                    text: sentencePart.slice(prefix.length, sentencePart.length - suffix.length)
-                });
-                position++;
-            }
-            if (suffix) {
-                spans.push({
-                    sentencePosition,
-                    position: position,
-                    hasTranslation: false,
-                    spaceAfter: true,
-                    text: suffix
-                });
-                position++;
-            }
-        })
-    })
-    return spans;
+    return sentences;
 }
 
 async function getTranslations(langFrom, langTo, text) {
