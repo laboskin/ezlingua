@@ -1,63 +1,41 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import './style.scss';
-import {Link} from "react-router-dom";
 import MainContainer from "../../hoc/MainContainer/MainContainer";
-import IconContentDone from "../../icons/IconContentDone/IconContentDone";
+import {clearContent, loadContents} from "../../store/actions/content";
+import ContentCard from "../../components/ContentCard/ContentCard";
 
 function ContentIndex() {
+    const dispatch = useDispatch();
+    const currentCourse = useSelector(state => state.user.courses.currentCourse);
+    const contentList = useSelector(state => state.content.all);
 
-    const contentList = [
-        {
-            id: 1,
-            name: "Corn",
-            image: "https://lifetambov.ru/assets/images/tickets/%D0%A1%D0%B5%D0%BD%D1%82%D1%8F%D0%B1%D1%80%D1%8C2019/%D0%BA%D1%83%D0%BA%D1%83.jpg",
-            done: true
+    useEffect(() => {
+        dispatch(loadContents());
+
+        return () => {
+            dispatch(clearContent());
         }
-    ];
+    }, [dispatch, currentCourse]);
 
     return (
         <MainContainer maxWidth="900px">
-            <div className="page-title">
-                <div className="page-name">
-                    <div className="page-name-text">
-                        Content
-                    </div>
-                </div>
+            <div className="ContentIndex-Title">
+                Content
             </div>
-            <div className="content-list">
-                <div className="items-grid">
-                    {
-                        contentList.map(content => {
-                            return (
-                                <Link to={`/content/${content.id}`} className="content">
-                                    <div className="content-image">
-                                        <img src={content.image} alt=""/>
-                                    </div>
-                                    <div className="content-text">
-                                        {
-                                            content.done && (
-                                                <div className="content-icon">
-                                                    <IconContentDone />
-                                                </div>
-                                            )
-                                        }
-                                        {content.name}
-                                    </div>
-                                </Link>
-                            )
-                        })
-                    }
-                    {/*<?php if (!empty($q) and $q!=$content['complexity']) continue ?>*/}
-
-
-                    <div className="hidden-content"/>
-                    <div className="hidden-content"/>
-                    <div className="hidden-content"/>
-                    <div className="hidden-content"/>
-                    <div className="hidden-content"/>
-
-
-                </div>
+            <div className="ContentIndex-Cards">
+                {contentList && contentList.map(content => (
+                    <ContentCard contentId={content.id}
+                                 contentName={content.name}
+                                 image={content.image}
+                                 isUserContent={content.isUserContent}
+                    />
+                ))}
+                <ContentCard hidden />
+                <ContentCard hidden />
+                <ContentCard hidden />
+                <ContentCard hidden />
+                <ContentCard hidden />
             </div>
         </MainContainer>
     )
