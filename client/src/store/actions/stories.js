@@ -1,42 +1,41 @@
 import {
-    CONTENT_SET_ALL,
-    CONTENT_SET_ONE,
-
+    STORIES_SET_STORIES,
+    STORIES_SET_STORY,
 } from './actionTypes';
 import {request} from "../../utils/request";
 
-export function loadContents() {
+export function loadStories() {
     return async (dispatch, getState) => {
         const {auth: {token}} = getState();
-        const response = await request('/api/content/all/', 'GET', null, {}, token);
+        const response = await request('/api/stories/all/', 'GET', null, {}, token);
         if (response) {
             dispatch({
-                type: CONTENT_SET_ALL,
+                type: STORIES_SET_STORIES,
                 payload: response
             })
         }
     }
 }
-export function clearContents() {
+export function clearStories() {
     return {
-        type: CONTENT_SET_ALL,
+        type: STORIES_SET_STORIES,
     }
 }
 
-export function loadContent(contentId) {
+export function loadStory(storyId) {
     return async (dispatch, getState) => {
         const {auth: {token}} = getState();
-        const response = await request(`/api/content/one/${contentId || ''}`, 'GET', null, {}, token);
+        const response = await request(`/api/stories/${storyId || ''}`, 'GET', null, {}, token);
         if (response) {
             dispatch({
-                type: CONTENT_SET_ONE,
+                type: STORIES_SET_STORY,
                 payload: response
             });
         }
     }
 }
-export function clearContent() {
+export function clearStory() {
     return {
-        type: CONTENT_SET_ALL,
+        type: STORIES_SET_STORY,
     }
 }

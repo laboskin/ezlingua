@@ -51,7 +51,7 @@ const schema = new Schema({
 });
 
 schema.virtual('imageLink').get(function() {
-    return `/img/contents/${this.image || 'nophoto.svg'}`;
+    return `/img/stories/${this.image || 'nophoto.svg'}`;
 })
 
-module.exports = model('Content', schema);
+module.exports = model('Story', schema);

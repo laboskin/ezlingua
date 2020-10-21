@@ -7,7 +7,7 @@ const authRouter = require('./routes/auth.routes');
 const courseRouter = require('./routes/course.routes');
 const dictionaryRouter = require('./routes/dictionary.routes');
 const trainingRouter = require('./routes/training.routes');
-const contentRouter = require('./routes/content.routes');
+const storiesRouter = require('./routes/stories.routes');
 const app = express();
 
 const PORT = config.get('port');
@@ -21,7 +21,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/course', courseRouter);
 app.use('/api/dictionary', dictionaryRouter);
 app.use('/api/training', trainingRouter);
-app.use('/api/content', contentRouter);
+app.use('/api/stories', storiesRouter);
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 if (process.env.NODE_ENV === 'production') {

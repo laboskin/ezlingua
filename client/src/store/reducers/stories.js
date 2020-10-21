@@ -1,20 +1,20 @@
 import {
-    CONTENT_SET_ALL, CONTENT_SET_ONE,
+    STORIES_SET_STORIES, STORIES_SET_STORY,
 } from '../actions/actionTypes';
 
 const initialState = {
-    all: null,
-    one: null
+    stories: null,
+    story: null
 }
 
-export default function dictionaryReducer(state = initialState, action) {
+export default function storiesReducer(state = initialState, action) {
     switch (action.type) {
-        case CONTENT_SET_ALL:
+        case STORIES_SET_STORIES:
             return {
                 ...state,
                 all: action.payload
             }
-        case CONTENT_SET_ONE:
+        case STORIES_SET_STORY:
             return {
                 ...state,
                 one: action.payload

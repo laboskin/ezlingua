@@ -3,14 +3,13 @@ import './globalStyles.scss';
 import Homepage from "./pages/Homepage/Homepage";
 import {Switch, Route, Redirect} from "react-router-dom";
 import MainLayout from "./hoc/layouts/MainLayout/MainLayout";
-import Noop from "./components/Noop";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import DictionaryIndex from "./pages/DictionaryIndex/DictionaryIndex";
 import Settings from "./pages/Settings/Settings";
 import DictionaryView from "./pages/DictionaryView/DictionaryView";
 import DictionaryMy from "./pages/DictionaryMy/DictionaryMy";
-import ContentView from "./pages/ContentView/ContentView";
-import ContentIndex from "./pages/ContentIndex/ContentIndex";
+import StoriesPage from "./pages/StoriesPage/StoriesPage";
+import StoriesIndex from "./pages/StoriesIndex/StoriesIndex";
 import TrainingIndex from "./pages/TrainingIndex/TrainingIndex";
 import Modal from "./hoc/Modal/Modal";
 import {useSelector} from "react-redux";
@@ -34,8 +33,8 @@ function App() {
                         <Route path="/dictionary/:id" component={DictionaryView}/>
                         <Route path="/dictionary" component={DictionaryIndex}/>
 
-                        <Route path="/content/:id" component={ContentView}/>
-                        <Route path="/content" component={ContentIndex}/>
+                        <Route path="/stories/:id" component={StoriesPage}/>
+                        <Route path="/stories" component={StoriesIndex}/>
 
                         <Route path="/training/cards/:id?" component={TrainingPage}/>
                         <Route path="/training/constructor/:id?" component={TrainingPage}/>
@@ -46,7 +45,7 @@ function App() {
 
                         <Route path="/settings" component={Settings}/>
 
-                        <Redirect from="/" to="/dictionary" component={Noop}/>
+                        <Redirect from="/" to="/dictionary"/>
                         <Route path="/" component={ErrorPage}/>
                     </Switch>
                 </MainLayout>

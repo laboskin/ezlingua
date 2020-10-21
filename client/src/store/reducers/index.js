@@ -5,7 +5,7 @@ import homepage from './homepage';
 import user from './user';
 import dictionary from './dictionary';
 import training from './training';
-import content from './content';
+import stories from './stories';
 export default combineReducers({
     auth,
     modal,
@@ -13,5 +13,5 @@ export default combineReducers({
     user,
     dictionary,
     training,
-    content
+    stories
 })

@@ -2,7 +2,7 @@ const {Schema, model, Types} = require('mongoose');
 const Course = require('./Course');
 const Word = require('./Word');
 const Vocabulary = require('./Vocabulary');
-const Content = require('./Content');
+const Story = require('./Story');
 
 const wordsSchema = new Schema({
     model:{
@@ -66,9 +66,9 @@ const schema = new Schema({
         default: false
     },
     words: [wordsSchema],
-    contents: [{
+    stories: [{
         type: Types.ObjectId,
-        ref: Content.modelName
+        ref: Story.modelName
     }],
 
 });

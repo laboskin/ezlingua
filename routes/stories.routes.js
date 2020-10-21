@@ -5,24 +5,23 @@ const config = require('config');
 const jwtConfig = config.get('jwtConfig');
 const azureConfig = config.get('azure');
 const User = require('../models/User');
-const Content = require('../models/Content');
+const Story = require('../models/Story');
 const axios = require("axios");
 const { v4: uuidv4 } = require('uuid');
 
 router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }))
 
-router.get('/all/',
+router.get('/all',
     async (req, res) => {
         try {
             const user = await User.findById(req.user.userId);
-            const contents = await Content.find({course: user.course});
+            const stories = await Story.find({course: user.course});
 
-            const result = contents.map(content => ({
-                id: content.id,
-                name: content.name,
-                image: content.imageLink,
-                spans: content.spans,
-                isUserContent: user.contents.find(c => c.toString() === content.id.toString()) || undefined
+            const result = stories.map(story => ({
+                id: story.id,
+                name: story.name,
+                image: story.imageLink,
+                isUserStory: user.stories.find(c => c.toString() === story.id.toString()) || undefined
             }));
 
             res.json(result);
@@ -32,21 +31,42 @@ router.get('/all/',
         }
     });
 
-router.get('/one/:id',
+router.get('/:id',
     async (req, res) => {
         try {
             const user = await User.findById(req.user.userId);
-            const content = await Content.findOne({course: user.course, _id: req.params.id});
-            if (!content)
-                return res.status(404).json({message: 'Content not found'});
+            const story = await Story.findOne({course: user.course, _id: req.params.id});
+            if (!story)
+                return res.status(404).json({message: 'Story not found'});
 
             const result = {};
-            result.id = content.id;
-            result.name = content.name;
-            result.image = content.image;
-            result.sentences = content.sentences;
+            result.id = story.id;
+            result.name = story.name;
+            result.image = story.image;
+            result.sentences = story.sentences;
 
             res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+router.post('/test',
+    async (req, res) => {
+        try {
+            const story = new Story({
+                name: 'People discuss',
+                course: '5f6a7da7d3abae2a00f4a6cc',
+                sentences: await splitTextIntoSentences('Great minds discuss ideas, average minds discuss events, small minds discuss people.\n' +
+                    '\n' +
+                    '\n' +
+                    'Eleanor Roosevelt')
+            });
+
+            await story.save();
+
+            res.json({message: 'Science'});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});

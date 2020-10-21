@@ -40,7 +40,7 @@ function Header() {
                     <img className="" src={logo} alt=""/>
                 </a>
                 <div className="Header-Nav">
-                    <NavLink className="Header-NavButton" to="/content">Content</NavLink>
+                    <NavLink className="Header-NavButton" to="/stories">Stories</NavLink>
                     <NavLink className="Header-NavButton" to="/dictionary">Dictionary</NavLink>
                     <NavLink className="Header-NavButton" to="/training">Training</NavLink>
                 </div>
