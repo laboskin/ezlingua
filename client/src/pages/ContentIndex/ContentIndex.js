@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import './style.scss';
 import MainContainer from "../../hoc/MainContainer/MainContainer";
-import {clearContent, loadContents} from "../../store/actions/content";
+import {clearContents, loadContents} from "../../store/actions/content";
 import ContentCard from "../../components/ContentCard/ContentCard";
 
 function ContentIndex() {
@@ -14,7 +14,7 @@ function ContentIndex() {
         dispatch(loadContents());
 
         return () => {
-            dispatch(clearContent());
+            dispatch(clearContents());
         }
     }, [dispatch, currentCourse]);
 
