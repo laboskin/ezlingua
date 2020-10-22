@@ -6,6 +6,7 @@ const jwtConfig = config.get('jwtConfig');
 const azureConfig = config.get('azure');
 const User = require('../models/User');
 const Story = require('../models/Story');
+const Course = require('../models/Course');
 const axios = require("axios");
 const { v4: uuidv4 } = require('uuid');
 
@@ -39,11 +40,13 @@ router.get('/:id',
             if (!story)
                 return res.status(404).json({message: 'Story not found'});
 
-            const result = {};
-            result.id = story.id;
-            result.name = story.name;
-            result.image = story.image;
-            result.sentences = story.sentences;
+            const result = {
+                id: story.id,
+                name: story.name,
+                image: story.imageLink,
+                course: story.course,
+                sentences: story.sentences
+            };
 
             res.json(result);
         } catch (e) {
@@ -76,11 +79,12 @@ router.post('/test',
 router.post('/get-translations',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId).populate('course');
-            await user.populate('course.goalLanguage', 'code').populate('course.sourceLanguage', 'code').execPopulate();
+            const course = await Course.findById(req.body.courseId)
+                .populate('goalLanguage', 'code')
+                .populate('sourceLanguage', 'code');
 
-            const langFrom = user.course.goalLanguage.code;
-            const langTo = user.course.sourceLanguage.code;
+            const langFrom = course.goalLanguage.code;
+            const langTo = course.sourceLanguage.code;
             const text = req.body.text;
 
             let result = await getTranslations(langFrom, langTo, text);

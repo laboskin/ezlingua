@@ -8,7 +8,7 @@ import StoryCard from "../../components/StoryCard/StoryCard";
 function StoriesIndex() {
     const dispatch = useDispatch();
     const currentCourse = useSelector(state => state.user.courses.currentCourse);
-    const stories = useSelector(state => state.stories.all);
+    const stories = useSelector(state => state.stories.stories);
 
     useEffect(() => {
         dispatch(loadStories());

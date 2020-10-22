@@ -1,10 +1,16 @@
 import {
-    STORIES_SET_STORIES, STORIES_SET_STORY,
+    STORIES_SET_SELECTED_WORD,
+    STORIES_SET_STORIES, STORIES_SET_STORY, STORIES_SET_TRANSLATIONS,
 } from '../actions/actionTypes';
 
 const initialState = {
     stories: null,
-    story: null
+    story: null,
+    selectedWord: {
+        sentencePosition: null,
+        partPosition: null
+    },
+    translations: null
 }
 
 export default function storiesReducer(state = initialState, action) {
@@ -12,12 +18,25 @@ export default function storiesReducer(state = initialState, action) {
         case STORIES_SET_STORIES:
             return {
                 ...state,
-                all: action.payload
+                stories: action.payload
             }
         case STORIES_SET_STORY:
             return {
                 ...state,
-                one: action.payload
+                story: action.payload
+            }
+        case STORIES_SET_SELECTED_WORD:
+            return {
+                ...state,
+                selectedWord: {
+                    sentencePosition: action.sentencePosition,
+                    partPosition: action.partPosition
+                }
+            }
+        case STORIES_SET_TRANSLATIONS:
+            return {
+                ...state,
+                translations: action.translations
             }
         default:
             return state

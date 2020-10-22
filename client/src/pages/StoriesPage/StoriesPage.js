@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {clearStory, loadStory} from "../../store/actions/stories";
+import {clearStory, loadStory, selectWord, unselectWord} from "../../store/actions/stories";
 import MainContainer from "../../hoc/MainContainer/MainContainer";
 import './style.scss';
 import {useParams} from "react-router-dom";
@@ -10,16 +10,27 @@ function StoriesPage() {
     const dispatch = useDispatch();
     const { id: storyId } = useParams();
     const currentCourse = useSelector(state => state.user.courses.currentCourse);
-    const story = useSelector(state => state.stories.one);
+    const story = useSelector(state => state.stories.story);
+    const selectedWord = useSelector(state => state.stories.selectedWord);
+    const translations = useSelector(state => state.stories.translations);
+    const translationsVisible = !!translations;
+    const addedWords = [];
 
     useEffect(() => {
         dispatch(loadStory(storyId));
-
-        return () => {
-            dispatch(clearStory());
-        }
+        return () => dispatch(clearStory());
     }, [dispatch, currentCourse, storyId]);
-    const selectedWords = [];
+
+    const bodyClearTranslationsClickListener = useCallback((event) => {
+        if(!event.target.classList.contains('StoriesPage-TextSpan_selected'))
+            dispatch(unselectWord());
+    }, [dispatch]);
+    useEffect(() => {
+        if (translationsVisible) {
+            document.body.addEventListener('click', bodyClearTranslationsClickListener);
+        }
+        return () => document.body.removeEventListener('click', bodyClearTranslationsClickListener);
+    }, [dispatch, bodyClearTranslationsClickListener, translationsVisible]);
 
     if (!story) return null;
     return (
@@ -38,13 +49,14 @@ function StoriesPage() {
                                 const cssClass = ['StoriesPage-TextSpan'];
                                 if (part.hasTranslation)
                                     cssClass.push('StoriesPage-TextSpan_hasTranslation');
-                                if (selectedWords.find(selectedWord => selectedWord.original === part.text))
+
+                                if (addedWords.find(selectedWord => selectedWord.original === part.text))
                                     cssClass.push('StoriesPage-TextSpan_added');
-                                if (false)
+                                else if (sentence.position === selectedWord.sentencePosition && part.position === selectedWord.partPosition)
                                     cssClass.push('StoriesPage-TextSpan_selected');
                                 return (
                                     <React.Fragment key={sentence.position + '' + part.position}>
-                                    <span className={cssClass.join(' ')}>
+                                    <span className={cssClass.join(' ')} onClick={() => part.hasTranslation && dispatch(selectWord(sentence.position, part.position))}>
                                         {part.text}
                                     </span>
                                         {part.spaceAfter?' ':''}
