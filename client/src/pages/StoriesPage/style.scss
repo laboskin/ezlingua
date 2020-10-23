@@ -32,6 +32,7 @@
       }
       &_selected{
         background-color: #bbdbff;
+        position: relative;
       }
     }
   }
@@ -52,10 +53,8 @@
 
   &-Popover{
     position: absolute;
+    left: 50%;
     z-index: 10;
-    max-width: calc(100% - 20px);
-    opacity: 0;
-    transition: opacity 0.1s;
     transform: translateX(-50%);
     margin-top: 7px;
     padding: 10px 0 0 0;
@@ -63,17 +62,23 @@
     &_left{
       transform: translateX(-20px);
 
-      .ContentView-PopoverDiamond{
+      .StoriesPage-PopoverDiamond{
         left: 20px;
       }
     }
     &_right{
       transform: translateX(calc(-100% + 20px));
 
-      .ContentView-PopoverDiamond{
+      .StoriesPage-PopoverDiamond{
         right: 5px;
         left: unset;
       }
+    }
+
+    &_hidden{
+      opacity: 0;
+      left: -9999px;
+      top: -9999px;
     }
 
     &Diamond{
