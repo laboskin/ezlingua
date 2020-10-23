@@ -1,7 +1,8 @@
 import {
+    STORIES_ADD_WORD, STORIES_CLEAR_STORY, STORIES_REMOVE_WORD,
     STORIES_SET_SELECTED_WORD,
     STORIES_SET_STORIES,
-    STORIES_SET_STORY, STORIES_SET_TRANSLATIONS,
+    STORIES_LOAD_STORY, STORIES_SET_TRANSLATIONS,
 } from './actionTypes';
 import {request} from "../../utils/request";
 
@@ -29,7 +30,7 @@ export function loadStory(storyId) {
         const response = await request(`/api/stories/${storyId || ''}`, 'GET', null, {}, token);
         if (response) {
             dispatch({
-                type: STORIES_SET_STORY,
+                type: STORIES_LOAD_STORY,
                 payload: response
             });
         }
@@ -37,7 +38,7 @@ export function loadStory(storyId) {
 }
 export function clearStory() {
     return {
-        type: STORIES_SET_STORY,
+        type: STORIES_CLEAR_STORY,
     }
 }
 
@@ -76,5 +77,24 @@ export function unselectWord() {
             sentencePosition: null,
             partPosition: null
         });
+    }
+}
+
+export function addWord(original, translation) {
+    return {
+        type: STORIES_ADD_WORD,
+        word: {
+            original,
+            translation
+        }
+    };
+}
+export function removeWord(original, translation) {
+    return {
+        type: STORIES_REMOVE_WORD,
+        word: {
+            original,
+            translation
+        }
     }
 }
