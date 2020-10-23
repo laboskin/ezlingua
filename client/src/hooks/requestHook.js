@@ -33,7 +33,7 @@ export const useRequest = (withAuth = false) => {
             setError(e.message);
             throw e;
         }
-    }, [])
+    }, [withAuth, auth.isAuthenticated, auth.token])
 
     const clearError = useCallback(() => setError(null), []);
 

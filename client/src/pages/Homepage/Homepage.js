@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import './style.scss';
 import homepageLogo from './homepage-logo.png';
 import IconArrowDown from "../../icons/IconArrowDown/IconArrowDown";
@@ -7,7 +8,6 @@ import homepageNotebook from './homepage-notebook.png';
 import homepageBooks from './homepage-books.png';
 import homepagePhone from './homepage-phone.png';
 import homepageCertificate from './homepage-certificate.png';
-import {useDispatch, useSelector} from "react-redux";
 import {showLoginModal, showRegisterModal} from "../../store/actions/modal";
 import {loadCourses, setCurrentLanguage} from "../../store/actions/homepage";
 
@@ -16,8 +16,8 @@ function Homepage() {
     const isLoading = useSelector(state => state.homepage.loading);
     const currentLanguage = useSelector(state => state.homepage.currentLanguage);
     const languages = useSelector(state => state.homepage.sourceLanguages);
-    useEffect(() => {dispatch(loadCourses())}, []);
-    const scrollHandler = (event) => {
+    useEffect(() => {dispatch(loadCourses())}, [dispatch]);
+    const scrollHandler = () => {
         if (window.scrollY - window.outerHeight >= -70)
             document.querySelector('.Homepage-HeaderButtons').classList.add('Homepage-HeaderButtons_visible')
         else
