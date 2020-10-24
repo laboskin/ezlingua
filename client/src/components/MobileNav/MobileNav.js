@@ -5,10 +5,10 @@ import IconMobileContent from "../../icons/mobile/IconMobileContent/IconMobileCo
 import IconMobileDictionary from "../../icons/mobile/IconMobileDictionary/IconMobileDictionary";
 import IconMobileTraining from "../../icons/mobile/IconMobileTraining/IconMobileTraining";
 
-function MobileNav(props) {
+function MobileNav() {
     return (
         <div className="MobileNav">
-            <NavLink to="/content"
+            <NavLink to="/stories"
                      className="MobileNav-Item"
                      activeClassName="MobileNav-Item_current">
                 <div className="MobileNav-ItemIcon">

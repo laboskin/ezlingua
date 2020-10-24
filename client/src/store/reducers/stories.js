@@ -1,7 +1,7 @@
 import {
     STORIES_ADD_WORD, STORIES_CLEAR_STORY, STORIES_REMOVE_WORD,
     STORIES_SET_SELECTED_WORD,
-    STORIES_SET_STORIES, STORIES_LOAD_STORY, STORIES_SET_TRANSLATIONS,
+    STORIES_SET_STORIES, STORIES_LOAD_STORY, STORIES_SET_TRANSLATIONS, STORIES_COMPLETE_STORY,
 } from '../actions/actionTypes';
 
 const initialState = {
@@ -12,7 +12,8 @@ const initialState = {
         partPosition: null
     },
     translations: null,
-    addedWords: []
+    addedWords: [],
+    completed: false
 }
 
 export default function storiesReducer(state = initialState, action) {
@@ -33,7 +34,8 @@ export default function storiesReducer(state = initialState, action) {
                 story: initialState.story,
                 selectedWord: initialState.selectedWord,
                 translations: initialState.translations,
-                addedWords: initialState.addedWords
+                addedWords: initialState.addedWords,
+                completed: initialState.completed
             }
         case STORIES_SET_SELECTED_WORD:
             return {
@@ -62,6 +64,11 @@ export default function storiesReducer(state = initialState, action) {
                 addedWords: state.addedWords
                     .filter(word => !(word.original === action.word.original
                         && word.translation === action.word.translation))
+            }
+        case STORIES_COMPLETE_STORY:
+            return {
+                ...state,
+                completed: true
             }
         default:
             return state

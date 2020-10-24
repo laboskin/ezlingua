@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useRef} from 'react';
+import {useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {addWord, clearStory, loadStory, selectWord, unselectWord} from "../../store/actions/stories";
+import {addWord, clearStory, completeStory, loadStory, selectWord, unselectWord} from "../../store/actions/stories";
 import MainContainer from "../../hoc/MainContainer/MainContainer";
 import './style.scss';
 import {useParams} from "react-router-dom";
@@ -8,14 +9,16 @@ import IconTrash from "../../icons/IconTrash/IconTrash";
 
 function StoriesPage() {
     const dispatch = useDispatch();
+    const history = useHistory();
     const { id: storyId } = useParams();
     const currentCourse = useSelector(state => state.user.courses.currentCourse);
     const story = useSelector(state => state.stories.story);
-    const addedWords = useSelector(state => state.stories.addedWords);
     const selectedWord = useSelector(state => state.stories.selectedWord);
-    const selectedWordRef = useRef();
+    const addedWords = useSelector(state => state.stories.addedWords);
     const translations = useSelector(state => state.stories.translations);
+    const isCompleted = useSelector(state => state.stories.completed);
     const isPopoverVisible = !!translations;
+    const selectedWordRef = useRef();
 
     useEffect(() => {
         dispatch(loadStory(storyId));
@@ -34,6 +37,10 @@ function StoriesPage() {
     }, [dispatch, bodyClearTranslationsClickListener, isPopoverVisible]);
 
     if (!story) return null;
+    if (isCompleted) {
+        history.push('/stories');
+        return null;
+    }
 
     return (
         <MainContainer maxWidth="1100px">
@@ -118,7 +125,7 @@ function StoriesPage() {
                         })}
                     </div>
                     <div className="StoriesPage-Complete">
-                        <div className="StoriesPage-CompleteButton">
+                        <div className="StoriesPage-CompleteButton" onClick={() => dispatch(completeStory())}>
                             Complete
                         </div>
                     </div>

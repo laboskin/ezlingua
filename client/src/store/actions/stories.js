@@ -2,7 +2,7 @@ import {
     STORIES_ADD_WORD, STORIES_CLEAR_STORY, STORIES_REMOVE_WORD,
     STORIES_SET_SELECTED_WORD,
     STORIES_SET_STORIES,
-    STORIES_LOAD_STORY, STORIES_SET_TRANSLATIONS,
+    STORIES_LOAD_STORY, STORIES_SET_TRANSLATIONS, STORIES_COMPLETE_STORY,
 } from './actionTypes';
 import {request} from "../../utils/request";
 
@@ -95,6 +95,18 @@ export function removeWord(original, translation) {
         word: {
             original,
             translation
+        }
+    }
+}
+
+export function completeStory() {
+    return async (dispatch, getState) => {
+        const {auth: {token}, stories: {story: {id: storyId}, addedWords}} = getState();
+        const response = await request(`/api/stories/complete/${storyId || ''}`, 'POST', addedWords, {}, token);
+        if (response) {
+            dispatch({
+                type: STORIES_COMPLETE_STORY
+            });
         }
     }
 }
