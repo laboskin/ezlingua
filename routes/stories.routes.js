@@ -7,6 +7,7 @@ const azureConfig = config.get('azure');
 const User = require('../models/User');
 const Story = require('../models/Story');
 const Course = require('../models/Course');
+const Word = require('../models/Word');
 const axios = require("axios");
 const { v4: uuidv4 } = require('uuid');
 
@@ -92,6 +93,45 @@ router.post('/get-translations',
                 result = [await getTranslation(langFrom, langTo, text)];
 
             res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+router.post('/complete/:id',
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.userId);
+            const story = await Story.findOne({course: user.course, _id: req.params.id});
+            if (!story)
+                return res.status(404).json({message: 'Story not found'});
+
+            const words = await Story.find({course: story.course});
+            const addedWords = req.body;
+            for (const addedWord of addedWords) {
+                const candidate = words.find(word => word.original === addedWord.original && word.translation === addedWord.translation);
+                let wordId;
+                if (candidate)
+                    wordId = candidate.id
+                else {
+                    const newWord = new Word({
+                        original: addedWord.original,
+                        translation: addedWord.translation,
+                        course: story.course
+                    });
+                    await newWord.save();
+                    wordId = newWord.id;
+                }
+                user.words.push({
+                    model: wordId
+                });
+            }
+
+            user.stories.push(story.id);
+            await user.save();
+
+            res.json({message: 'Story was successfully completed'});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
