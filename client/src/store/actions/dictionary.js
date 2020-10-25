@@ -1,4 +1,6 @@
 import {
+    DICTIONARY_SET_FILTER_PROGRESS,
+    DICTIONARY_SET_FILTER_TEXT, DICTIONARY_SET_FILTER_TRAINING,
     DICTIONARY_SET_PROGRESS, DICTIONARY_SET_USER_VOCABULARY, DICTIONARY_SET_USER_WORDS,
     DICTIONARY_SET_VOCABULARIES, DICTIONARY_SET_VOCABULARY, DICTIONARY_UPDATE,
 } from './actionTypes';
@@ -104,7 +106,6 @@ export function learnVocabulary(vocabularyId) {
         }
     }
 }
-
 export function removeVocabulary(vocabularyId) {
     return async (dispatch, getState) => {
         const {auth: {token}} = getState();
@@ -137,6 +138,34 @@ export function removeWord(wordId) {
                 type: DICTIONARY_UPDATE
             });
         }
+    }
+}
+
+
+export function setFilterText(text) {
+    return {
+        type: DICTIONARY_SET_FILTER_TEXT,
+        payload: text
+    }
+}
+export function setFilterTraining(text) {
+    return {
+        type: DICTIONARY_SET_FILTER_TRAINING,
+        payload: text
+    }
+}
+export function setFilterProgress(progress) {
+    return {
+        type: DICTIONARY_SET_FILTER_PROGRESS,
+        payload: progress
+    }
+}
+export function clearFilters(){
+    return dispatch => {
+        dispatch({type: DICTIONARY_SET_FILTER_TEXT});
+        dispatch({type: DICTIONARY_SET_FILTER_TRAINING});
+        dispatch({type: DICTIONARY_SET_FILTER_PROGRESS});
+
     }
 }
 

@@ -1,4 +1,6 @@
 import {
+    DICTIONARY_SET_FILTER_PROGRESS,
+    DICTIONARY_SET_FILTER_TEXT, DICTIONARY_SET_FILTER_TRAINING,
     DICTIONARY_SET_PROGRESS,
     DICTIONARY_SET_USER_VOCABULARY,
     DICTIONARY_SET_USER_WORDS,
@@ -14,7 +16,12 @@ const initialState = {
 
     userVocabulary: null,
     userWords: null,
-    vocabulary: null
+    vocabulary: null,
+    filters: {
+        text: '',
+        training: null,
+        progress: null
+    }
 }
 
 export default function dictionaryReducer(state = initialState, action) {
@@ -49,6 +56,31 @@ export default function dictionaryReducer(state = initialState, action) {
             return {
                 ...state,
                 vocabulary: action.vocabulary || initialState.vocabulary
+            }
+        case DICTIONARY_SET_FILTER_TEXT:
+            return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    text: action.payload || initialState.filters.text
+                }
+
+            }
+        case DICTIONARY_SET_FILTER_TRAINING:
+            return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    training: action.payload || initialState.filters.training
+                }
+            }
+        case DICTIONARY_SET_FILTER_PROGRESS:
+            return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    progress: action.payload || initialState.filters.progress
+                }
             }
         default:
             return state

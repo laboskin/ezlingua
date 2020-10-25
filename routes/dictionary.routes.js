@@ -120,8 +120,8 @@ router.get('/vocabulary/:id',
 router.get('/user-vocabulary/:id',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId).populate('words.model');
-            const vocabulary = await Vocabulary.findOne({_id: req.params.id, course: user.course});
+            const user = await User.findById(req.user.userId);
+            const vocabulary = await Vocabulary.findOne({_id: req.params.id, course: user.course}).populate('words');
 
             if (!vocabulary) return res.status(404).json({message: 'Vocabulary not found'});
 
@@ -130,16 +130,24 @@ router.get('/user-vocabulary/:id',
             result.name = vocabulary.name;
             result.image = vocabulary.imageLink;
             result.words = []
-            user.words.forEach(word => {
-                if (word.vocabulary && word.vocabulary.toString() === vocabulary.id) {
+            vocabulary.words.forEach(word => {
+                const userWord = user.words.find(userWord => userWord.vocabulary
+                    && userWord.vocabulary.toString() === vocabulary.id.toString()
+                    && userWord.model.toString() === word.id.toString());
+                if (userWord) {
                     result.words.push({
                         id: word.id,
-                        original: word.model.original,
-                        translation: word.model.translation,
-                        isNew: word.isNew || undefined,
-                        isLearning: word.isLearning || undefined,
-                        isLearned: word.isLearned || undefined,
-                    })
+                        original: word.original,
+                        translation: word.translation,
+                        isNew: userWord.isNew || undefined,
+                        isLearning: userWord.isLearning || undefined,
+                        isLearned: userWord.isLearned || undefined,
+                        trainingCards: userWord.trainingCards || undefined,
+                        trainingConstructor: userWord.trainingConstructor || undefined,
+                        trainingListening: userWord.trainingListening || undefined,
+                        trainingTranslationWord: userWord.trainingTranslationWord || undefined,
+                        trainingWordTranslation: userWord.trainingWordTranslation || undefined,
+                    });
                 }
             });
             if (vocabulary.words.length > result.words.length)
@@ -157,7 +165,7 @@ router.get('/user-words',
             const user = await User.findById(req.user.userId).populate('words.model words.vocabulary');
 
             const result = [];
-            user.words.forEach(word => {
+            user.words.reverse().forEach(word => {
                 if (word.model.course.toString() === user.course.toString()) {
                     result.push({
                         id: word.id,
@@ -166,6 +174,11 @@ router.get('/user-words',
                         isNew: word.isNew || undefined,
                         isLearning: word.isLearning || undefined,
                         isLearned: word.isLearned || undefined,
+                        trainingCards: word.trainingCards || undefined,
+                        trainingConstructor: word.trainingConstructor || undefined,
+                        trainingListening: word.trainingListening || undefined,
+                        trainingTranslationWord: word.trainingTranslationWord || undefined,
+                        trainingWordTranslation: word.trainingWordTranslation || undefined,
                         vocabulary: word.vocabulary && {
                             id: word.vocabulary.id,
                             name: word.vocabulary.name,
@@ -237,7 +250,7 @@ router.post('/learn-vocabulary/:id',
             if (!vocabulary)
                 return res.status(404).json({message: 'Vocabulary not found'});
 
-            vocabulary.words.forEach(word => {
+            vocabulary.words.reverse().forEach(word => {
                 user.words.push({
                     model: word,
                     vocabulary: vocabulary.id

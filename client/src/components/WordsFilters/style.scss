@@ -173,7 +173,6 @@
       line-height: 20px;
       padding: 8px 12px;
       background-color: #fff;
-      transition: all .3s ease-in;
       outline: none;
       color: #afafaf;
       border-color: rgba(55,56,60,.16);
@@ -195,13 +194,12 @@
 
       &_beforeActive{
         border-right: none;
-
-        & + .WordsFilters-ProgressItem{
-          border-left: 2px solid;
-          color: #2582e7;
-          background-color: #ebf3fd;
-          border-color: #2582e7;
-        }
+      }
+      &_active{
+        border-left: 2px solid;
+        color: #2582e7;
+        background-color: #ebf3fd;
+        border-color: #2582e7;
       }
 
 
