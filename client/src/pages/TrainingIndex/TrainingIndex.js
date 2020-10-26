@@ -16,8 +16,10 @@ import {
     loadCount
 } from "../../store/actions/training";
 import Select from "react-select";
+import {useTranslation} from "react-i18next";
 
 function TrainingIndex() {
+    const { t } = useTranslation();
     const {id: vocabularyId} = useParams();
     const currentCourse = useSelector(state => state.user.currentCourse);
     const history = useHistory();
@@ -42,31 +44,31 @@ function TrainingIndex() {
 
     const trainings = [
         {
-            name: 'Word-Translation',
+            name: t('trainingNames.wordTranslation'),
             count: count.trainingWordTranslation,
             link: '/training/word-translation/',
             icon: <IconTrainingWordTranslation />
         },
         {
-            name: 'Translation-Word',
+            name: t('trainingNames.translationWord'),
             count: count.trainingTranslationWord,
             link: '/training/translation-word/',
             icon: <IconTrainingTranslationWord />
         },
         {
-            name: 'Cards',
+            name: t('trainingNames.cards'),
             count: count.trainingCards,
             link: '/training/cards/',
             icon: <IconTrainingCards />
         },
         {
-            name: 'Constructor',
+            name: t('trainingNames.constructor'),
             count: count.trainingConstructor,
             link: '/training/constructor/',
             icon: <IconTrainingConstructor />
         },
         {
-            name: 'Listening',
+            name: t('trainingNames.listening'),
             count: count.trainingListening,
             link: '/training/listening/',
             icon: <IconTrainingListening />,
@@ -75,7 +77,7 @@ function TrainingIndex() {
 
     ];
     const selectOptions = [
-        {value: undefined, label: 'All vocabularies'},
+        {value: undefined, label: t('trainingIndex.allVocabularies')},
         ...availableVocabularies.map(v => ({value: v.id, label: v.name}))
     ];
 
@@ -83,7 +85,7 @@ function TrainingIndex() {
         <MainContainer maxWidth="700px">
             <div className="TrainingIndex-Title">
                 <div className="TrainingIndex-TitleName">
-                    Training
+                    { t('trainingIndex.training')}
                 </div>
                 <div className="TrainingIndex-TitleFilter">
                     <Select
@@ -99,13 +101,14 @@ function TrainingIndex() {
                     if (training.count)
                         return (
                             <Link className={`TrainingIndex-Card ${training.large?'TrainingIndex-Card_large':''}`}
-                                  to={training.link + (vocabularyId || '')}>
+                                  to={training.link + (vocabularyId || '')}
+                                  key={training.name}>
                                 <div className="TrainingIndex-CardText">
                                     <div className="TrainingIndex-CardTitle">
                                         {training.name}
                                     </div>
                                     <div className="TrainingIndex-CardCount">
-                                        {training.count} words
+                                        {t('trainingIndex.pluralWords', {count: training.count})}
                                     </div>
                                 </div>
                                 <div className="TrainingIndex-CardIcon">
@@ -120,7 +123,7 @@ function TrainingIndex() {
                                     {training.name}
                                 </div>
                                 <div className="TrainingIndex-CardCount">
-                                    {training.count} words
+                                    {t('trainingIndex.pluralWords', {count: training.count})}
                                 </div>
                             </div>
                             <div className="TrainingIndex-CardIcon">

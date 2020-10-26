@@ -14,9 +14,11 @@ import {changeCourse} from "../../store/actions/user";
 
 import userAvatar from './avatar.jpg';
 import {showCourseSelectModal} from "../../store/actions/modal";
+import {useTranslation} from "react-i18next";
 
 function Header() {
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     const {request} = useRequest();
     const logoutHandler = async () => {
@@ -40,9 +42,9 @@ function Header() {
                     <img className="" src={logo} alt=""/>
                 </a>
                 <div className="Header-Nav">
-                    <NavLink className="Header-NavButton" to="/stories">Stories</NavLink>
-                    <NavLink className="Header-NavButton" to="/dictionary">Dictionary</NavLink>
-                    <NavLink className="Header-NavButton" to="/training">Training</NavLink>
+                    <NavLink className="Header-NavButton" to="/stories">{t('header.stories')}</NavLink>
+                    <NavLink className="Header-NavButton" to="/dictionary">{t('header.dictionary')}</NavLink>
+                    <NavLink className="Header-NavButton" to="/training">{t('header.training')}</NavLink>
                 </div>
                 <div className="Header-User">
                     {
@@ -85,7 +87,7 @@ function Header() {
                                                 <IconPlus />
                                             </div>
                                             <span className="Header-LanguagePopupItemText">
-                                            Add
+                                            {t('header.add')}
                                         </span>
                                         </div>
                                     </div>
@@ -107,7 +109,7 @@ function Header() {
                                                 <IconAdmin />
                                             </div>
                                             <span className="Header-ProfilePopupItemText">
-                                                Admin panel
+                                                {t('header.admin')}
                                             </span>
                                         </Link>
                                     )
@@ -118,7 +120,7 @@ function Header() {
                                             <IconSettings />
                                         </div>
                                         <span className="Header-ProfilePopupItemText">
-                                            Settings
+                                            {t('header.settings')}
                                         </span>
                                     </Link>
                                     <div className="Header-ProfilePopupItem"
@@ -127,7 +129,7 @@ function Header() {
                                             <IconLogout />
                                         </div>
                                         <span className="Header-ProfilePopupItemText">
-                                            Logout
+                                            {t('header.logout')}
                                         </span>
                                     </div>
                                 </div>

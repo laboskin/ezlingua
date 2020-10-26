@@ -12,8 +12,10 @@ import {
     nextStep,
     selectOption, startTraining
 } from "../../store/actions/training";
+import {useTranslation} from "react-i18next";
 
 function TrainingQuiz() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const history = useHistory();
     const currentCourse = useSelector(state => state.user.currentCourse);
@@ -38,19 +40,19 @@ function TrainingQuiz() {
     let title;
     switch(trainingName) {
         case 'cards':
-            title = 'Cards';
+            title = t('trainingNames.cards');
             break;
         case 'constructor':
-            title = 'Constructor';
+            title = t('trainingNames.constructor');
             break;
         case 'listening':
-            title = 'Listening';
+            title = t('trainingNames.listening');
             break;
         case 'translation-word':
-            title = 'Translation-word';
+            title = t('trainingNames.translationWord');
             break;
         case 'word-translation':
-            title = 'Word-translation';
+            title = t('trainingNames.wordTranslation');
             break;
         default:
             return null;
@@ -173,12 +175,12 @@ function TrainingQuiz() {
                             <React.Fragment>
                                 <div className="TrainingQuiz-Button TrainingQuiz-Button_wrong" onClick={() => dispatch(cardsRepeat())}>
                                     <div className="TrainingQuiz-ButtonText">
-                                        I don't know
+                                        {t('trainingQuiz.iDontKnow')}
                                     </div>
                                 </div>
                                 <div className="TrainingQuiz-Button TrainingQuiz-Button_correct" onClick={() => dispatch(cardsKnow())}>
                                     <div className="TrainingQuiz-ButtonText">
-                                        I know
+                                        {t('trainingQuiz.iKnow')}
                                     </div>
                                 </div>
                             </React.Fragment>
@@ -188,20 +190,20 @@ function TrainingQuiz() {
                                 {!word.correct && (
                                     <div className="TrainingQuiz-Button TrainingQuiz-Button_forget">
                                         <div className="TrainingQuiz-ButtonText">
-                                            On repeat
+                                            {t('trainingQuiz.onRepeat')}
                                         </div>
                                     </div>
                                 )}
                                 {word.correct && (
                                     <div className="TrainingQuiz-Button TrainingQuiz-Button_repeat" onClick={() => dispatch(cardsForceRepeat())}>
                                         <div className="TrainingQuiz-ButtonText">
-                                            Repeat
+                                            {t('trainingQuiz.repeat')}
                                         </div>
                                     </div>
                                 )}
                                 <div className="TrainingQuiz-Button TrainingQuiz-Button_next" onClick={() => dispatch(nextStep(trainingName))}>
                                     <div className="TrainingQuiz-ButtonText">
-                                        Next
+                                        {t('trainingQuiz.next')}
                                     </div>
                                     <IconArrowRight />
                                 </div>
@@ -210,7 +212,7 @@ function TrainingQuiz() {
                         <Link className="TrainingQuiz-Button TrainingQuiz-Button_exit"
                               to={`/training/${vocabularyId}`}>
                             <div className="TrainingQuiz-ButtonText">
-                                Exit
+                                {t('trainingQuiz.exit')}
                             </div>
                         </Link>
                     </React.Fragment>
@@ -220,20 +222,20 @@ function TrainingQuiz() {
                         <Link className="TrainingQuiz-Button TrainingQuiz-Button_exit"
                               to={`/training/${vocabularyId}`}>
                             <div className="TrainingQuiz-ButtonText">
-                                Exit
+                                {t('trainingQuiz.exit')}
                             </div>
                         </Link>
                         {!isAnswered && (
                             <div className="TrainingQuiz-Button TrainingQuiz-Button_skip" onClick={() => dispatch(answerSkip())}>
                                 <div className="TrainingQuiz-ButtonText">
-                                    skip
+                                    {t('trainingQuiz.skip')}
                                 </div>
                             </div>
                         )}
                         {isAnswered && (
                             <div className="TrainingQuiz-Button TrainingQuiz-Button_next" onClick={() => dispatch(nextStep(trainingName))}>
                                 <div className="TrainingQuiz-ButtonText">
-                                    Next
+                                    {t('trainingQuiz.next')}
                                 </div>
                                 <IconArrowRight />
                             </div>

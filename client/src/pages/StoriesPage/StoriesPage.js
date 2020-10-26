@@ -6,9 +6,11 @@ import MainContainer from "../../hoc/MainContainer/MainContainer";
 import './style.scss';
 import {useParams} from "react-router-dom";
 import IconTrash from "../../icons/IconTrash/IconTrash";
+import {useTranslation} from "react-i18next";
 
 function StoriesPage() {
     const dispatch = useDispatch();
+    const { t } = useTranslation();
     const history = useHistory();
     const { id: storyId } = useParams();
     const currentCourse = useSelector(state => state.user.courses.currentCourse);
@@ -126,14 +128,14 @@ function StoriesPage() {
                     </div>
                     <div className="StoriesPage-Complete">
                         <div className="StoriesPage-CompleteButton" onClick={() => dispatch(completeStory())}>
-                            Complete
+                            {t('storiesPage.complete')}
                         </div>
                     </div>
                 </div>
 
                 <div className="StoriesPage-Words">
                     <div className="StoriesPage-WordsTitle">
-                        Words
+                        {t('storiesPage.words')}
                     </div>
                     {addedWords.map(word => (
                         <div className="StoriesPage-WordsItem" key={`${word.original}_${word.translation}`}>

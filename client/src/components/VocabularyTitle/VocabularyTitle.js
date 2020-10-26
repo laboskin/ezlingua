@@ -5,9 +5,11 @@ import './style.scss';
 import {learnVocabulary} from "../../store/actions/dictionary";
 import IconPlus from "../../icons/IconPlus/IconPlus";
 import IconCheckmark from "../../icons/IconCheckmark/IconCheckmark";
+import {useTranslation} from "react-i18next";
 
 
 function VocabularyTitle(props) {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     return (
         <div className="VocabularyTitle">
@@ -24,7 +26,7 @@ function VocabularyTitle(props) {
                 <Link to={`/dictionary/${props.vocabularyId}`}
                       className="VocabularyTitle-Button VocabularyTitle-Button_blue">
                     <div className="VocabularyTitle-ButtonText">
-                        Show all {props.fullVocabulary} words
+                        {t('vocabularyTitle.pluralWords', {count: props.fullVocabulary})}
                     </div>
                 </Link>
             )}
@@ -33,7 +35,7 @@ function VocabularyTitle(props) {
                       className=" VocabularyTitle-Button VocabularyTitle-Button_gray">
                     <IconCheckmark />
                     <div className="VocabularyTitle-ButtonText">
-                        My vocabulary
+                        {t('vocabularyTitle.myVocabulary')}
                     </div>
                 </Link>
             )}
@@ -41,7 +43,7 @@ function VocabularyTitle(props) {
                 <div className="VocabularyTitle-Button VocabularyTitle-Button_blue" onClick={() => dispatch(learnVocabulary(props.vocabularyId))}>
                     <IconPlus />
                     <div className="VocabularyTitle-ButtonText">
-                        Learn vocabulary
+                        {t('vocabularyTitle.learnVocabulary')}
                     </div>
                 </div>
             )}

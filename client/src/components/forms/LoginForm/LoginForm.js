@@ -8,19 +8,21 @@ import {useForm} from "react-hook-form";
 import * as yup from 'yup';
 import {yupResolver} from "@hookform/resolvers";
 import FormInput from "../FormInput/FormInput";
+import {useTranslation} from "react-i18next";
 
-function LoginForm(props) {
+function LoginForm() {
+    const { t } = useTranslation();
     const validationSchema = yup.object().shape({
         email: yup.string()
             .trim()
             .lowercase()
-            .required('Email is required')
-            .email('Please enter valid email'),
+            .required(t('loginForm.errors.emailIsRequired'))
+            .email(t('loginForm.errors.validEmail')),
         password: yup.string()
             .trim()
-            .min(7, 'Password length must be more than 6')
-            .max(49, 'Password length must be less than 50')
-            .matches(/^([A-Za-z0-9.$\\/[\]\-_@])/, 'Password contains forbidden characters')
+            .min(7, t('loginForm.errors.passwordMore') + ' 6')
+            .max(49, t('loginForm.errors.passwordLess') + ' 50')
+            .matches(/^([A-Za-z0-9.$\\/[\]\-_@])/, t('loginForm.errors.passwordForbiddenCharacters'))
     });
     const { register, handleSubmit, errors } = useForm({
         mode: 'onTouched',
@@ -46,23 +48,23 @@ function LoginForm(props) {
                        name="email"
                        id="email"
                        type="text"
-                       label="Email"
+                       label={t('loginForm.email')}
                        onChange={clearServerError}
                        register={register} />
             <FormInput error={errors.password?.message}
                        name="password"
                        id="password"
                        type="password"
-                       label="Password"
+                       label={t('loginForm.password')}
                        ref={register}
                        onChange={clearServerError}
                        register={register} />
             <button disabled={isLoading} type="submit" className="LoginForm-Submit">
-                Login
+                {t('loginForm.login')}
             </button>
             <div className="LoginForm-Register">
                 <span onClick={() => dispatch(showRegisterModal())}>
-                    Sign up
+                    {t('loginForm.signUp')}
                 </span>
             </div>
         </form>

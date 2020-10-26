@@ -8,8 +8,10 @@ import IconProgressMiddleVertical from "../../icons/progress/IconProgressMiddleV
 import IconProgressHighVertical from "../../icons/progress/IconProgressHighVertical/IconProgressHighVertical";
 import {useDispatch, useSelector} from "react-redux";
 import {clearProgress, loadProgress} from "../../store/actions/dictionary";
+import {useTranslation} from "react-i18next";
 
 function DictionaryProgress() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const updated = useSelector(state => state.dictionary.updated);
     const currentCourse = useSelector(state => state.user.courses.currentCourse);
@@ -29,7 +31,7 @@ function DictionaryProgress() {
     return (
         <div className="DictionaryProgress">
             <div className="DictionaryProgress-Title">
-                My dictionary
+                {t('dictionaryProgress.myDictionary')}
             </div>
             <div className="DictionaryProgress-Cards">
                 <Link className="DictionaryProgress-Card DictionaryProgress-Words"
@@ -39,10 +41,10 @@ function DictionaryProgress() {
                     </div>
                     <div className="DictionaryProgress-WordsText">
                         <div className="DictionaryProgress-WordsCount">
-                            {progress.new + progress.learning + progress.learned} words
+                            {t('dictionaryProgress.pluralWords', {count: progress.new + progress.learning + progress.learned})}
                         </div>
                         <div className="DictionaryProgress-WordsLink">
-                            Show
+                            {t('dictionaryProgress.show')}
                         </div>
                     </div>
                 </Link>
@@ -53,10 +55,10 @@ function DictionaryProgress() {
                         </div>
                         <div className="DictionaryProgress-StatsText">
                             <div className="DictionaryProgress-StatsTitle">
-                                New
+                                {t('dictionaryProgress.new')}
                             </div>
                             <div className="DictionaryProgress-StatsCount">
-                                {progress.new} words
+                                {t('dictionaryProgress.pluralWords', {count: progress.new})}
                             </div>
                         </div>
                     </div>
@@ -66,10 +68,10 @@ function DictionaryProgress() {
                         </div>
                         <div className="DictionaryProgress-StatsText">
                             <div className="DictionaryProgress-StatsTitle">
-                                Learning
+                                {t('dictionaryProgress.learning')}
                             </div>
                             <div className="DictionaryProgress-StatsCount">
-                                {progress.learning} words
+                                {t('dictionaryProgress.pluralWords', {count: progress.learning})}
                             </div>
                         </div>
                     </div>
@@ -79,16 +81,16 @@ function DictionaryProgress() {
                         </div>
                         <div className="DictionaryProgress-StatsText">
                             <div className="DictionaryProgress-StatsTitle">
-                                Learned
+                                {t('dictionaryProgress.learned')}
                             </div>
                             <div className="DictionaryProgress-StatsCount">
-                                {progress.learned} words
+                                {t('dictionaryProgress.pluralWords', {count: progress.learned})}
                             </div>
                         </div>
                     </div>
                     <Link className="DictionaryProgress-LinkTraining" to="/training">
                         <div className="DictionaryProgress-LinkTrainingText">
-                            Training
+                            {t('dictionaryProgress.training')}
                         </div>
                         <div className="DictionaryProgress-LinkTrainingIcon">
                             <IconArrowRight />

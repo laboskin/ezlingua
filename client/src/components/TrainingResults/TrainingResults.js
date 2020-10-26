@@ -4,8 +4,10 @@ import {Link, useLocation, useParams} from "react-router-dom";
 import './style.scss';
 import IconArrowRight from "../../icons/IconArrowRight/IconArrowRight";
 import {startTraining} from "../../store/actions/training";
+import {useTranslation} from "react-i18next";
 
 function TrainingResults() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const words = useSelector(state => state.training.words);
     const trainingName = useLocation().pathname.split('/')[2];
@@ -14,19 +16,19 @@ function TrainingResults() {
     let title;
     switch(trainingName) {
         case 'cards':
-            title = 'Cards';
+            title = t('trainingNames.cards');
             break;
         case 'constructor':
-            title = 'Constructor';
+            title = t('trainingNames.constructor');
             break;
         case 'listening':
-            title = 'Listening';
+            title = t('trainingNames.listening');
             break;
         case 'translation-word':
-            title = 'Translation-word';
+            title = t('trainingNames.translationWord');
             break;
         case 'word-translation':
-            title = 'Word-translation';
+            title = t('trainingNames.wordTranslation');
             break;
         default:
             return null;
@@ -40,7 +42,7 @@ function TrainingResults() {
                 </div>
             </div>
             <div className="TrainingResult-Card">
-                Results
+                {t('trainingResults.results')}
             </div>
             <div className="TrainingResult-Words">
                 {words.map(word => (
@@ -61,13 +63,13 @@ function TrainingResults() {
                 <Link className="TrainingResult-Button TrainingResult-Button_exit"
                       to={`/training/${vocabularyId}`}>
                     <div className="TrainingResult-ButtonText">
-                        Exit
+                        {t('trainingResults.exit')}
                     </div>
                 </Link>
                 <div className="TrainingResult-Button TrainingResult-Button_continue"
                      onClick={() => dispatch(startTraining(trainingName, vocabularyId))}>
                     <div className="TrainingResult-ButtonText">
-                        Continue
+                        {t('trainingResults.continue')}
                     </div>
                     <IconArrowRight />
                 </div>

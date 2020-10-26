@@ -8,8 +8,10 @@ import {useForm} from "react-hook-form";
 import * as yup from 'yup';
 import {yupResolver} from "@hookform/resolvers";
 import FormInput from "../FormInput/FormInput";
+import {useTranslation} from "react-i18next";
 
-function RegisterForm(props) {
+function RegisterForm() {
+    const { t } = useTranslation();
     const courses = useSelector(state => state.homepage.courses);
     const currentLanguage = useSelector(state => state.homepage.currentLanguage);
     const languages = courses.filter(course => course.sourceLanguage.id === currentLanguage.id)
@@ -21,18 +23,18 @@ function RegisterForm(props) {
         language: yup.string(),
         name: yup.string()
             .trim()
-            .min(2, 'Name length must be more than 1')
-            .max(49, 'Name length must be less than 50'),
+            .min(2, t('registerForm.errors.nameMore') + ' 1')
+            .max(49, t('registerForm.errors.nameLess') + ' 50'),
         email: yup.string()
             .trim()
             .lowercase()
-            .required('Email is required')
-            .email('Please enter valid email'),
+            .required(t('registerForm.errors.emailIsRequired'))
+            .email(t('registerForm.errors.validEmail')),
         password: yup.string()
             .trim()
-            .min(7, 'Password length must be more than 6')
-            .max(49, 'Password length must be less than 50')
-            .matches(/^([ A-Za-z0-9.$\\/[\]\-_@])/, 'Password contains forbidden characters')
+            .min(7, t('registerForm.errors.passwordMore') + ' 6')
+            .max(49, t('registerForm.errors.passwordLess') + ' 50')
+            .matches(/^([A-Za-z0-9.$\\/[\]\-_@])/, t('registerForm.errors.passwordForbiddenCharacters'))
     });
     const { register, handleSubmit, errors } = useForm({
         mode: 'onTouched',
@@ -58,7 +60,7 @@ function RegisterForm(props) {
                        name="language"
                        id="language"
                        type="select"
-                       label="Language"
+                       label={t('registerForm.language')}
                        placeholder="I want to learn..."
                        onChange={clearServerError}
                        register={register}
@@ -67,30 +69,30 @@ function RegisterForm(props) {
                        name="name"
                        id="name"
                        type="text"
-                       label="Name"
+                       label={t('registerForm.name')}
                        onChange={clearServerError}
                        register={register} />
             <FormInput error={serverError || errors.email?.message}
                        name="email"
                        id="email"
                        type="text"
-                       label="Email"
+                       label={t('registerForm.email')}
                        onChange={clearServerError}
                        register={register} />
             <FormInput error={errors.password?.message}
                        name="password"
                        id="password"
                        type="password"
-                       label="Password"
+                       label={t('registerForm.password')}
                        ref={register}
                        onChange={clearServerError}
                        register={register} />
             <button disabled={isLoading} type="submit" className="RegisterForm-Submit">
-                Sign up
+                {t('registerForm.signUp')}
             </button>
             <div className="RegisterForm-Login">
                 <span onClick={() => dispatch(showLoginModal())}>
-                    Sign in
+                    {t('registerForm.signIn')}
                 </span>
             </div>
         </form>

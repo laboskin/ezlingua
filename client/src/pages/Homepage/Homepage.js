@@ -10,8 +10,10 @@ import homepagePhone from './homepage-phone.png';
 import homepageCertificate from './homepage-certificate.png';
 import {showLoginModal, showRegisterModal} from "../../store/actions/modal";
 import {loadCourses, setCurrentLanguage} from "../../store/actions/homepage";
+import {useTranslation} from "react-i18next";
 
 function Homepage() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const isLoading = useSelector(state => state.homepage.loading);
     const currentLanguage = useSelector(state => state.homepage.currentLanguage);
@@ -38,7 +40,7 @@ function Homepage() {
                     <div className="Homepage-HeaderLanguage">
                         <div className="Homepage-HeaderLanguageButton">
                             <div className="Homepage-HeaderLanguageButtonText">
-                                Website language: {currentLanguage.name}
+                                {t('homepage.websiteLanguage')}: {currentLanguage.name}
                             </div>
                             <IconArrowDown />
                             <div className="Homepage-HeaderLanguagePopup">
@@ -67,11 +69,11 @@ function Homepage() {
                     <div className="Homepage-HeaderButtons">
                         <div className="Homepage-HeaderButton Homepage-HeaderButton_signup"
                              onClick={() => dispatch(showRegisterModal())}>
-                            Start
+                            {t('homepage.start')}
                         </div>
                         <div className="Homepage-HeaderButton Homepage-HeaderButton_login"
                              onClick={() => dispatch(showLoginModal())}>
-                            Sign In
+                            {t('homepage.signIn')}
                         </div>
 
                     </div>
@@ -81,21 +83,17 @@ function Homepage() {
                 <div className="Homepage-MainBanner">
                     <div className="Homepage-MainBannerText">
                         <div className="Homepage-MainBannerDescription">
-                            <span
-                                className="Homepage-MainBannerDescription_large">Learn foreign languages online.
-                            </span>
+                            <span className="Homepage-MainBannerDescription_large">{t('homepage.banner.title')}</span>
                             <br/>
-                            <span
-                                className="Homepage-MainBannerDescription_small">Easy, efficient, free.
-                            </span>
+                            <span className="Homepage-MainBannerDescription_small">{t('homepage.banner.description')}</span>
                         </div>
                         <div className="Homepage-MainBannerButton Homepage-MainBannerButton_signup"
                              onClick={() => dispatch(showRegisterModal())}>
-                            Start
+                            {t('homepage.start')}
                         </div>
                         <div className="Homepage-MainBannerButton Homepage-MainBannerButton_login"
                              onClick={() => dispatch(showLoginModal())}>
-                            Sign in to account
+                            {t('homepage.signInToAccount')}
                         </div>
 
                     </div>
@@ -111,20 +109,20 @@ function Homepage() {
                             </div>
                             <div className="Homepage-MainFeaturesBlockText">
                                 <div className="Homepage-MainFeaturesBlockTitle">
-                                    The best way to learn foreign languages
+                                    {t('homepage.features.bestWay.title')}
                                 </div>
                                 <div className="Homepage-MainFeaturesBlockDescription">
-                                    Forget about boring textbooks, thick dictionaries and trips to tutors. Learn foreign languages online with ezlingua! Anywhere in the world, from any device and at any time convenient for you.
+                                    {t('homepage.features.bestWay.description')}
                                 </div>
                             </div>
                         </div>
                         <div className="Homepage-MainFeaturesBlock">
                             <div className="Homepage-MainFeaturesBlockText">
                                 <div className="Homepage-MainFeaturesBlockTitle">
-                                    From quotes to literary masterpieces
+                                    {t('homepage.features.fromQuotes.title')}
                                 </div>
                                 <div className="Homepage-MainFeaturesBlockDescription">
-                                    Here you will find many texts in foreign languages, by studying which you can not only learn new words, but also learn a lot for yourself. The site contains materials of varying complexity - suitable for both beginners and polyglot.
+                                    {t('homepage.features.fromQuotes.description')}
                                 </div>
                             </div>
                             <div className="Homepage-MainFeaturesBlockImage">
@@ -137,20 +135,20 @@ function Homepage() {
                             </div>
                             <div className="Homepage-MainFeaturesBlockText">
                                 <div className="Homepage-MainFeaturesBlockTitle">
-                                    Get ready for an interview or an international travel
+                                    {t('homepage.features.getReady.title')}
                                 </div>
                                 <div className="Homepage-MainFeaturesBlockDescription">
-                                    No more hours of searching for translations of words and copying them into a notebook. Using thematic sets of foreign words, you can prepare for an important event - from going to a restaurant to an important interview. Choose the appropriate set of words and add the necessary words to your personal dictionary.
+                                    {t('homepage.features.getReady.description')}
                                 </div>
                             </div>
                         </div>
                         <div className="Homepage-MainFeaturesBlock">
                             <div className="Homepage-MainFeaturesBlockText">
                                 <div className="Homepage-MainFeaturesBlockTitle">
-                                    Speed up your progress
+                                    {t('homepage.features.speedUp.title')}
                                 </div>
                                 <div className="Homepage-MainFeaturesBlockDescription">
-                                    Learn foreign words with training. A wide selection of vocabulary workouts is available on the site - from classic vocabulary cards to word constructor. Take training, track progress and improve your language skills.
+                                    {t('homepage.features.speedUp.description')}
                                 </div>
                             </div>
                             <div className="Homepage-MainFeaturesBlockImage">

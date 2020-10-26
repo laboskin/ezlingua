@@ -8,61 +8,56 @@ import {Link} from "react-router-dom";
 import IconArrowRight from "../../icons/IconArrowRight/IconArrowRight";
 import {useDispatch, useSelector} from "react-redux";
 import {setFilterProgress, setFilterText, setFilterTraining} from "../../store/actions/dictionary";
+import {useTranslation} from "react-i18next";
 
 function WordsFilters(props) {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const filters = useSelector(state => state.dictionary.filters);
-    const trainingNames = {
-        all: 'All trainings',
-        cards: 'Cards',
-        constructor: 'Constructor',
-        listening: 'Listening',
-        translationWord: 'Translation-word',
-        wordTranslation: 'Word-translation'
-    };
+
     return (
         <div className="WordsFilters">
             <div className="WordsFilters-Search">
                 <input className="WordsFilters-SearchInput"
-                       placeholder="Search"
+                       placeholder={t('wordsFilters.search')}
                        value={filters.text}
                        onChange={(e) => dispatch(setFilterText(e.target.value))}/>
             </div>
 
             <div className="WordsFilters-Group">
                 <div className="WordsFilters-Training WordsFilters-Training_active">
-                    {filters.training?trainingNames[filters.training]:trainingNames.all}
+                    {filters.training?t('trainingNames.'+filters.training):t('wordsFilters.allTrainings')}
                     <div className="WordsFilters-TrainingPopup">
                         <div className="WordsFilters-TrainingPopupContainer">
                             <div className={'WordsFilters-TrainingPopupItem ' +
                             (!filters.training?'WordsFilters-TrainingPopupItem_current':'')}
                                  onClick={() => dispatch(setFilterTraining(null))}>
-                                <div>{trainingNames.all}</div>
+                                <div>{t('wordsFilters.allTrainings')}</div>
                             </div>
                             <div className={'WordsFilters-TrainingPopupItem ' +
                             (filters.training==='cards'?'WordsFilters-TrainingPopupItem_current':'')}
                                  onClick={() => dispatch(setFilterTraining('cards'))}>
-                                <div>{trainingNames.cards}</div>
+                                <div>{t('trainingNames.cards')}</div>
                             </div>
                             <div className={'WordsFilters-TrainingPopupItem ' +
                             (filters.training==='constructor'?'WordsFilters-TrainingPopupItem_current':'')}
                                  onClick={() => dispatch(setFilterTraining('constructor'))}>
-                                <div>{trainingNames.constructor}</div>
+                                <div>{t('trainingNames.constructor')}</div>
                             </div>
                             <div className={'WordsFilters-TrainingPopupItem ' +
                             (filters.training==='listening'?'WordsFilters-TrainingPopupItem_current':'')}
                                  onClick={() => dispatch(setFilterTraining('listening'))}>
-                                <div>{trainingNames.listening}</div>
+                                <div>{t('trainingNames.listening')}</div>
                             </div>
                             <div className={'WordsFilters-TrainingPopupItem ' +
                             (filters.training==='translationWord'?'WordsFilters-TrainingPopupItem_current':'')}
                                  onClick={() => dispatch(setFilterTraining('translationWord'))}>
-                                <div>{trainingNames.translationWord}</div>
+                                <div>{t('trainingNames.translationWord')}</div>
                             </div>
                             <div className={'WordsFilters-TrainingPopupItem ' +
                             (filters.training==='wordTranslation'?'WordsFilters-TrainingPopupItem_current':'')}
                                  onClick={() => dispatch(setFilterTraining('wordTranslation'))}>
-                                <div>{trainingNames.wordTranslation}</div>
+                                <div>{t('trainingNames.wordTranslation')}</div>
                             </div>
                         </div>
                         <div className="WordsFilters-TrainingPopupTriangle">
@@ -77,7 +72,7 @@ function WordsFilters(props) {
                     + (!filters.progress?'WordsFilters-ProgressItem_active':'')
                     + (filters.progress===1?'WordsFilters-ProgressItem_beforeActive':'')}
                          onClick={() => dispatch(setFilterProgress(null))}>
-                        All
+                        {t('wordsFilters.all')}
                     </div>
                     <div className={'WordsFilters-ProgressItem '
                     +(filters.progress===1?'WordsFilters-ProgressItem_active':'')
@@ -108,7 +103,7 @@ function WordsFilters(props) {
 
             <Link to={`/training/${props.vocabularyId || ''}`} className="WordsFilters-LinkTraining">
                 <div className="WordsFilters-LinkTrainingText">
-                    Training
+                    {t('wordsFilters.training')}
                 </div>
                 <div className="WordsFilters-LinkTrainingIcon">
                     <IconArrowRight />

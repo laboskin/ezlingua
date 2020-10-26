@@ -12,9 +12,11 @@ import WordsTable from "../../components/WordsTable/WordsTable";
 } from "../../store/actions/dictionary";
  import WordsFilters from "../../components/WordsFilters/WordsFilters";
  import VocabularyTitle from "../../components/VocabularyTitle/VocabularyTitle";
+ import {useTranslation} from "react-i18next";
 
 
 function DictionaryMy() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const updated = useSelector(state => state.dictionary.updated);
     const currentCourse = useSelector(state => state.user.courses.currentCourse);
@@ -51,15 +53,17 @@ function DictionaryMy() {
         words = words.filter(word => {
             switch (filters.training) {
                 case 'cards':
-                    return word.trainingCards;
+                    return !word.trainingCards;
                 case 'constructor':
-                    return word.trainingConstructor;
+                    return !word.trainingConstructor;
                 case 'listening':
-                    return word.trainingListening;
+                    return !word.trainingListening;
                 case 'translationWord':
-                    return word.trainingTranslationWord;
+                    return !word.trainingTranslationWord;
                 case 'wordTranslation':
-                    return word.trainingWordTranslation;
+                    return !word.trainingWordTranslation;
+                default:
+                    return true;
             }
         })
     if (filters.progress)
@@ -71,9 +75,11 @@ function DictionaryMy() {
                     return word.isLearning;
                 case 3:
                     return word.isLearned;
+                default:
+                    return true;
             }
         })
-    const title = `My vocabulary${userVocabulary?`: ${userVocabulary.name}`:''}`.toUpperCase() + ` - ${words.length} words`;
+    const title = `${t('dictionaryMy.myVocabulary')}${userVocabulary?`: ${userVocabulary.name}`:''}`.toUpperCase() + ` - ${t('dictionaryMy.pluralWords', {count: words.length})}`;
 
     return (
         <MainContainer maxWidth="900px">

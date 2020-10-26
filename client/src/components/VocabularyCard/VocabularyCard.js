@@ -4,8 +4,10 @@ import './style.scss';
 import IconPlus from "../../icons/IconPlus/IconPlus";
 import {useDispatch} from "react-redux";
 import {learnVocabulary, removeVocabulary} from "../../store/actions/dictionary";
+import {useTranslation} from "react-i18next";
 
 function VocabularyCard(props) {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const link = `/dictionary/${props.isUserVocabulary?'my/':''}${props.vocabularyId}`;
 
@@ -25,7 +27,7 @@ function VocabularyCard(props) {
                     {props.vocabularyName}
                 </div>
                 <div className="VocabularyCard-Count">
-                    {props.vocabularyCount} words
+                    {t('vocabularyCard.pluralWords', {count: props.vocabularyCount})}
                 </div>
             </Link>
             {props.isUserVocabulary && (
@@ -35,7 +37,7 @@ function VocabularyCard(props) {
                         <IconPlus />
                     </div>
                     <div className="VocabularyCard-ButtonText">
-                        Remove
+                        {t('vocabularyCard.remove')}
                     </div>
                 </div>
             )}
@@ -46,7 +48,7 @@ function VocabularyCard(props) {
                         <IconPlus />
                     </div>
                     <div className="VocabularyCard-ButtonText">
-                        Learn
+                        {t('vocabularyCard.learn')}
                     </div>
                 </div>
             )}

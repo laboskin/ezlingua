@@ -5,8 +5,10 @@ import {clearVocabulary, loadVocabulary} from "../../store/actions/dictionary";
 import MainContainer from "../../hoc/MainContainer/MainContainer";
 import WordsTable from "../../components/WordsTable/WordsTable";
 import VocabularyTitle from "../../components/VocabularyTitle/VocabularyTitle";
+import {useTranslation} from "react-i18next";
 
 function DictionaryView() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const updated = useSelector(state => state.dictionary.updated);
     const currentCourse = useSelector(state => state.user.courses.currentCourse);
@@ -25,7 +27,7 @@ function DictionaryView() {
 
     if (!vocabulary) return null;
 
-    const title = `Vocabulary: ${vocabulary.name}`.toUpperCase() + ` - ${vocabulary.words.length} words`;
+    const title = `${t('dictionaryView.vocabulary')}: ${vocabulary.name}`.toUpperCase() + ` - ${t('dictionaryView.pluralWords', {count: vocabulary.words.length})}`;
 
     return (
         <MainContainer maxWidth="900px">
