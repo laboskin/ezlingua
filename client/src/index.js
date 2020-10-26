@@ -8,6 +8,7 @@ import {Provider} from "react-redux";
 import {BrowserRouter} from "react-router-dom";
 import thunk from "redux-thunk";
 import {composeWithDevTools} from "redux-devtools-extension/index";
+import './i18n/i18n';
 
 const store = createStore(rootReducer, composeWithDevTools(
     applyMiddleware(
