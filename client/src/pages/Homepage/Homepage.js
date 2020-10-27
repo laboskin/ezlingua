@@ -9,21 +9,16 @@ import homepageBooks from './homepage-books.png';
 import homepagePhone from './homepage-phone.png';
 import homepageCertificate from './homepage-certificate.png';
 import {showLoginModal, showRegisterModal} from "../../store/actions/modal";
-import {loadCourses, setCurrentLanguage} from "../../store/actions/homepage";
 import {useTranslation} from "react-i18next";
+import {homepageChangeLanguage, homepageLoadCourses} from "../../store/actions/user";
 
 function Homepage() {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const dispatch = useDispatch();
-    const currentLanguage = useSelector(state => state.homepage.currentLanguage);
-    const languages = useSelector(state => state.homepage.sourceLanguages);
-    const languageCode = currentLanguage?currentLanguage.code:null;
-    const isLoading = currentLanguage && languages;
-    useEffect(() => {dispatch(loadCourses())}, [dispatch]);
-    useEffect(() => {
-        if(languageCode)
-            i18n.changeLanguage(languageCode);
-    }, [i18n, languageCode]);
+    const currentLanguage = useSelector(state => state.user.homepage.currentLanguage);
+    const languages = useSelector(state => state.user.homepage.sourceLanguages);
+    const isLoading = !(currentLanguage && languages);
+    useEffect(() => {dispatch(homepageLoadCourses())}, [dispatch]);
     useEffect(()=>{
         const scrollHandler = () => {
             if (window.scrollY - window.outerHeight >= -70)
@@ -55,7 +50,7 @@ function Homepage() {
                                         languages.map(language => (
                                             <div className="Homepage-HeaderLanguagePopupItem"
                                                  key={language.name}
-                                                 onClick={() => dispatch(setCurrentLanguage(language))}>
+                                                 onClick={() => dispatch(homepageChangeLanguage(language))}>
                                                 <div className="Homepage-HeaderLanguagePopupItemIcon">
                                                     <img src={language.image} alt=""/>
                                                 </div>

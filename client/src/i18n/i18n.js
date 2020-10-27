@@ -19,7 +19,7 @@ i18n
     .use(ICU)
     .init({
         resources,
-        lng: 'ru',
+        lng: 'en',
         fallbackLng: 'en',
         debug: true,
 

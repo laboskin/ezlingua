@@ -12,8 +12,8 @@ import {useTranslation} from "react-i18next";
 
 function RegisterForm() {
     const { t } = useTranslation();
-    const courses = useSelector(state => state.homepage.courses);
-    const currentLanguage = useSelector(state => state.homepage.currentLanguage);
+    const courses = useSelector(state => state.user.homepage.courses);
+    const currentLanguage = useSelector(state => state.user.homepage.currentLanguage);
     const languages = courses.filter(course => course.sourceLanguage.id === currentLanguage.id)
         .map(course => ({
             value: course.id,
