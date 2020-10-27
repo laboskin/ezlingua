@@ -13,22 +13,28 @@ import {loadCourses, setCurrentLanguage} from "../../store/actions/homepage";
 import {useTranslation} from "react-i18next";
 
 function Homepage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
-    const isLoading = useSelector(state => state.homepage.loading);
     const currentLanguage = useSelector(state => state.homepage.currentLanguage);
     const languages = useSelector(state => state.homepage.sourceLanguages);
+    const languageCode = currentLanguage?currentLanguage.code:null;
+    const isLoading = currentLanguage && languages;
     useEffect(() => {dispatch(loadCourses())}, [dispatch]);
-    const scrollHandler = () => {
-        if (window.scrollY - window.outerHeight >= -70)
-            document.querySelector('.Homepage-HeaderButtons').classList.add('Homepage-HeaderButtons_visible')
-        else
-            document.querySelector('.Homepage-HeaderButtons').classList.remove('Homepage-HeaderButtons_visible')
-    }
+    useEffect(() => {
+        if(languageCode)
+            i18n.changeLanguage(languageCode);
+    }, [i18n, languageCode]);
     useEffect(()=>{
+        const scrollHandler = () => {
+            if (window.scrollY - window.outerHeight >= -70)
+                document.querySelector('.Homepage-HeaderButtons').classList.add('Homepage-HeaderButtons_visible')
+            else
+                document.querySelector('.Homepage-HeaderButtons').classList.remove('Homepage-HeaderButtons_visible')
+        }
         window.addEventListener('scroll', scrollHandler);
         return ()=> {window.removeEventListener('scroll', scrollHandler)}
-    })
+    });
+
     if (isLoading) return null;
     return (
         <div className="Homepage">
