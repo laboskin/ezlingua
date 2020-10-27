@@ -124,7 +124,7 @@ function generateAccessToken(payload) {
 
 function getAccessPayloadFromUserModel(user) {
     return {
-        userId: user.id,
+        id: user.id,
         email: user.email,
         name: user.name,
         isAdmin: user.isAdmin

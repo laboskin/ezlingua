@@ -11,7 +11,7 @@ router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }))
 router.get('/words-count/:id?',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
             let words = user.words;
             if (req.params.id)
                 words = words.filter(word => word.vocabulary && word.vocabulary.toString() === req.params.id);
@@ -33,7 +33,7 @@ router.get('/words-count/:id?',
 router.get('/available-vocabularies/',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId).populate('words.vocabulary', 'id name');
+            const user = await User.findById(req.user.id).populate('words.vocabulary', 'id name');
 
             const result = Object.entries(user.words.reduce((acc, word) => {
                 if (word.vocabulary && !acc[word.vocabulary.id.toString()])
@@ -55,7 +55,7 @@ router.get('/available-vocabularies/',
 router.get('/cards/:id?',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId).populate('words.model');
+            const user = await User.findById(req.user.id).populate('words.model');
 
             const userWords = shuffleArray(user.words.filter(word => {
                 if (req.params.id && (!word.vocabulary || word.vocabulary.toString() !== req.params.id))
@@ -85,7 +85,7 @@ router.get('/cards/:id?',
 router.get('/constructor/:id?',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId).populate('words.model');
+            const user = await User.findById(req.user.id).populate('words.model');
 
             const userWords = shuffleArray(user.words.filter(word => {
                 if (req.params.id && (!word.vocabulary || word.vocabulary.toString() !== req.params.id))
@@ -123,7 +123,7 @@ router.get('/constructor/:id?',
 router.get('/word-translation/:id?',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId).populate('words.model');
+            const user = await User.findById(req.user.id).populate('words.model');
             const sameCourseWords = await Word.find({course: user.course});
 
             const userWords = shuffleArray(user.words.filter(word => {
@@ -158,7 +158,7 @@ router.get('/word-translation/:id?',
 router.get('/translation-word/:id?',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId).populate('words.model');
+            const user = await User.findById(req.user.id).populate('words.model');
             const sameCourseWords = await Word.find({course: user.course});
 
             const userWords = shuffleArray(user.words.filter(word => {
@@ -193,7 +193,7 @@ router.get('/translation-word/:id?',
 router.get('/listening/:id?',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId).populate('words.model');
+            const user = await User.findById(req.user.id).populate('words.model');
             const sameCourseWords = await Word.find({course: user.course});
 
             const userWords = shuffleArray(user.words.filter(word => {
@@ -249,7 +249,7 @@ router.post('/:trainingName/',
                     throw new Error('Wrong training name');
             }
 
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
 
             const userAnswers = req.body;
 

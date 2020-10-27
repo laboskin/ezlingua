@@ -12,7 +12,7 @@ router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }))
 router.get('/all-vocabularies',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
             const allVocabularies = await Vocabulary.find({course: user.course}).populate('vocabularyGroup');
 
             const userVocabularyIds = Object.keys(user.words.reduce((acc, word) => {
@@ -62,7 +62,7 @@ router.get('/all-vocabularies',
 router.get('/user-progress',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId).populate('words.model', 'course');
+            const user = await User.findById(req.user.id).populate('words.model', 'course');
 
             const result = {};
             result.new = 0;
@@ -90,7 +90,7 @@ router.get('/user-progress',
 router.get('/vocabulary/:id',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
             const vocabulary = await Vocabulary.findOne({_id: req.params.id, course: user.course}).populate('words');
 
             if (!vocabulary) return res.status(404).json({message: 'Vocabulary not found'});
@@ -120,7 +120,7 @@ router.get('/vocabulary/:id',
 router.get('/user-vocabulary/:id',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
             const vocabulary = await Vocabulary.findOne({_id: req.params.id, course: user.course}).populate('words');
 
             if (!vocabulary) return res.status(404).json({message: 'Vocabulary not found'});
@@ -162,7 +162,7 @@ router.get('/user-vocabulary/:id',
 router.get('/user-words',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId).populate('words.model words.vocabulary');
+            const user = await User.findById(req.user.id).populate('words.model words.vocabulary');
 
             const result = [];
             user.words.reverse().forEach(word => {
@@ -197,7 +197,7 @@ router.get('/user-words',
 router.post('/learn-word/:id',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
 
             const word = await Word.findById(req.params.id);
             if (!word) return res.status(404).json({message: 'Word not found'});
@@ -224,7 +224,7 @@ router.post('/learn-word/:id',
 router.post('/remove-word/:id',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
 
             if (!user.words.find(word => word.id.toString() === req.params.id))
                 res.status(404).json({message: 'Word not found'});
@@ -242,7 +242,7 @@ router.post('/remove-word/:id',
 router.post('/learn-vocabulary/:id',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
             if (user.words.find(word => word.vocabulary === req.params.id))
                 return res.status(404).json({message: 'Vocabulary has been added already'});
 
@@ -268,7 +268,7 @@ router.post('/learn-vocabulary/:id',
 router.post('/remove-vocabulary/:id',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
 
             if (!user.words.find(word => !word.vocabulary || word.vocabulary.toString() === req.params.id))
                 res.status(404).json({message: 'Vocabulary not found'});

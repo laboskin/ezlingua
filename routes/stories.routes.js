@@ -16,7 +16,7 @@ router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }))
 router.get('/all',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
             const stories = await Story.find({course: user.course});
 
             const result = stories.map(story => ({
@@ -36,7 +36,7 @@ router.get('/all',
 router.get('/:id',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
             const story = await Story.findOne({course: user.course, _id: req.params.id});
             if (!story)
                 return res.status(404).json({message: 'Story not found'});
@@ -102,7 +102,7 @@ router.post('/get-translations',
 router.post('/complete/:id',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.userId);
+            const user = await User.findById(req.user.id);
             const story = await Story.findOne({course: user.course, _id: req.params.id});
             if (!story)
                 return res.status(404).json({message: 'Story not found'});

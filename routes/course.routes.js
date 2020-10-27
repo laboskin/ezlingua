@@ -5,12 +5,11 @@ const config = require('config');
 const jwtConfig = config.get('jwtConfig')
 const Course = require('../models/Course');
 const User = require('../models/User');
-const Word = require('../models/Word');
 
 
 router.get('/homepage', async (req, res) => {
     try {
-        const courses = await Course.find().populate('sourceLanguage', 'name image');
+        const courses = await Course.find().populate('sourceLanguage', 'name image code');
         const result = courses.map(course => {
             return {
                 id: course.id,
@@ -19,7 +18,8 @@ router.get('/homepage', async (req, res) => {
                 sourceLanguage: {
                     id: course.sourceLanguage.id,
                     name: course.sourceLanguage.name,
-                    image: course.sourceLanguage.imageLink
+                    image: course.sourceLanguage.imageLink,
+                    code: course.sourceLanguage.code
                 }
             }
         });
@@ -49,11 +49,12 @@ router.get('/user',
     jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
     try {
-        const user = await User.findById(req.user.userId).populate('words.model', 'course').populate('course', 'id sourceLanguage');
-        const allCourses = (await Course.find({sourceLanguage: user.course.sourceLanguage}).populate('goalLanguage', 'image')).map(course => ({
+        const user = await User.findById(req.user.id).populate('words.model', 'course').populate('course', 'id sourceLanguage');
+        const allCourses = (await Course.find({sourceLanguage: user.course.sourceLanguage}).populate('goalLanguage', 'image').populate('sourceLanguage', 'code')).map(course => ({
             id: course.id,
             name: course.name,
-            image: course.goalLanguage.imageLink
+            image: course.goalLanguage.imageLink,
+            code: course.sourceLanguage.code
         }));
         const result = {};
 
@@ -76,7 +77,7 @@ router.post('/user',
     async (req, res) => {
         try {
             const newCourseId = req.body.courseId;
-            const user = await User.findById(req.user.userId).populate('words.model', 'course').populate('course', 'id sourceLanguage');
+            const user = await User.findById(req.user.id).populate('words.model', 'course').populate('course', 'id sourceLanguage');
             const allCourses = (await Course.find({sourceLanguage: user.course.sourceLanguage}).populate('goalLanguage', 'image')).map(course => ({
                 id: course.id,
                 name: course.name,
