@@ -35,9 +35,7 @@ function TrainingIndex() {
         }
     }, [dispatch, vocabularyId, currentCourse]);
 
-    if (!count || !availableVocabularies)
-        return null;
-    if (vocabularyId && !availableVocabularies.find(vocabulary => vocabulary.id === vocabularyId)) {
+    if (vocabularyId && availableVocabularies &&!availableVocabularies.find(vocabulary => vocabulary.id === vocabularyId)) {
         history.replace('/training/');
         return null;
     }
@@ -45,41 +43,40 @@ function TrainingIndex() {
     const trainings = [
         {
             name: t('trainingNames.wordTranslation'),
-            count: count.trainingWordTranslation,
+            count: count && count.trainingWordTranslation,
             link: '/training/word-translation/',
             icon: <IconTrainingWordTranslation />
         },
         {
             name: t('trainingNames.translationWord'),
-            count: count.trainingTranslationWord,
+            count: count && count.trainingTranslationWord,
             link: '/training/translation-word/',
             icon: <IconTrainingTranslationWord />
         },
         {
             name: t('trainingNames.cards'),
-            count: count.trainingCards,
+            count: count && count.trainingCards,
             link: '/training/cards/',
             icon: <IconTrainingCards />
         },
         {
             name: t('trainingNames.constructor'),
-            count: count.trainingConstructor,
+            count: count && count.trainingConstructor,
             link: '/training/constructor/',
             icon: <IconTrainingConstructor />
         },
         {
             name: t('trainingNames.listening'),
-            count: count.trainingListening,
+            count: count && count.trainingListening,
             link: '/training/listening/',
             icon: <IconTrainingListening />,
             large: true
         },
 
     ];
-    const selectOptions = [
-        {value: undefined, label: t('trainingIndex.allVocabularies')},
-        ...availableVocabularies.map(v => ({value: v.id, label: v.name}))
-    ];
+    const selectOptions = [{value: undefined, label: t('trainingIndex.allVocabularies')}];
+    if (availableVocabularies)
+        selectOptions.push(...availableVocabularies.map(v => ({value: v.id, label: v.name})));
 
     return (
         <MainContainer maxWidth="700px">
@@ -90,8 +87,8 @@ function TrainingIndex() {
                 <div className="TrainingIndex-TitleFilter">
                     <Select
                         options={selectOptions}
-                            defaultValue={selectOptions.find(option => option.value === vocabularyId)}
-                            onChange={e => history.push(`/training/${e.value}`)}
+                        value={availableVocabularies?selectOptions.find(option => option.value === vocabularyId):selectOptions[0]}
+                        onChange={e => history.push(`/training/${e.value}`)}
                     />
                 </div>
             </div>
@@ -108,7 +105,7 @@ function TrainingIndex() {
                                         {training.name}
                                     </div>
                                     <div className="TrainingIndex-CardCount">
-                                        {t('trainingIndex.pluralWords', {count: training.count})}
+                                        {count?t('trainingIndex.pluralWords', {count: training.count}):'...'}
                                     </div>
                                 </div>
                                 <div className="TrainingIndex-CardIcon">
@@ -123,7 +120,7 @@ function TrainingIndex() {
                                     {training.name}
                                 </div>
                                 <div className="TrainingIndex-CardCount">
-                                    {t('trainingIndex.pluralWords', {count: training.count})}
+                                    {count?t('trainingIndex.pluralWords', {count: training.count}):'...'}
                                 </div>
                             </div>
                             <div className="TrainingIndex-CardIcon">

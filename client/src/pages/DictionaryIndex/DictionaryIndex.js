@@ -23,16 +23,16 @@ function DictionaryIndex() {
         }
     }, [dispatch, currentCourse]);
 
-    if (!userVocabularies || !vocabularyGroups) return null;
-
     return (
         <MainContainer maxWidth="1000px">
             <DictionaryProgress />
-            <VocabularyGroup title={t('dictionaryIndex.myVocabularies')}
-                             vocabularies={userVocabularies}
-                             isUserVocabulary
-            />
-            {vocabularyGroups.map(vg => (
+            {userVocabularies && (
+                <VocabularyGroup title={t('dictionaryIndex.myVocabularies')}
+                                 vocabularies={userVocabularies}
+                                 isUserVocabulary
+                />
+            )}
+            {vocabularyGroups && vocabularyGroups.map(vg => (
                 <VocabularyGroup
                     key={vg.id}
                     title={vg.name}

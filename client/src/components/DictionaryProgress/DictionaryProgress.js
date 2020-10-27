@@ -26,8 +26,6 @@ function DictionaryProgress() {
         }
     }, [dispatch, currentCourse]);
 
-    if (!progress) return null;
-
     return (
         <div className="DictionaryProgress">
             <div className="DictionaryProgress-Title">
@@ -41,7 +39,7 @@ function DictionaryProgress() {
                     </div>
                     <div className="DictionaryProgress-WordsText">
                         <div className="DictionaryProgress-WordsCount">
-                            {t('dictionaryProgress.pluralWords', {count: progress.new + progress.learning + progress.learned})}
+                            {progress?t('dictionaryProgress.pluralWords', {count: progress.new + progress.learning + progress.learned}):'...'}
                         </div>
                         <div className="DictionaryProgress-WordsLink">
                             {t('dictionaryProgress.show')}
@@ -58,7 +56,7 @@ function DictionaryProgress() {
                                 {t('dictionaryProgress.new')}
                             </div>
                             <div className="DictionaryProgress-StatsCount">
-                                {t('dictionaryProgress.pluralWords', {count: progress.new})}
+                                {progress?t('dictionaryProgress.pluralWords', {count: progress.new}):'...'}
                             </div>
                         </div>
                     </div>
@@ -71,7 +69,7 @@ function DictionaryProgress() {
                                 {t('dictionaryProgress.learning')}
                             </div>
                             <div className="DictionaryProgress-StatsCount">
-                                {t('dictionaryProgress.pluralWords', {count: progress.learning})}
+                                {progress?t('dictionaryProgress.pluralWords', {count: progress.learning}):'...'}
                             </div>
                         </div>
                     </div>
@@ -84,7 +82,7 @@ function DictionaryProgress() {
                                 {t('dictionaryProgress.learned')}
                             </div>
                             <div className="DictionaryProgress-StatsCount">
-                                {t('dictionaryProgress.pluralWords', {count: progress.learned})}
+                                {progress?t('dictionaryProgress.pluralWords', {count: progress.learned}):'...'}
                             </div>
                         </div>
                     </div>
