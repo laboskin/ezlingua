@@ -8,7 +8,7 @@ import {request} from "../../utils/request";
 
 export function loadVocabularies() {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request('/api/dictionary/all-vocabularies', 'GET', null, {}, token);
         if (response) {
             dispatch({
@@ -27,7 +27,7 @@ export function clearVocabularies() {
 
 export function loadProgress() {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request('/api/dictionary/user-progress', 'GET', null, {}, token);
         dispatch({
             type: DICTIONARY_SET_PROGRESS,
@@ -43,7 +43,7 @@ export function clearProgress() {
 
 export function loadUserWords() {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request('/api/dictionary/user-words', 'GET', null, {}, token);
         if (response) {
             dispatch({
@@ -61,7 +61,7 @@ export function clearUserWords() {
 
 export function loadUserVocabulary(id) {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request(`/api/dictionary/user-vocabulary/${id}`, 'GET', null, {}, token);
         if (response) {
             dispatch({
@@ -79,7 +79,7 @@ export function clearUserVocabulary() {
 
 export function loadVocabulary(id) {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request(`/api/dictionary/vocabulary/${id}`, 'GET', null, {}, token);
         if (response) {
             dispatch({
@@ -97,7 +97,7 @@ export function clearVocabulary() {
 
 export function learnVocabulary(vocabularyId) {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request(`/api/dictionary/learn-vocabulary/${vocabularyId}`, 'POST', null, {}, token);
         if (response) {
             dispatch({
@@ -108,7 +108,7 @@ export function learnVocabulary(vocabularyId) {
 }
 export function removeVocabulary(vocabularyId) {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request(`/api/dictionary/remove-vocabulary/${vocabularyId}`, 'POST', null, {}, token);
         if (response) {
             dispatch({
@@ -120,7 +120,7 @@ export function removeVocabulary(vocabularyId) {
 
 export function learnWordFromVocabulary(wordId, vocabularyId) {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request(`/api/dictionary/learn-word/${wordId}`, 'POST', {vocabulary: vocabularyId}, {}, token);
         if (response) {
             dispatch({
@@ -131,7 +131,7 @@ export function learnWordFromVocabulary(wordId, vocabularyId) {
 }
 export function removeWord(wordId) {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request(`/api/dictionary/remove-word/${wordId}`, 'POST', null, {}, token);
         if (response) {
             dispatch({

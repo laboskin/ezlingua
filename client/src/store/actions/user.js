@@ -1,52 +1,90 @@
 import {
+    USER_AUTH_LOADED,
     USER_HOMEPAGE_CHANGE_LANGUAGE,
     USER_HOMEPAGE_LOAD_COURSES,
-    USER_SET_CURRENT_COURSE,
-    USER_SET_OTHER_COURSES,
-    USER_SET_USER_COURSES
+    USER_LOGIN,
+    USER_LOGOUT,
+    USER_SET_COURSES,
 } from './actionTypes';
 import {request} from "../../utils/request";
 import i18n from 'i18next';
+import jwt_decode from "jwt-decode";
+
+export function login(token) {
+    return dispatch => {
+        const {email, name, isAdmin} = jwt_decode(token);
+        dispatch({
+            type: USER_LOGIN,
+            email,
+            name,
+            isAdmin,
+            token
+        });
+    }
+}
+export function logout() {
+    return async dispatch => {
+        const response = await request('/api/auth/logout', 'POST', {}, {});
+        if (response) {
+            dispatch({
+                type: USER_LOGOUT
+            })
+        }
+    }
+}
+
+export function refresh() {
+    return async dispatch => {
+        try {
+            const response = await request('/api/auth/refresh', 'POST', {}, {});
+            if (response) {
+                const token = response.accessToken;
+                const {email, name, isAdmin} = jwt_decode(token);
+                dispatch({
+                    type: USER_LOGIN,
+                    email,
+                    name,
+                    isAdmin,
+                    token
+                });
+            }
+        } catch(e) {
+
+        } finally {
+            dispatch({
+                type: USER_AUTH_LOADED
+            });
+        }
+    }
+}
+
 export function loadCourses() {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request('/api/course/user', 'GET', null, {}, token);
         if (response) {
             i18n.changeLanguage(response.currentCourse.code);
-            dispatch(setCurrentCourse(response.currentCourse));
-            dispatch(setUserCourses(response.userCourses));
-            dispatch(setOtherCourses(response.otherCourses))
+            dispatch({
+                type: USER_SET_COURSES,
+                currentCourse: response.currentCourse,
+                userCourses: response.userCourses,
+                otherCourses: response.otherCourses
+            });
         }
     }
 }
 export function changeCourse(courseId) {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request('/api/course/user', 'POST', {courseId}, {}, token);
         if (response) {
-            i18n.changeLanguage(response.currentCourse.code);
-            dispatch(setCurrentCourse(response.currentCourse));
-            dispatch(setUserCourses(response.userCourses));
-            dispatch(setOtherCourses(response.otherCourses))
+            dispatch({
+                type: USER_SET_COURSES,
+                currentCourse: response.currentCourse,
+                userCourses: response.userCourses,
+                otherCourses: response.otherCourses
+            });
         }
-    }
-}
-export function setCurrentCourse(course) {
-    return {
-        type: USER_SET_CURRENT_COURSE,
-        course
-    }
-}
-export function setUserCourses(courses) {
-    return {
-        type: USER_SET_USER_COURSES,
-        courses
-    }
-}
-export function setOtherCourses(courses) {
-    return {
-        type: USER_SET_OTHER_COURSES,
-        courses
     }
 }
 

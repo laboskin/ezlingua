@@ -7,9 +7,7 @@ import IconPlus from "../../icons/IconPlus/IconPlus";
 import IconAdmin from "../../icons/IconAdmin/IconAdmin";
 import IconSettings from "../../icons/IconSettings/IconSettings";
 import IconLogout from "../../icons/IconLogout/IconLogout";
-import {logout} from "../../store/actions/auth";
-import {useRequest} from "../../hooks/requestHook";
-import {changeCourse} from "../../store/actions/user";
+import {changeCourse, logout} from "../../store/actions/user";
 
 
 import userAvatar from './avatar.jpg';
@@ -20,17 +18,6 @@ function Header() {
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
-    const {request} = useRequest();
-    const logoutHandler = async () => {
-        try {
-            await request('/api/auth/logout', 'POST');
-            if (request) {
-                dispatch(logout());
-            }
-        }
-        catch (e) {
-        }
-    }
     const currentCourse = useSelector(state => state.user.courses.currentCourse);
     const userCourses = useSelector(state => state.user.courses.userCourses);
     const userIsAdmin = true; // TODO
@@ -124,7 +111,7 @@ function Header() {
                                         </span>
                                     </Link>
                                     <div className="Header-ProfilePopupItem"
-                                       onClick={logoutHandler}>
+                                       onClick={() => dispatch(logout())}>
                                         <div className="Header-ProfilePopupItemIcon">
                                             <IconLogout />
                                         </div>
@@ -143,7 +130,6 @@ function Header() {
             </div>
         </header>
     )
-
 }
 
 export default Header;

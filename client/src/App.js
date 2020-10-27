@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './globalStyles.scss';
 import Homepage from "./pages/Homepage/Homepage";
 import {Switch, Route, Redirect} from "react-router-dom";
@@ -12,17 +12,23 @@ import StoriesPage from "./pages/StoriesPage/StoriesPage";
 import StoriesIndex from "./pages/StoriesIndex/StoriesIndex";
 import TrainingIndex from "./pages/TrainingIndex/TrainingIndex";
 import Modal from "./hoc/Modal/Modal";
-import {useSelector} from "react-redux";
-import {useAuth} from "./hooks/authHook";
+import {useDispatch, useSelector} from "react-redux";
 import TrainingPage from "./pages/TrainingPage/TrainingPage";
+import {refresh} from "./store/actions/user";
 
 
 function App() {
-    const isLoading = useAuth();
-    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+    const dispatch = useDispatch();
+    const isAuthLoading = useSelector(state => state.user.isAuthLoading);
+    const isAuthenticated = useSelector(state => state.user.isAuthenticated);
+    const isAdmin = useSelector(state => state.user.isAdmin); // TODO
     const isModalVisible = useSelector((state) => state.modal.visible);
 
-    if (isLoading) return null;
+    useEffect(() => {
+        dispatch(refresh());
+    }, [dispatch]);
+
+    if (isAuthLoading) return null;
 
     return (
         <React.Fragment>

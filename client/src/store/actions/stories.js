@@ -8,7 +8,7 @@ import {request} from "../../utils/request";
 
 export function loadStories() {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request('/api/stories/all/', 'GET', null, {}, token);
         if (response) {
             dispatch({
@@ -26,7 +26,7 @@ export function clearStories() {
 
 export function loadStory(storyId) {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request(`/api/stories/${storyId || ''}`, 'GET', null, {}, token);
         if (response) {
             dispatch({
@@ -49,7 +49,7 @@ export function selectWord(sentencePosition, partPosition) {
             sentencePosition,
             partPosition
         });
-        const {auth: {token}, stories: {story}} = getState();
+        const {user: {token}, stories: {story}} = getState();
         const response = await request('/api/stories/get-translations', 'POST', {
             text: story.sentences
                 .find(sentence => sentence.position === sentencePosition)
@@ -101,7 +101,7 @@ export function removeWord(original, translation) {
 
 export function completeStory() {
     return async (dispatch, getState) => {
-        const {auth: {token}, stories: {story: {id: storyId}, addedWords}} = getState();
+        const {user: {token}, stories: {story: {id: storyId}, addedWords}} = getState();
         const response = await request(`/api/stories/complete/${storyId || ''}`, 'POST', addedWords, {}, token);
         if (response) {
             dispatch({

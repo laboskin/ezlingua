@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import './style.scss';
-import homepageLogo from './homepage-logo.png';
 import IconArrowDown from "../../icons/IconArrowDown/IconArrowDown";
+import homepageLogo from './homepage-logo.png';
 import homepageBanner from './homepage-banner.png';
 import homepageNotebook from './homepage-notebook.png';
 import homepageBooks from './homepage-books.png';

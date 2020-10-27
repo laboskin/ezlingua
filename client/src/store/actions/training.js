@@ -18,7 +18,7 @@ import {request} from "../../utils/request";
 
 export function loadCount(vocabularyId = null) {
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request(`/api/training/words-count/${vocabularyId || ''}`, 'GET', null, {}, token);
         if (response) {
             dispatch({
@@ -36,7 +36,7 @@ export function clearCount() {
 
 export function loadAvailableVocabularies(){
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request('/api/training/available-vocabularies/', 'GET', null, {}, token);
         if (response) {
             dispatch({
@@ -54,7 +54,7 @@ export function clearAvailableVocabularies(){
 
 export function startTraining(trainingName, vocabularyId = null){
     return async (dispatch, getState) => {
-        const {auth: {token}} = getState();
+        const {user: {token}} = getState();
         const response = await request(`/api/training/${trainingName}/${vocabularyId || ''}`, 'GET', null, {}, token);
         if (response) {
             dispatch({

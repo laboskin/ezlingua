@@ -2,7 +2,7 @@ import React from "react";
 import './style.scss';
 import {useRequest} from "../../../hooks/requestHook";
 import {useDispatch, useSelector} from "react-redux";
-import {login} from "../../../store/actions/auth";
+import {login} from "../../../store/actions/user";
 import {hideModal, showLoginModal} from "../../../store/actions/modal";
 import {useForm} from "react-hook-form";
 import * as yup from 'yup';
@@ -50,8 +50,7 @@ function RegisterForm() {
                 dispatch(login(response.accessToken));
             }
         }
-        catch (e) {
-        }
+        catch (e) {}
     };
     return (
         <form className="LoginForm"

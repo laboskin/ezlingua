@@ -4,7 +4,7 @@ import {useSelector} from "react-redux";
 export const useRequest = (withAuth = false) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const auth = useSelector(state => state.auth);
+    const {isAuthenticated, token} = useSelector(state => state.user);
 
     const request = useCallback(async (url, method = 'GET', body = null, headers = {}) => {
         setIsLoading(true);
@@ -15,8 +15,8 @@ export const useRequest = (withAuth = false) => {
                 body = JSON.stringify(body);
             }
 
-            if (withAuth && auth.isAuthenticated) {
-                headers['Authorization'] = `Bearer ${auth.token}`;
+            if (withAuth && isAuthenticated) {
+                headers['Authorization'] = `Bearer ${token}`;
             }
 
             const response = await fetch(url, {method, body, headers});
@@ -33,7 +33,7 @@ export const useRequest = (withAuth = false) => {
             setError(e.message);
             throw e;
         }
-    }, [withAuth, auth.isAuthenticated, auth.token])
+    }, [withAuth, isAuthenticated, token])
 
     const clearError = useCallback(() => setError(null), []);
 

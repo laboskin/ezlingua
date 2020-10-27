@@ -93,7 +93,7 @@ router.post('/refresh', async (req, res) => {
             httpOnly: true
         })
             .status(200)
-            .json({newAccessToken, newRefreshToken});
+            .json({accessToken: newAccessToken, refreshToken: newRefreshToken});
     } catch (e) {
         console.log(e)
         res.status(500).json({message: 'Server error'});

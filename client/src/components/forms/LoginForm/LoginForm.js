@@ -2,7 +2,7 @@ import React from "react";
 import './style.scss';
 import {useRequest} from "../../../hooks/requestHook";
 import {useDispatch} from "react-redux";
-import {login} from "../../../store/actions/auth";
+import {login} from "../../../store/actions/user";
 import {hideModal, showRegisterModal} from "../../../store/actions/modal";
 import {useForm} from "react-hook-form";
 import * as yup from 'yup';
