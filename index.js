@@ -4,7 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const config = require('config')
 const authRouter = require('./routes/auth.routes');
-const courseRouter = require('./routes/course.routes');
+const userRouter = require('./routes/user.routes');
 const dictionaryRouter = require('./routes/dictionary.routes');
 const trainingRouter = require('./routes/training.routes');
 const storiesRouter = require('./routes/stories.routes');
@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/api/auth', authRouter);
-app.use('/api/course', courseRouter);
+app.use('/api/user', userRouter);
 app.use('/api/dictionary', dictionaryRouter);
 app.use('/api/training', trainingRouter);
 app.use('/api/stories', storiesRouter);

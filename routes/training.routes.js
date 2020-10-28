@@ -11,8 +11,8 @@ router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }))
 router.get('/words-count/:id?',
     async (req, res) => {
         try {
-            const user = await User.findById(req.user.id);
-            let words = user.words;
+            const user = await User.findById(req.user.id).populate('words.model', 'course');
+            let words = user.words.filter(word => word.model.course.toString() === user.course.toString());
             if (req.params.id)
                 words = words.filter(word => word.vocabulary && word.vocabulary.toString() === req.params.id);
 

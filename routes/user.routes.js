@@ -7,7 +7,7 @@ const Course = require('../models/Course');
 const User = require('../models/User');
 
 
-router.get('/homepage', async (req, res) => {
+router.get('/homepage-courses', async (req, res) => {
     try {
         const courses = await Course.find().populate('sourceLanguage', 'name image code');
         const result = courses.map(course => {
@@ -45,7 +45,7 @@ router.get('/homepage', async (req, res) => {
     }
 });
 
-router.get('/user',
+router.get('/user-courses',
     jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
     try {
@@ -72,7 +72,7 @@ router.get('/user',
     }
 });
 
-router.post('/user',
+router.post('/change-user-course',
     jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }),
     async (req, res) => {
         try {

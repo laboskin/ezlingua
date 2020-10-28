@@ -61,7 +61,7 @@ export function refresh() {
 export function loadCourses() {
     return async (dispatch, getState) => {
         const {user: {token}} = getState();
-        const response = await request('/api/course/user', 'GET', null, {}, token);
+        const response = await request('/api/user/user-courses', 'GET', null, {}, token);
         if (response) {
             i18n.changeLanguage(response.currentCourse.code);
             dispatch({
@@ -76,7 +76,7 @@ export function loadCourses() {
 export function changeCourse(courseId) {
     return async (dispatch, getState) => {
         const {user: {token}} = getState();
-        const response = await request('/api/course/user', 'POST', {courseId}, {}, token);
+        const response = await request('/api/user/change-user-course', 'POST', {courseId}, {}, token);
         if (response) {
             dispatch({
                 type: USER_SET_COURSES,
@@ -90,7 +90,7 @@ export function changeCourse(courseId) {
 
 export function homepageLoadCourses() {
     return  async (dispatch) => {
-        const courses = await request('/api/course/homepage');
+        const courses = await request('/api/user/homepage-courses');
 
         const sourceLanguages = courses.reduce((arr, course) => {
             if (arr.find(language => language.id === course.sourceLanguage.id))
