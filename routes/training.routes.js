@@ -12,7 +12,7 @@ router.get('/words-count/:id?',
     async (req, res) => {
         try {
             const user = await User.findById(req.user.id).populate('words.model', 'course');
-            let words = user.words.filter(word => word.model.course.toString() === user.course.toString());
+            let words = user.words.filter(word => word.model.course.toString() === user.course.toString() && !word.isLearned);
             if (req.params.id)
                 words = words.filter(word => word.vocabulary && word.vocabulary.toString() === req.params.id);
 

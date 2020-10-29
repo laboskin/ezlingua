@@ -114,7 +114,8 @@ function TrainingIndex() {
                             </Link>
                         )
                     else return (
-                        <div className={`TrainingIndex-Card ${training.large?'TrainingIndex-Card_large':''}`}>
+                        <div className={`TrainingIndex-Card ${training.large?'TrainingIndex-Card_large':''}`}
+                             key={training.name}>
                             <div className="TrainingIndex-CardText">
                                 <div className="TrainingIndex-CardTitle">
                                     {training.name}
