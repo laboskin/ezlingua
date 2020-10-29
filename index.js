@@ -8,6 +8,7 @@ const userRouter = require('./routes/user.routes');
 const dictionaryRouter = require('./routes/dictionary.routes');
 const trainingRouter = require('./routes/training.routes');
 const storiesRouter = require('./routes/stories.routes');
+const adminRouter = require('./routes/admin.routes');
 const app = express();
 
 const PORT = config.get('port');
@@ -22,6 +23,7 @@ app.use('/api/user', userRouter);
 app.use('/api/dictionary', dictionaryRouter);
 app.use('/api/training', trainingRouter);
 app.use('/api/stories', storiesRouter);
+app.use('/api/admin', adminRouter);
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 if (process.env.NODE_ENV === 'production') {

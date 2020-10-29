@@ -1,31 +1,39 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-import rootReducer from './store/reducers';
 import {applyMiddleware, createStore} from "redux";
 import {Provider} from "react-redux";
-import {BrowserRouter} from "react-router-dom";
 import thunk from "redux-thunk";
+import createSagaMiddleware from 'redux-saga';
+import {all, fork} from 'redux-saga/effects';
 import {composeWithDevTools} from "redux-devtools-extension/index";
+import {adminSaga} from 'react-admin';
+import simpleRestProvider  from 'ra-data-simple-rest';
+import {routerMiddleware, ConnectedRouter} from 'connected-react-router';
+import createRootReducer from './store/reducers';
 import './i18n/i18n';
+import {createBrowserHistory} from "history";
+import App from './App';
 
-const store = createStore(rootReducer, composeWithDevTools(
+const history = createBrowserHistory();
+
+const sagaMiddleware = createSagaMiddleware();
+const saga = function* rootSaga() { yield all([adminSaga(simpleRestProvider(), () => Promise.resolve())].map(fork)); };
+
+const store = createStore(createRootReducer(history), composeWithDevTools(
     applyMiddleware(
-        thunk
+        thunk,
+        sagaMiddleware,
+        routerMiddleware(history),
     )
 ));
 
+sagaMiddleware.run(saga);
+
 ReactDOM.render(
     <Provider store={store}>
-        <BrowserRouter>
+        <ConnectedRouter history={history}>
             <App />
-        </BrowserRouter>
+        </ConnectedRouter>
     </Provider>,
     document.getElementById('root')
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();

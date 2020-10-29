@@ -20,7 +20,7 @@ function Header() {
 
     const currentCourse = useSelector(state => state.user.courses.currentCourse);
     const userCourses = useSelector(state => state.user.courses.userCourses);
-    const userIsAdmin = true; // TODO
+    const isAdmin = useSelector(state => state.user.isAdmin);
 
     return (
         <header className="Header">
@@ -89,7 +89,7 @@ function Header() {
                         <img className="" src={userAvatar} alt=""/>
                             <div className="Header-ProfilePopup">
                                 <div className="Header-ProfilePopupContainer">
-                                    { userIsAdmin && (
+                                    { isAdmin && (
                                         <Link className="Header-ProfilePopupItem"
                                                  to="/admin">
                                             <div className="Header-ProfilePopupItemIcon">
