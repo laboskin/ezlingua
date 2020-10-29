@@ -32,7 +32,7 @@ function TrainingQuiz() {
         return null;
     }
     if (words.length === 0) {
-        history.push('/training');
+        setTimeout(() => history.push('/training/'), 0);
         return null;
     }
 
@@ -94,14 +94,17 @@ function TrainingQuiz() {
                                 word.original.split('').map((letter, idx) => {
                                     if (isAnswered || word.letterGuessed > idx)
                                         return (
-                                            <div className="TrainingQuiz-Letter TrainingQuiz-Letter_completed">
+                                            <div className="TrainingQuiz-Letter TrainingQuiz-Letter_completed"
+                                                 key={letter.text}>
                                                 {letter}
                                             </div>
                                         )
                                     if (word.letterGuessed === idx)
-                                        return <div className="TrainingQuiz-Letter TrainingQuiz-Letter_next" />
+                                        return <div className="TrainingQuiz-Letter TrainingQuiz-Letter_next"
+                                                    key={letter.text}/>
 
-                                    return <div className="TrainingQuiz-Letter TrainingQuiz-Letter_empty" />;
+                                    return <div className="TrainingQuiz-Letter TrainingQuiz-Letter_empty"
+                                                key={letter.text}/>;
                                 })
                             }
                         </div>
@@ -109,7 +112,8 @@ function TrainingQuiz() {
                             {
                                 word.letterOptions.map(letter => (
                                     <div className={`TrainingQuiz-LetterOption ${letter.count === 0?'TrainingQuiz-LetterOption_empty':''} ${letter.text === word.letterMistake?'TrainingQuiz-LetterOption_wrong':''}`}
-                                         onClick={letter.count>0 && (() => dispatch(constructorSelect(letter.text)))}>
+                                         onClick={letter.count>0 && (() => dispatch(constructorSelect(letter.text)))}
+                                         key={letter.text}>
                                         {letter.text}
                                         {letter.count > 1 && (
                                             <div className="TrainingQuiz-LetterOptionCount">
@@ -155,12 +159,14 @@ function TrainingQuiz() {
                             return (
                                 <div className={`TrainingQuiz-Option 
                                 ${option === word.original || option === word.translation?'TrainingQuiz-Option_correct':''} 
-                                ${option === word.mistake?'TrainingQuiz-Option_wrong':''}`}>
+                                ${option === word.mistake?'TrainingQuiz-Option_wrong':''}`}
+                                     key={option}>
                                     {option}
                                 </div>
                             );
                         return (
-                            <div className="TrainingQuiz-Option TrainingQuiz-Option_active" onClick={() => dispatch(selectOption(trainingName, option))}>
+                            <div className="TrainingQuiz-Option TrainingQuiz-Option_active" onClick={() => dispatch(selectOption(trainingName, option))}
+                                 key={option}>
                                 {option}
                             </div>
                         );

@@ -90,15 +90,15 @@ function Header() {
                             <div className="Header-ProfilePopup">
                                 <div className="Header-ProfilePopupContainer">
                                     { isAdmin && (
-                                        <Link className="Header-ProfilePopupItem"
-                                                 to="/admin">
+                                        <a className="Header-ProfilePopupItem"
+                                                 href="/admin">
                                             <div className="Header-ProfilePopupItemIcon">
                                                 <IconAdmin />
                                             </div>
                                             <span className="Header-ProfilePopupItemText">
                                                 {t('header.admin')}
                                             </span>
-                                        </Link>
+                                        </a>
                                     )
                                     }
                                     <Link className="Header-ProfilePopupItem"

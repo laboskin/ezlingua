@@ -36,7 +36,7 @@ function TrainingIndex() {
     }, [dispatch, vocabularyId, currentCourse]);
 
     if (vocabularyId && availableVocabularies &&!availableVocabularies.find(vocabulary => vocabulary.id === vocabularyId)) {
-        history.replace('/training/');
+        setTimeout(() => history.push('/training/'), 0);
         return null;
     }
 

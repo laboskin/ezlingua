@@ -1,7 +1,7 @@
 import React from 'react';
 import {fetchUtils, Admin, Resource, ListGuesser} from 'react-admin';
 import simpleRestProvider  from 'ra-data-simple-rest';
-import {createHashHistory} from "history";
+import {createBrowserHistory} from "history";
 import {useHistory} from "react-router";
 import {useSelector} from "react-redux";
 
@@ -29,7 +29,7 @@ function AdminPanel() {
     };
 
     return (
-        <Admin dataProvider={simpleRestProvider('/api/admin', httpClient)} authProvider={authProvider} history={createHashHistory()}>
+        <Admin dataProvider={simpleRestProvider('/api/admin', httpClient)} authProvider={authProvider} history={createBrowserHistory({basename: '/admin/'})}>
 
         </Admin>
     )
