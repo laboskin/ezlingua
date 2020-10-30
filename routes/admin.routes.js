@@ -1,31 +1,53 @@
 const {Router} = require('express');
 const router = Router();
+const axios = require("axios");
+const { v4: uuidv4 } = require('uuid');
+const responseRange = require('express-response-range');
 const jwt = require('express-jwt');
 const config = require('config');
 const jwtConfig = config.get('jwtConfig');
 const azureConfig = config.get('azure');
-const User = require('../models/User');
-const Story = require('../models/Story');
 const Course = require('../models/Course');
+const Language = require('../models/Language');
+const RefreshToken = require('../models/RefreshToken');
+const Story = require('../models/Story');
+const User = require('../models/User');
+const Vocabulary = require('../models/Vocabulary');
+const VocabularyGroup = require('../models/VocabularyGroup');
 const Word = require('../models/Word');
-const axios = require("axios");
-const { v4: uuidv4 } = require('uuid');
 
-router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }))
-
-router.get('/languages/:id',
+//router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }));
+router.use(responseRange({
+    alwaysSendRange: true
+}));
+router.get('/languages',
     async (req, res) => {
         try {
-            res.json({});
+            const result = (await Language.find().skip(req.range.offset).limit(req.range.limit))
+                .map(item => ({
+                    id: item._id,
+                    name: item.name,
+                    code: item.code,
+                    image: item.imageLink,
+                }));
+            const count = await Language.countDocuments();
+            res.sendRange(result, count);
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
         }
     });
-router.get('/languages',
+router.get('/languages/:id',
     async (req, res) => {
         try {
-            res.json([]);
+            const dbQueryResult = await Language.findById(req.params.id);
+            const result = {
+                id: dbQueryResult._id,
+                name: dbQueryResult.name,
+                code: dbQueryResult.code,
+                image: dbQueryResult.imageLink
+            }
+            res.json(result);
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
@@ -53,6 +75,25 @@ router.delete('/languages',
     async (req, res) => {
         try {
             res.json({});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+
+router.get('/courses',
+    async (req, res) => {
+        try {
+            const result = (await Course.find().skip(req.range.offset).limit(req.range.limit))
+                .map(item => ({
+                    id: item._id,
+                    ...item.toJSON(),
+                    _id: undefined,
+                    __v: undefined
+                }));
+            const count = await Language.countDocuments();
+            res.sendRange(result, count);
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
