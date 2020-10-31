@@ -1,4 +1,4 @@
-const {Schema, model, Types} = require('mongoose');
+const {Schema, model} = require('mongoose');
 
 const schema = new Schema({
     name: {
@@ -15,7 +15,7 @@ const schema = new Schema({
     }
 });
 schema.virtual('imageLink').get(function() {
-    return `/img/flags/${this.image}`;
+    return `/img/${this.image?'flags/this.image':'nophoto.svg'}`;
 })
 
 module.exports = model('Language', schema);

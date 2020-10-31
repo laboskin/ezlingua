@@ -28,7 +28,7 @@ const schema = new Schema({
 });
 
 schema.virtual('imageLink').get(function() {
-    return `/img/vocabularies/${this.image || 'nophoto.svg'}`;
+    return `/img/${this.image?'vocabularies/this.image':'nophoto.svg'}`;
 })
 
 module.exports = model('Vocabulary', schema);
