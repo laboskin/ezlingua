@@ -4,7 +4,6 @@ function CourseCreate(props) {
     return (
         <Create {...props}>
             <SimpleForm>
-                <TextInput disabled source="id" />
                 <TextInput source="name" />
                 <ReferenceInput label="Source Language" source="sourceLanguage" reference="languages">
                     <SelectInput optionText="name" />

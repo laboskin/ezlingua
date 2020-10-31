@@ -26,6 +26,58 @@ import WordEdit from "./components/Word/WordEdit";
 import WordCreate from "./components/Word/WordCreate";
 
 function App() {
+    const convertFileToBase64 = file =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file.rawFile);
+        });
+
+    const dataProvider = simpleRestProvider('/api/admin');
+    const myDataProvider = {
+        ...dataProvider,
+        update: (resource, params) => {
+            if (params.data.image && (params.data.image.rawFile instanceof File)) {
+                return convertFileToBase64(params.data.image)
+                    .then(base64Picture => ({
+                        src: base64Picture,
+                        title: params.data.image.title,
+                    }))
+                    .then(transformedImage =>
+                        dataProvider.update(resource, {
+                            ...params,
+                            data: {
+                                ...params.data,
+                                image: transformedImage
+                            }
+                        })
+                    );
+            }
+            return dataProvider.update(resource, params);
+        },
+        create: (resource, params) => {
+            if (params.data.image && (params.data.image.rawFile instanceof File)) {
+                return convertFileToBase64(params.data.image)
+                    .then(base64Picture => ({
+                        src: base64Picture,
+                        title: params.data.image.title,
+                    }))
+                    .then(transformedImage =>
+                        dataProvider.create(resource, {
+                            ...params,
+                            data: {
+                                ...params.data,
+                                image: transformedImage
+                            }
+                        })
+                    );
+            }
+            return dataProvider.create(resource, params);
+        }
+    };
+
+
 
     // const httpClient = (url, options = {}) => {
 //     if (!options.headers) {
@@ -44,7 +96,7 @@ function App() {
     // }
 
     return (
-        <Admin dataProvider={simpleRestProvider('/api/admin')}>
+        <Admin dataProvider={myDataProvider}>
             <Resource name="courses" list={CourseList} edit={CourseEdit} create={CourseCreate}/>
             <Resource name="languages" list={LanguageList} edit={LanguageEdit} create={LanguageCreate} />
             <Resource name="refresh-tokens" list={RefreshTokenList} edit={RefreshTokenEdit} create={RefreshTokenCreate} />

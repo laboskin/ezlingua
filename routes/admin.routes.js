@@ -1,5 +1,7 @@
 const {Router} = require('express');
 const router = Router();
+const fs = require('fs');
+const path = require('path');
 const axios = require("axios");
 const { v4: uuidv4 } = require('uuid');
 const responseRange = require('express-response-range');
@@ -93,24 +95,63 @@ router.get('/languages/:id',
 router.post('/languages',
     async (req, res) => {
         try {
-            res.json({});
+            const imageName = uuidv4() + '.' + req.body.image.title.split('.').reverse()[0];
+            const imageBase64 = req.body.image.src.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+            await fs.writeFileSync(path.resolve('./public/img/flags/', imageName), imageBase64, {encoding: 'base64'});
+            const language = new Language({
+                name: req.body.name,
+                code: req.body.code,
+                image: imageName
+            });
+            await language.save();
+
+            const result = {
+                id: language._id,
+                name: language.name,
+                code: language.code,
+                image: language.image && language.imageLink
+            }
+            res.json(result);
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
         }
     });
-router.put('/languages',
+router.put('/languages/:id',
     async (req, res) => {
         try {
-            res.json({});
+            const language = await Language.findById(req.params.id);
+            language.code = req.body.code;
+            language.name = req.body.name;
+            if (typeof req.body.image === 'object') {
+                if (language.image && fs.existsSync(path.resolve('./public/img/flags/', language.image)))
+                    fs.unlinkSync(path.resolve('./public/img/flags/', language.image));
+                const imageName = uuidv4() + '.' + req.body.image.title.split('.').reverse()[0];
+                const imageBase64 = req.body.image.src.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+                await fs.writeFileSync(path.resolve('./public/img/flags/', imageName), imageBase64, {encoding: 'base64'});
+                language.image = imageName;
+            }
+            await language.save();
+
+            const result = {
+                id: language._id,
+                name: language.name,
+                code: language.code,
+                image: language.image && language.imageLink
+            }
+            res.json(result);
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
         }
     });
-router.delete('/languages',
+router.delete('/languages/:id',
     async (req, res) => {
         try {
+            const language = await Language.findById(req.params.id);
+            if (language.image && fs.existsSync(path.resolve('./public/img/flags/', language.image)))
+                fs.unlinkSync(path.resolve('./public/img/flags/', language.image));
+            await language.remove();
             res.json({});
         } catch (e) {
             console.log(e)

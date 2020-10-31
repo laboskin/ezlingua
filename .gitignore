@@ -24,3 +24,6 @@ yarn-error.log*
 
 .idea/
 /config/local.js
+/public/img/stories/
+/public/img/flags/
+/public/img/vocabularies/
