@@ -1,12 +1,15 @@
-import {Edit, SimpleForm, TextInput, ImageInput, ImageField, FormDataConsumer} from 'react-admin';
+import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput, ImageField, ImageInput, FormDataConsumer} from 'react-admin';
 
-function LanguageEdit(props) {
+function StoryEdit(props) {
     return (
         <Edit {...props}>
             <SimpleForm>
                 <TextInput disabled source="id" />
                 <TextInput source="name" />
-                <TextInput source="code" />
+                <ReferenceInput source="course" reference="courses">
+                    <SelectInput optionText="name" />
+                </ReferenceInput>
+                <TextInput source="text" multiline />
                 <ImageInput source="image" accept="image/*">
                     <ImageField source="src" title="title" />
                 </ImageInput>
@@ -20,10 +23,9 @@ function LanguageEdit(props) {
                             )
                     }}
                 </FormDataConsumer>
-
             </SimpleForm>
         </Edit>
     )
 }
 
-export default LanguageEdit;
+export default StoryEdit;
