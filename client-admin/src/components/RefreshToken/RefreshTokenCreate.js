@@ -1,4 +1,4 @@
-import {Create, SimpleForm, TextInput, SelectInput, ReferenceInput} from 'react-admin';
+import {Create, SimpleForm, TextInput, DateTimeInput, SelectInput, ReferenceInput} from 'react-admin';
 
 function RefreshTokenCreate(props) {
     return (
@@ -9,6 +9,7 @@ function RefreshTokenCreate(props) {
                     <SelectInput optionText="email" type="email" />
                 </ReferenceInput>
                 <TextInput source="refreshToken" />
+                <DateTimeInput source="issuedAt" />
             </SimpleForm>
         </Create>
     )

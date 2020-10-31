@@ -1,4 +1,4 @@
-import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput} from 'react-admin';
+import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput, DateTimeInput} from 'react-admin';
 
 function RefreshTokenEdit(props) {
     return (
@@ -9,6 +9,7 @@ function RefreshTokenEdit(props) {
                     <SelectInput optionText="email" type="email" />
                 </ReferenceInput>
                 <TextInput source="refreshToken" />
+                <DateTimeInput source="issuedAt" />
             </SimpleForm>
         </Edit>
     )
