@@ -1,4 +1,5 @@
 const {Schema, model, Types} = require('mongoose');
+const User = require('./User');
 
 const schema = new Schema({
     refreshToken: {
@@ -6,9 +7,10 @@ const schema = new Schema({
         required: true,
         unique: true
     },
-    userId: {
+    user: {
         type: Types.ObjectId,
-        required: true
+        required: true,
+        ref: User.modelName
     },
     issuedAt: {
         type: Date,

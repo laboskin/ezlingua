@@ -24,7 +24,7 @@ router.post('/register', async (req, res) => {
 
         // Generate and save refresh token
         const refreshToken = uuidv4();
-        new RefreshToken({refreshToken, userId: user.id, issuedAt: new Date()}).save();
+        new RefreshToken({refreshToken, user: user.id, issuedAt: new Date()}).save();
         // Send response
         res.cookie('refreshToken', refreshToken, {
             maxAge: jwtConfig.refreshTokenAge,
@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
 
         // Generate and save refresh token
         const refreshToken = uuidv4();
-        new RefreshToken({refreshToken, userId: user.id, issuedAt: new Date()}).save();
+        new RefreshToken({refreshToken, user: user.id, issuedAt: new Date()}).save();
         // Send response
         res.cookie('refreshToken', refreshToken, {
             maxAge: jwtConfig.refreshTokenAge,
@@ -83,10 +83,10 @@ router.post('/refresh', async (req, res) => {
 
         setTimeout(() => refreshTokenModel.remove(), 5*1000);
 
-        const user = await User.findOne(refreshTokenModel.userId);
+        const user = await User.findOne(refreshTokenModel.user);
         const newAccessToken = generateAccessToken(getAccessPayloadFromUserModel(user));
         const newRefreshToken = uuidv4();
-        new RefreshToken({refreshToken: newRefreshToken, userId: user.id, issuedAt: new Date() }).save();
+        new RefreshToken({refreshToken: newRefreshToken, user: user.id, issuedAt: new Date() }).save();
 
         res.cookie('refreshToken', newRefreshToken, {
             maxAge: jwtConfig.refreshTokenAge,
