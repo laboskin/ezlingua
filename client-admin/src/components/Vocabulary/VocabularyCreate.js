@@ -6,7 +6,9 @@ import {
     ReferenceInput,
     ImageField,
     ImageInput,
-    FormDataConsumer, ReferenceArrayInput, AutocompleteArrayInput
+    FormDataConsumer,
+    SimpleFormIterator,
+    ArrayInput
 } from 'react-admin';
 
 function VocabularyCreate(props) {
@@ -33,16 +35,12 @@ function VocabularyCreate(props) {
                             )
                     }}
                 </FormDataConsumer>
-                <ReferenceArrayInput source="words" reference="words" label="Words">
-                    <AutocompleteArrayInput
-                        optionText={(record) => (
-                            <span><strong>{record.original}</strong>&nbsp;&#8212;&nbsp;{record.translation}</span>
-                        )}
-                        matchSuggestion={(filter, choice) => {
-                            return choice.original.toLowerCase().includes(filter.toLowerCase())
-                                || choice.translation.toLowerCase().includes(filter.toLowerCase())
-                        }}/>
-                </ReferenceArrayInput>
+                <ArrayInput source="words">
+                    <SimpleFormIterator>
+                        <TextInput source="original" label="Original" />
+                        <TextInput source="translation" label="Translation" />
+                    </SimpleFormIterator>
+                </ArrayInput>
             </SimpleForm>
         </Create>
     )

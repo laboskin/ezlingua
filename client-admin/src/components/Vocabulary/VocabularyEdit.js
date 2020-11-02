@@ -1,4 +1,13 @@
-import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput, ImageField, ImageInput, FormDataConsumer, ReferenceArrayInput, AutocompleteArrayInput } from 'react-admin';
+import {Edit,
+    SimpleForm,
+    TextInput,
+    SelectInput,
+    ReferenceInput,
+    ImageField,
+    ImageInput,
+    FormDataConsumer,
+    ArrayInput,
+    SimpleFormIterator} from 'react-admin';
 
 function VocabularyEdit(props) {
     return (
@@ -25,16 +34,12 @@ function VocabularyEdit(props) {
                             )
                     }}
                 </FormDataConsumer>
-                <ReferenceArrayInput source="words" reference="words" label="Words">
-                    <AutocompleteArrayInput
-                        optionText={(record) => (
-                        <span><strong>{record.original}</strong>&nbsp;&#8212;&nbsp;{record.translation}</span>
-                    )}
-                        matchSuggestion={(filter, choice) => {
-                            return choice.original.toLowerCase().includes(filter.toLowerCase())
-                                || choice.translation.toLowerCase().includes(filter.toLowerCase())
-                        }}/>
-                </ReferenceArrayInput>
+                <ArrayInput source="words">
+                    <SimpleFormIterator>
+                        <TextInput source="original" label="Original" />
+                        <TextInput source="translation" label="Translation" />
+                    </SimpleFormIterator>
+                </ArrayInput>
             </SimpleForm>
         </Edit>
     )
