@@ -1,4 +1,6 @@
 const {Schema, model, Types} = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 const Course = require('./Course');
 
 const schema = new Schema({
@@ -7,7 +9,16 @@ const schema = new Schema({
         required: true,
     },
     image: {
-        type: String
+        type: String,
+        set(value){
+            if (typeof value === 'object' && value.src && value.title) {
+                if (!this._previousImage && this.image)
+                    this._previousImage = this.image;
+                this._newImageBase64 = value.src.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+                return uuidv4() + '.' + value.title.split('.').reverse()[0];
+            }
+            return this.image;
+        }
     },
     course: {
         type: Types.ObjectId,
@@ -51,7 +62,27 @@ const schema = new Schema({
 });
 
 schema.virtual('imageLink').get(function() {
-    return `/img/${this.image?'stories/this.image':'nophoto.svg'}`;
-})
+    if (this.image && fs.existsSync(path.resolve('./public/img/stories/', this.image)))
+        return `/img/stories/${this.image}`;
+    return '/img/nophoto.svg';
+});
+
+schema.methods.deleteImageFile = function() {
+    if (this.image && fs.existsSync(path.resolve('./public/img/stories/', this.image)))
+        fs.unlinkSync(path.resolve('./public/img/stories/', this.image));
+}
+
+schema.pre('remove', async function() {
+    this.deleteImageFile();
+});
+
+schema.pre('save', async function() {
+    if(this._newImageBase64) {
+        fs.writeFileSync(path.resolve('./public/img/stories/', this.image), this._newImageBase64, {encoding: 'base64'});
+
+        if (this._previousImage && fs.existsSync(path.resolve('./public/img/stories/', this._previousImage)))
+            fs.unlinkSync(path.resolve('./public/img/stories/', this._previousImage));
+    }
+});
 
 module.exports = model('Story', schema);
