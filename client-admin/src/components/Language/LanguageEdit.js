@@ -3,7 +3,7 @@ import {Edit, SimpleForm, TextInput, ImageInput, ImageField, FormDataConsumer} f
 function LanguageEdit(props) {
     return (
         <Edit {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
                 <TextInput source="name" />
                 <TextInput source="code" />

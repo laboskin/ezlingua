@@ -3,7 +3,7 @@ import {Create, SimpleForm, TextInput, DateTimeInput, SelectInput, ReferenceInpu
 function RefreshTokenCreate(props) {
     return (
         <Create {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <ReferenceInput source="user" reference="users">
                     <SelectInput optionText="email" type="email" />
                 </ReferenceInput>

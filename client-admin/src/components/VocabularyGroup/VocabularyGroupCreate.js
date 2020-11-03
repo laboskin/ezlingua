@@ -3,7 +3,7 @@ import {Create, SimpleForm, TextInput, SelectInput, ReferenceInput} from 'react-
 function VocabularyGroupCreate(props) {
     return (
         <Create {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput source="name" />
                 <ReferenceInput source="course" reference="courses">
                     <SelectInput optionText="name" />

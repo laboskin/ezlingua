@@ -1,12 +1,14 @@
-import {List, SimpleList} from 'react-admin';
+import {Datagrid, DeleteButton, EditButton, List, TextField} from 'react-admin';
 
 function LanguageList(props) {
     return (
         <List {...props}>
-            <SimpleList primaryText={record => record.name}
-                        secondaryText={record => record.code}
-                        linkType="edit"
-                        leftAvatar={record => record.code} />
+            <Datagrid>
+                <TextField source="name" />
+                <TextField source="code" />
+                <EditButton />
+                <DeleteButton />
+            </Datagrid>
         </List>
     )
 }

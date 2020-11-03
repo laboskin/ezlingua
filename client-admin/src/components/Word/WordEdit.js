@@ -3,7 +3,7 @@ import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput} from 'react-ad
 function WordEdit(props) {
     return (
         <Edit {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
                 <TextInput source="original" />
                 <TextInput source="translation" />

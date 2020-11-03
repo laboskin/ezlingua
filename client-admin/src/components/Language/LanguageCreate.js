@@ -3,7 +3,7 @@ import {Create, SimpleForm, TextInput, ImageInput, ImageField} from 'react-admin
 function LanguageCreate(props) {
     return (
         <Create {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput source="name" />
                 <TextInput source="code" />
                 <ImageInput source="image" accept="image/*">

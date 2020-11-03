@@ -3,7 +3,7 @@ import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput, ImageField, Im
 function StoryEdit(props) {
     return (
         <Edit {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
                 <TextInput source="name" />
                 <ReferenceInput source="course" reference="courses">

@@ -3,7 +3,7 @@ import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput} from 'react-ad
 function CourseEdit(props) {
     return (
         <Edit {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
                 <TextInput source="name" />
                 <ReferenceInput label="Source Language" source="sourceLanguage" reference="languages">

@@ -1,9 +1,25 @@
-import {Edit, SimpleForm, TextInput, PasswordInput, SelectInput, ReferenceInput, BooleanInput} from 'react-admin';
+import {
+    Edit,
+    SimpleForm,
+    TextInput,
+    PasswordInput,
+    SelectInput,
+    ReferenceInput,
+    BooleanInput,
+    SimpleFormIterator,
+    FormDataConsumer,
+    ArrayInput,
+    ReferenceArrayInput,
+    SelectArrayInput,
+    ChipField
+} from 'react-admin';
+import React from 'react';
 
 function UserEdit(props) {
+
     return (
         <Edit {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
                 <TextInput source="email" type="email" />
                 <PasswordInput source="password" />
@@ -12,25 +28,27 @@ function UserEdit(props) {
                     <SelectInput optionText="name" />
                 </ReferenceInput>
                 <BooleanInput source="isAdmin" />
-                {/*<ArrayInput source="words">
-                    <SimpleFormIterator>
-                        <ReferenceInput source="model" reference="words" label="Word">
-                            <SelectInput optionText={(record) => (
-                                <span>
-                                    <strong>{record.original}</strong>&nbsp;&#8212;&nbsp;{record.translation}
-                                </span>
-                            )} />
-                        </ReferenceInput>
-                        <ReferenceInput source="vocabulary" reference="vocabularies" label="Vocabulary">
-                            <SelectInput optionText="name" allowEmpty />
-                        </ReferenceInput>
+                <ReferenceArrayInput reference="stories" source="stories">
+                    <SelectArrayInput label="Stories">
+                        <ChipField source="name" />
+                    </SelectArrayInput>
+                </ReferenceArrayInput>
+                <ArrayInput source="words">
+                    <SimpleFormIterator disableAdd >
+                        <TextInput disabled source="original" label="Original" />
+                        <TextInput disabled source="translation" label="Translation" />
+                        <TextInput disabled source="course" label="Course" />
+                        <FormDataConsumer>
+                            {({ scopedFormData, getSource }) => scopedFormData.vocabulary &&
+                                <TextInput disabled source={getSource('vocabulary')} label="Vocabulary" initialValue={scopedFormData.vocabulary} resettable/>}
+                        </FormDataConsumer>
                         <BooleanInput source="trainingCards" label="Cards" />
                         <BooleanInput source="trainingConstructor" label="Constructor" />
                         <BooleanInput source="trainingListening" label="Listening" />
                         <BooleanInput source="trainingTranslationWord" label="TranslationWord" />
                         <BooleanInput source="trainingWordTranslation" label="WordTranslation" />
                     </SimpleFormIterator>
-                </ArrayInput>*/}
+                </ArrayInput>
             </SimpleForm>
         </Edit>
     )

@@ -3,7 +3,7 @@ import {Create, SimpleForm, TextInput, SelectInput, ReferenceInput} from 'react-
 function WordCreate(props) {
     return (
         <Create {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput source="original" />
                 <TextInput source="translation" />
                 <ReferenceInput source="course" reference="courses">

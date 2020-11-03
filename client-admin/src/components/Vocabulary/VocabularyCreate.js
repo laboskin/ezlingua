@@ -14,7 +14,7 @@ import {
 function VocabularyCreate(props) {
     return (
         <Create {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput source="name" />
                 <ReferenceInput source="course" reference="courses">
                     <SelectInput optionText="name" />

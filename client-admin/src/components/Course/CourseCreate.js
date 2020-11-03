@@ -3,7 +3,7 @@ import {Create, SimpleForm, TextInput, SelectInput, ReferenceInput} from 'react-
 function CourseCreate(props) {
     return (
         <Create {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput source="name" />
                 <ReferenceInput label="Source Language" source="sourceLanguage" reference="languages">
                     <SelectInput optionText="name" />

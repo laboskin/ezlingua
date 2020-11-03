@@ -3,7 +3,7 @@ import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput, DateTimeInput}
 function RefreshTokenEdit(props) {
     return (
         <Edit {...props}>
-            <SimpleForm>
+            <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
                 <ReferenceInput source="user" reference="users">
                     <SelectInput optionText="email" type="email" />
