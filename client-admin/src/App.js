@@ -1,4 +1,4 @@
-import {Admin, Resource} from 'react-admin';
+import {Admin, Resource, fetchUtils, AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR, AUTH_CHECK} from 'react-admin';
 import simpleRestProvider from 'ra-data-simple-rest';
 import CourseList from "./components/Course/CourseList";
 import CourseEdit from "./components/Course/CourseEdit";
@@ -26,6 +26,7 @@ import WordEdit from "./components/Word/WordEdit";
 import WordCreate from "./components/Word/WordCreate";
 
 function App() {
+
     const convertFileToBase64 = file =>
         new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -34,7 +35,15 @@ function App() {
             reader.readAsDataURL(file.rawFile);
         });
 
-    const dataProvider = simpleRestProvider('/api/admin');
+    const httpClient = (url, options = {}) => {
+        if (!options.headers) {
+            options.headers = new Headers({ Accept: 'application/json' });
+        }
+        const token = localStorage.getItem('adminToken');
+        options.headers.set('Authorization', `Bearer ${token}`);
+        return fetchUtils.fetchJson(url, options);
+    };
+    const dataProvider = simpleRestProvider('/api/admin', httpClient);
     const myDataProvider = {
         ...dataProvider,
         update: (resource, params) => {
@@ -77,26 +86,45 @@ function App() {
         }
     };
 
-
-
-    // const httpClient = (url, options = {}) => {
-//     if (!options.headers) {
-//         options.headers = new Headers({ Accept: 'application/json' });
-//     }
-//     options.headers.set('Authorization', `Bearer ${token}`);
-//     return fetchUtils.fetchJson(url, options);
-// };
-    // const authProvider = {
-    //     login: () => Promise.resolve(),
-    //     checkAuth: () => Promise.resolve(),
-    //     checkError: () => Promise.resolve(),
-    //     getPermissions: () => Promise.resolve(),
-    //     getIdentity: () => Promise.resolve(),
-    //     logout: () => Promise.resolve(),
-    // }
+    const authProvider = async (type, params) => {
+        if (type === AUTH_LOGIN) {
+            try {
+                console.log(params);
+                const {username: email, password} = params;
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    body: JSON.stringify({email, password}),
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const data = await response.json();
+                if (data && response.ok) {
+                    localStorage.setItem('adminToken', data.accessToken);
+                    return Promise.resolve();
+                }
+            } catch(e) {
+                return Promise.reject(e.message);
+            }
+        }
+        if (type === AUTH_LOGOUT) {
+            localStorage.removeItem('adminToken');
+            return Promise.resolve();
+        }
+        if (type === AUTH_ERROR) {
+            const status  = params.status;
+            if (status === 401 || status === 403) {
+                localStorage.removeItem('adminToken');
+                return Promise.reject();
+            }
+            return Promise.resolve();
+        }
+        if (type === AUTH_CHECK) {
+            return localStorage.getItem('adminToken') ? Promise.resolve() : Promise.reject();
+        }
+        return Promise.resolve();
+    }
 
     return (
-        <Admin dataProvider={myDataProvider}>
+        <Admin dataProvider={myDataProvider} authProvider={authProvider}>
             <Resource name="courses" list={CourseList} edit={CourseEdit} create={CourseCreate}/>
             <Resource name="languages" list={LanguageList} edit={LanguageEdit} create={LanguageCreate} />
             <Resource name="refresh-tokens" list={RefreshTokenList} edit={RefreshTokenEdit} create={RefreshTokenCreate} />

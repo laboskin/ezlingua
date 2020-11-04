@@ -3,6 +3,7 @@ module.exports = {
     mongoUri :"MONGODB_CONNECTION_URI",
     jwtConfig: {
         secret: "JWT_SECRET",
+        adminSecret: "JWT_ADMIN_SECRET",
         accessTokenAge: 60*60,
         refreshTokenAge: 30*24*60*60*1000
     },

@@ -6,6 +6,7 @@ const responseRange = require('express-response-range');
 const bcrypt = require("bcrypt");
 const { body, param, validationResult } = require('express-validator');
 const jwt = require('express-jwt');
+const jwtEncode = require('jsonwebtoken');
 const config = require('config');
 const jwtConfig = config.get('jwtConfig');
 const azureConfig = config.get('azure');
@@ -18,11 +19,6 @@ const Vocabulary = require('../models/Vocabulary');
 const VocabularyGroup = require('../models/VocabularyGroup');
 const Word = require('../models/Word');
 
-//router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }));
-router.use(responseRange({
-    alwaysSendRange: true
-}));
-
 const checkIfCourseExist = async courseId => (await Course.findById(courseId))?Promise.resolve():Promise.reject('Course not found');
 const checkIfLanguageExist = async languageId => (await Language.findById(languageId))?Promise.resolve():Promise.reject('Language not found');
 const checkIfUserExist = async userId => (await User.findById(userId))?Promise.resolve():Promise.reject('User not found');
@@ -34,6 +30,42 @@ const sendResponseIfValidationError = (req, res, next) => {
     next();
 }
 
+// Middleware
+router.use(responseRange({
+    alwaysSendRange: true
+}));
+router.use(jwt({ secret: jwtConfig.adminSecret, algorithms: ['HS256'] }).unless({path: ['/api/admin/login']}));
+
+// Login
+router.post('/login', [
+        body('email').isString().trim().isEmail().normalizeEmail(),
+        body('password').isString().notEmpty(),
+    ],
+    async (req, res) => {
+        try {
+            const {email, password} = req.body;
+
+            const user = await User.findOne({email});
+
+            if (!(user && (await bcrypt.compare(password, user.password)) && user.isAdmin))
+                return res.status(400).json({message: 'Wrong email or password'});
+
+            const accessToken = jwtEncode.sign({
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    isAdmin: user.isAdmin
+                },
+                jwtConfig.adminSecret,
+                {expiresIn: jwtConfig.accessTokenAge});
+
+            res.status(200)
+                .json({accessToken, accessTokenAge: jwtConfig.accessTokenAge});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
 
 // Courses
 router.get('/courses',
@@ -829,7 +861,7 @@ router.delete('/words/:id', [
         }
     });
 
-
+// Mapping Mongoose document to REST API response object
 const mapCourseToResponse = course => ({
     id: course._id,
     name: course.name,
@@ -898,6 +930,7 @@ const mapWordToResponse = word => ({
     course: word.course
 });
 
+// Helpers
 const getWordsIdsFromWordsObjectArray = async (wordsArray, course) => {
     const result = [];
     for (const {original, translation} of wordsArray) {
@@ -914,7 +947,6 @@ const getTextFromStorySentences = sentences => sentences.reduce((text, sentence)
         return text + '\n';
     return text + sentence.parts.reduce((sentenceText, part) => sentenceText + part.text + (part.spaceAfter?' ':''), '')
 }, '');
-
 const splitTextIntoSentences = async text => {
     const paragraphs = text.split('\n').filter(paragraph => paragraph.trim().length !== 0);
     const data = paragraphs.map(paragraph => ({Text: paragraph}));
