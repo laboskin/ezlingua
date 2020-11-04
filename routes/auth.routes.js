@@ -31,7 +31,7 @@ router.post('/register', async (req, res) => {
             httpOnly: true
         })
             .status(200)
-            .json({accessToken, refreshToken});
+            .json({accessToken, refreshToken, accessTokenAge: jwtConfig.accessTokenAge});
     } catch (e) {
         console.log(e)
         res.status(500).json({message: 'Server error'});
@@ -60,7 +60,7 @@ router.post('/login', async (req, res) => {
             httpOnly: true
         })
             .status(200)
-            .json({accessToken, refreshToken});
+            .json({accessToken, refreshToken, accessTokenAge: jwtConfig.accessTokenAge});
     } catch (e) {
         res.status(500).json({message: 'Server error'});
     }
@@ -93,7 +93,7 @@ router.post('/refresh', async (req, res) => {
             httpOnly: true
         })
             .status(200)
-            .json({accessToken: newAccessToken, refreshToken: newRefreshToken});
+            .json({accessToken: newAccessToken, refreshToken: newRefreshToken, accessTokenAge: jwtConfig.accessTokenAge});
     } catch (e) {
         console.log(e)
         res.status(500).json({message: 'Server error'});

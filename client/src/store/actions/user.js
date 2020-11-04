@@ -47,6 +47,7 @@ export function refresh() {
                     isAdmin,
                     token
                 });
+                setTimeout(() => dispatch(refresh()), response.accessTokenAge - 60);
             }
         } catch(e) {
 
