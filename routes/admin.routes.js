@@ -3,6 +3,8 @@ const router = Router();
 const axios = require("axios");
 const { v4: uuidv4 } = require('uuid');
 const responseRange = require('express-response-range');
+const bcrypt = require("bcrypt");
+const { body, param, validationResult } = require('express-validator');
 const jwt = require('express-jwt');
 const config = require('config');
 const jwtConfig = config.get('jwtConfig');
@@ -15,12 +17,23 @@ const User = require('../models/User');
 const Vocabulary = require('../models/Vocabulary');
 const VocabularyGroup = require('../models/VocabularyGroup');
 const Word = require('../models/Word');
-const bcrypt = require("bcrypt");
 
 //router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }));
 router.use(responseRange({
     alwaysSendRange: true
 }));
+
+const checkIfCourseExist = async courseId => (await Course.findById(courseId))?Promise.resolve():Promise.reject('Course not found');
+const checkIfLanguageExist = async languageId => (await Language.findById(languageId))?Promise.resolve():Promise.reject('Language not found');
+const checkIfUserExist = async userId => (await User.findById(userId))?Promise.resolve():Promise.reject('User not found');
+const checkIfVocabularyGroupExist = async vocabularyGroupId => (await VocabularyGroup.findById(vocabularyGroupId))?Promise.resolve():Promise.reject('User not found');
+const sendResponseIfValidationError = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+        return res.status(400).json({ errors: errors.array() });
+    next();
+}
+
 
 // Courses
 router.get('/courses',
@@ -35,7 +48,10 @@ router.get('/courses',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.get('/courses/:id',
+router.get('/courses/:id', [
+    param('id').isMongoId(),
+    sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const course = await Course.findById(req.params.id);
@@ -45,7 +61,12 @@ router.get('/courses/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.post('/courses',
+router.post('/courses', [
+        body('name').isString().trim().notEmpty(),
+        body('goalLanguage').isMongoId().custom(checkIfLanguageExist),
+        body('sourceLanguage').isMongoId().custom(checkIfLanguageExist),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const course = new Course({
@@ -61,7 +82,13 @@ router.post('/courses',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.put('/courses/:id',
+router.put('/courses/:id', [
+        param('id').isMongoId(),
+        body('name').isString().trim().notEmpty(),
+        body('goalLanguage').isMongoId().custom(checkIfLanguageExist),
+        body('sourceLanguage').isMongoId().custom(checkIfLanguageExist),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const course = await Course.findById(req.params.id);
@@ -77,10 +104,16 @@ router.put('/courses/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.delete('/courses/:id',
+router.delete('/courses/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
-            await (await Course.findById(req.params.id)).remove();
+            const course = await Course.findById(req.params.id);
+            if (!course)
+                return res.status(404).json({message: 'Course not found'});
+            await course.remove();
             res.json({});
         } catch (e) {
             console.log(e)
@@ -101,7 +134,10 @@ router.get('/languages',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.get('/languages/:id',
+router.get('/languages/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const language = await Language.findById(req.params.id);
@@ -111,7 +147,14 @@ router.get('/languages/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.post('/languages',
+router.post('/languages', [
+        body('name').isString().trim().notEmpty(),
+        body('code').trim().isISO31661Alpha2(),
+        body('image').exists(),
+        body('image.src').isBase64(),
+        body('image.ext').isString().trim().notEmpty(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const language = new Language({
@@ -127,7 +170,15 @@ router.post('/languages',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.put('/languages/:id',
+router.put('/languages/:id', [
+        param('id').isMongoId(),
+        body('name').isString().trim().notEmpty(),
+        body('code').trim().isISO31661Alpha2(),
+        body('image').optional(),
+        body('image.src').if(body('image').exists()).isBase64(),
+        body('image.ext').if(body('image').exists()).isString().trim().notEmpty(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const language = await Language.findById(req.params.id);
@@ -143,10 +194,16 @@ router.put('/languages/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.delete('/languages/:id',
+router.delete('/languages/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
-            await (await Language.findById(req.params.id)).remove();
+            const language = await Language.findById(req.params.id);
+            if (!language)
+                return res.status(404).json({message: 'Language not found'});
+            await language.remove();
             res.json({});
         } catch (e) {
             console.log(e)
@@ -167,7 +224,10 @@ router.get('/refresh-tokens',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.get('/refresh-tokens/:id',
+router.get('/refresh-tokens/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const refreshToken = await RefreshToken.findById(req.params.id);
@@ -177,7 +237,12 @@ router.get('/refresh-tokens/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.post('/refresh-tokens',
+router.post('/refresh-tokens', [
+        body('refreshToken').isString().trim().notEmpty(),
+        body('user').isMongoId().custom(checkIfUserExist),
+        body('issuedAt').isRFC3339().isBefore(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const refreshToken = new RefreshToken({
@@ -193,7 +258,13 @@ router.post('/refresh-tokens',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.put('/refresh-tokens/:id',
+router.put('/refresh-tokens/:id', [
+        param('id').isMongoId(),
+        body('refreshToken').isString().trim().notEmpty(),
+        body('user').isMongoId().custom(checkIfUserExist),
+        body('issuedAt').isRFC3339().isBefore(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const refreshToken = await RefreshToken.findById(req.params.id);
@@ -209,10 +280,16 @@ router.put('/refresh-tokens/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.delete('/refresh-tokens/:id',
+router.delete('/refresh-tokens/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
-            await (await RefreshToken.findById(req.params.id)).remove();
+            const refreshToken = await RefreshToken.findById(req.params.id);
+            if (!refreshToken)
+                return res.status(404).json({message: 'RefreshToken not found'});
+            await refreshToken.remove();
             res.json({});
         } catch (e) {
             console.log(e)
@@ -233,7 +310,10 @@ router.get('/stories',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.get('/stories/:id',
+router.get('/stories/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const story = await Story.findById(req.params.id);
@@ -243,7 +323,15 @@ router.get('/stories/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.post('/stories',
+router.post('/stories', [
+        body('name').isString().trim().notEmpty(),
+        body('image').optional(),
+        body('image.src').if(body('image').exists()).isBase64(),
+        body('image.ext').if(body('image').exists()).isString().notEmpty(),
+        body('course').isMongoId().custom(checkIfCourseExist),
+        body('text').isString().trim().notEmpty(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
     try {
         const story = new Story({
@@ -261,7 +349,16 @@ router.post('/stories',
         res.status(500).json({message: 'Server error'});
     }
 });
-router.put('/stories/:id',
+router.put('/stories/:id', [
+        param('id').isMongoId(),
+        body('name').isString().trim().notEmpty(),
+        body('image').optional(),
+        body('image.src').if(body('image').exists()).isBase64(),
+        body('image.ext').if(body('image').exists()).isString().notEmpty(),
+        body('course').isMongoId().custom(checkIfCourseExist),
+        body('text').isString().trim().notEmpty(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const story = await Story.findById(req.params.id);
@@ -278,10 +375,16 @@ router.put('/stories/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.delete('/stories/:id',
+router.delete('/stories/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
-            await (await Story.findById(req.params.id)).remove();
+            const story = await Story.findById(req.params.id);
+            if (!story)
+                return res.status(404).json({message: 'Story not found'});
+            await story.remove();
             res.json({});
         } catch (e) {
             console.log(e)
@@ -311,7 +414,10 @@ router.get('/users',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.get('/users/:id',
+router.get('/users/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const user = await User.findById(req.params.id)
@@ -330,7 +436,13 @@ router.get('/users/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.post('/users',
+router.post('/users', [
+        body('name').isString().trim().notEmpty(),
+        body('email').isString().trim().isEmail().normalizeEmail(),
+        body('password').isString().notEmpty(),
+        body('course').isMongoId().custom(checkIfCourseExist),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const user = new User({
@@ -359,7 +471,23 @@ router.post('/users',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.put('/users/:id',
+router.put('/users/:id', [
+        param('id').isMongoId(),
+        body('name').isString().trim().notEmpty(),
+        body('email').isString().trim().isEmail().normalizeEmail(),
+        body('password').isString().optional(),
+        body('course').isMongoId().custom(checkIfCourseExist),
+        body('stories').isArray().optional(),
+        body('stories.*').if(body('stories').exists()).isMongoId(),
+        body('words').isArray().optional(),
+        body('words.*.id').if(body('words').exists()).isMongoId(),
+        body('words.*.trainingCards').if(body('words').exists()).isBoolean(),
+        body('words.*.trainingConstructor').if(body('words').exists()).isBoolean(),
+        body('words.*.trainingListening').if(body('words').exists()).isBoolean(),
+        body('words.*.trainingTranslationWord').if(body('words').exists()).isBoolean(),
+        body('words.*.trainingWordTranslation').if(body('words').exists()).isBoolean(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const user = await User.findById(req.params.id);
@@ -404,10 +532,16 @@ router.put('/users/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.delete('/users/:id',
+router.delete('/users/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
-            await (await User.findById(req.params.id)).remove();
+            const user = await User.findById(req.params.id);
+            if (!user)
+                return res.status(404).json({message: 'User not found'});
+            await user.remove();
             res.json({});
         } catch (e) {
             console.log(e)
@@ -428,7 +562,10 @@ router.get('/vocabularies',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.get('/vocabularies/:id',
+router.get('/vocabularies/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const vocabulary = await Vocabulary.findById(req.params.id).populate('words', 'original translation');
@@ -439,7 +576,18 @@ router.get('/vocabularies/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.post('/vocabularies',
+router.post('/vocabularies', [
+        body('name').isString().trim().notEmpty(),
+        body('image').optional(),
+        body('image.src').if(body('image').exists()).isBase64(),
+        body('image.ext').if(body('image').exists()).isString().notEmpty(),
+        body('course').isMongoId().custom(checkIfCourseExist),
+        body('words').isArray().optional(),
+        body('words.*.original').if(body('words').exists()).isString().trim().notEmpty(),
+        body('words.*.translation').if(body('words').exists()).isString().trim().notEmpty(),
+        body('vocabularyGroup').isMongoId().custom(checkIfVocabularyGroupExist),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const vocabulary = new Vocabulary({
@@ -459,7 +607,19 @@ router.post('/vocabularies',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.put('/vocabularies/:id',
+router.put('/vocabularies/:id', [
+        param('id').isMongoId(),
+        body('name').isString().trim().notEmpty(),
+        body('image').optional(),
+        body('image.src').if(body('image').exists()).isBase64(),
+        body('image.ext').if(body('image').exists()).isString().notEmpty(),
+        body('course').isMongoId().custom(checkIfCourseExist),
+        body('words').isArray().optional(),
+        body('words.*.original').if(body('words').exists()).isString().trim().notEmpty(),
+        body('words.*.translation').if(body('words').exists()).isString().trim().notEmpty(),
+        body('vocabularyGroup').isMongoId().custom(checkIfVocabularyGroupExist),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const vocabulary = await Vocabulary.findById(req.params.id);
@@ -478,11 +638,16 @@ router.put('/vocabularies/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.delete('/vocabularies/:id',
+router.delete('/vocabularies/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
-            await (await Vocabulary.findById(req.params.id)).remove();
-
+            const vocabulary = await Vocabulary.findById(req.params.id);
+            if (!vocabulary)
+                return res.status(404).json({message: 'Vocabulary not found'});
+            await vocabulary.remove();
             res.json({});
         } catch (e) {
             console.log(e)
@@ -503,7 +668,10 @@ router.get('/vocabulary-groups',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.get('/vocabulary-groups/:id',
+router.get('/vocabulary-groups/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const vocabularyGroup = await VocabularyGroup.findById(req.params.id);
@@ -513,7 +681,11 @@ router.get('/vocabulary-groups/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.post('/vocabulary-groups',
+router.post('/vocabulary-groups', [
+        body('name').isString().trim().notEmpty(),
+        body('course').isMongoId().custom(checkIfCourseExist),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const vocabularyGroup = new VocabularyGroup({
@@ -528,7 +700,12 @@ router.post('/vocabulary-groups',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.put('/vocabulary-groups/:id',
+router.put('/vocabulary-groups/:id', [
+        param('id').isMongoId(),
+        body('name').isString().trim().notEmpty(),
+        body('course').isMongoId().custom(checkIfCourseExist),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const vocabularyGroup = await VocabularyGroup.findById(req.params.id);
@@ -543,10 +720,16 @@ router.put('/vocabulary-groups/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.delete('/vocabulary-groups/:id',
+router.delete('/vocabulary-groups/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
-            await (await VocabularyGroup.findById(req.params.id)).remove();
+            const vocabularyGroup = await VocabularyGroup.findById(req.params.id);
+            if (!vocabularyGroup)
+                return res.status(404).json({message: 'VocabularyGroup not found'});
+            await vocabularyGroup.remove();
             res.json({});
         } catch (e) {
             console.log(e)
@@ -567,7 +750,10 @@ router.get('/words',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.get('/words/:id',
+router.get('/words/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const word = await Word.findById(req.params.id);
@@ -577,7 +763,12 @@ router.get('/words/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.post('/words',
+router.post('/words', [
+        body('original').isString().trim().notEmpty(),
+        body('translation').isString().trim().notEmpty(),
+        body('course').isMongoId().custom(checkIfCourseExist),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             if (await Word.findOne({original: req.body.original, translation: req.body.translation, course: req.body.course}))
@@ -595,7 +786,13 @@ router.post('/words',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.put('/words/:id',
+router.put('/words/:id', [
+        param('id').isMongoId(),
+        body('original').isString().trim().notEmpty(),
+        body('translation').isString().trim().notEmpty(),
+        body('course').isMongoId().custom(checkIfCourseExist),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
             const candidate = await Word.findOne({original: req.body.original, translation: req.body.translation, course: req.body.course});
@@ -615,18 +812,22 @@ router.put('/words/:id',
             res.status(500).json({message: 'Server error'});
         }
     });
-router.delete('/words/:id',
+router.delete('/words/:id', [
+        param('id').isMongoId(),
+        sendResponseIfValidationError
+    ],
     async (req, res) => {
         try {
-            await (await Word.findById(req.params.id)).remove();
+            const word = await Word.findById(req.params.id);
+            if (!word)
+                return res.status(404).json({message: 'Word not found'});
+            await word.remove();
             res.json({});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
         }
     });
-
-
 
 
 const mapCourseToResponse = course => ({
