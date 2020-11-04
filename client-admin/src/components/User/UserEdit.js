@@ -11,7 +11,7 @@ import {
     ArrayInput,
     ReferenceArrayInput,
     SelectArrayInput,
-    ChipField
+    ChipField, required, email
 } from 'react-admin';
 import React from 'react';
 
@@ -21,11 +21,11 @@ function UserEdit(props) {
         <Edit {...props}>
             <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
-                <TextInput source="email" type="email" />
-                <PasswordInput source="password" />
-                <TextInput source="name" />
+                <TextInput source="email" type="email" validate={[required(), email()]} />
+                <PasswordInput source="password" validate={required()} />
+                <TextInput source="name" validate={required()} />
                 <ReferenceInput source="course" reference="courses">
-                    <SelectInput optionText="name" />
+                    <SelectInput optionText="name" validate={required()} />
                 </ReferenceInput>
                 <BooleanInput source="isAdmin" />
                 <ReferenceArrayInput reference="stories" source="stories">

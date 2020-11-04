@@ -1,12 +1,22 @@
-import {Edit, SimpleForm, TextInput, ImageInput, ImageField, FormDataConsumer} from 'react-admin';
+import {
+    Edit,
+    SimpleForm,
+    TextInput,
+    ImageInput,
+    ImageField,
+    FormDataConsumer,
+    required,
+    minLength,
+    maxLength
+} from 'react-admin';
 
 function LanguageEdit(props) {
     return (
         <Edit {...props}>
             <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
-                <TextInput source="name" />
-                <TextInput source="code" />
+                <TextInput source="name" validate={required()} />
+                <TextInput source="code" validate={[required(), minLength(2), maxLength(2)]} />
                 <ImageInput source="image" accept="image/*">
                     <ImageField source="src" title="title" />
                 </ImageInput>
@@ -20,7 +30,6 @@ function LanguageEdit(props) {
                             )
                     }}
                 </FormDataConsumer>
-
             </SimpleForm>
         </Edit>
     )
