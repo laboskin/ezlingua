@@ -41,8 +41,8 @@ function App() {
             if (params.data.image && (params.data.image.rawFile instanceof File)) {
                 return convertFileToBase64(params.data.image)
                     .then(base64Picture => ({
-                        src: base64Picture,
-                        title: params.data.image.title,
+                        src: base64Picture.replace(/^data:([A-Za-z-+/]+);base64,/, ''),
+                        ext: params.data.image.title.split('.').reverse()[0].toLowerCase(),
                     }))
                     .then(transformedImage =>
                         dataProvider.update(resource, {
@@ -60,8 +60,8 @@ function App() {
             if (params.data.image && (params.data.image.rawFile instanceof File)) {
                 return convertFileToBase64(params.data.image)
                     .then(base64Picture => ({
-                        src: base64Picture,
-                        title: params.data.image.title,
+                        src: base64Picture.replace(/^data:([A-Za-z-+/]+);base64,/, ''),
+                        ext: params.data.image.title.split('.').reverse()[0].toLowerCase(),
                     }))
                     .then(transformedImage =>
                         dataProvider.create(resource, {

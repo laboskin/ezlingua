@@ -1,6 +1,7 @@
 const {Schema, model, Types} = require('mongoose');
 const fs = require('fs');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 const Course = require('./Course');
 
 const schema = new Schema({
@@ -11,11 +12,11 @@ const schema = new Schema({
     image: {
         type: String,
         set(value){
-            if (typeof value === 'object' && value.src && value.title) {
+            if (typeof value === 'object' && value.src && value.ext) {
                 if (!this._previousImage && this.image)
                     this._previousImage = this.image;
-                this._newImageBase64 = value.src.replace(/^data:([A-Za-z-+/]+);base64,/, '');
-                return uuidv4() + '.' + value.title.split('.').reverse()[0];
+                this._newImageBase64 = value.src;
+                return uuidv4() + '.' + value.ext;
             }
             return this.image;
         }
