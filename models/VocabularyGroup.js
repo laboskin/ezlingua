@@ -13,4 +13,10 @@ const schema = new Schema({
     },
 });
 
+schema.pre('remove', async function() {
+    const vocabularies = await require('./Vocabulary').find({vocabularyGroup: this.id});
+    for (const vocabulary of vocabularies)
+        await vocabulary.remove();
+});
+
 module.exports = model('VocabularyGroup', schema);

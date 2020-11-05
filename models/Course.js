@@ -18,4 +18,25 @@ const schema = new Schema({
     },
 });
 
+schema.pre('remove', async function() {
+    this.deleteImageFile();
+
+    const words = await require('./Word').find({course: this.id});
+    for (const word of words)
+        await word.remove();
+
+    const vocabularies = await require('./Vocabulary').find({course: this.id});
+    for (const vocabulary of vocabularies)
+        await vocabulary.remove();
+
+    const users = await require('./User').find({course: this.id}).populate('words.model', 'course');
+    for (const user of users) {
+        user.course = user.words[0].model.course;
+        await user.save();
+    }
+
+
+});
+
+
 module.exports = model('Course', schema);

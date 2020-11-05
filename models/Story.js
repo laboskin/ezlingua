@@ -75,6 +75,14 @@ schema.methods.deleteImageFile = function() {
 
 schema.pre('remove', async function() {
     this.deleteImageFile();
+
+    const users = await require('./User').find({}).select('stories');
+    for (const user of users) {
+        if (user.stories.find(story => story.toString() === this.id.toString())) {
+            user.stories = user.stories.filter(story => story.toString() !== this.id.toString());
+            await user.save();
+        }
+    }
 });
 
 schema.pre('save', async function() {

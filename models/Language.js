@@ -40,6 +40,12 @@ schema.methods.deleteImageFile = function() {
 
 schema.pre('remove', async function() {
     this.deleteImageFile();
+
+    const courses = await require('./Course').find();
+    for (const course of courses) {
+        if (course.goalLanguage.toString() === this.id.toString() || course.sourceLanguage.toString() === this.id.toString())
+            await course.remove();
+    }
 });
 
 schema.pre('save', async function() {
