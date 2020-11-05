@@ -10,6 +10,8 @@ const schema = new Schema({
     name: {
         type: String,
         required: true,
+        minLength: 2,
+        maxLength: 50
     },
     course: {
         type: Types.ObjectId,

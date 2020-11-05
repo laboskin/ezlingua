@@ -4,7 +4,9 @@ const Course = require('./Course');
 const schema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        minLength: 2,
+        maxLength: 50
     },
     course: {
         type: Types.ObjectId,

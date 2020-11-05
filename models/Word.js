@@ -5,10 +5,14 @@ const schema = new Schema({
     original: {
         type: String,
         required: true,
+        minLength: 2,
+        maxLength: 20
     },
     translation: {
         type: String,
         required: true,
+        minLength: 2,
+        maxLength: 20
     },
     course: {
         type: Types.ObjectId,

@@ -7,7 +7,8 @@ const Story = require('./Story');
 const wordsSchema = new Schema({
     model:{
         type: Types.ObjectId,
-        ref: Word.modelName
+        ref: Word.modelName,
+        required: true
     },
     vocabulary: {
         type: Types.ObjectId,
@@ -45,15 +46,22 @@ const schema = new Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        minLength: 7,
+        maxLength: 50,
+        match: /^([A-Za-z0-9.$\\/[\]\-_@])/
     },
     name: {
         type: String,
-        required: true
+        required: true,
+        minLength: 2,
+        maxLength: 50
     },
     course: {
         type: Types.ObjectId,
