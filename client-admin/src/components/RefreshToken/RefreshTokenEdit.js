@@ -8,7 +8,6 @@ function RefreshTokenEdit(props) {
                 <ReferenceInput source="user" reference="users" >
                     <SelectInput optionText="email" type="email"  validate={required()} />
                 </ReferenceInput>
-                <TextInput source="refreshToken"  validate={required()} />
                 <DateTimeInput source="issuedAt"  validate={required()} />
             </SimpleForm>
         </Edit>
