@@ -7,7 +7,7 @@ import {
     ImageField,
     ImageInput,
     FormDataConsumer,
-    required
+    required, minLength, maxLength
 } from 'react-admin';
 
 function StoryEdit(props) {
@@ -15,7 +15,7 @@ function StoryEdit(props) {
         <Edit {...props}>
             <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
-                <TextInput source="name" validate={required()} />
+                <TextInput source="name" validate={[required(), minLength(2), maxLength(50)]} />
                 <ReferenceInput source="course" reference="courses">
                     <SelectInput optionText="name" validate={required()} />
                 </ReferenceInput>

@@ -7,7 +7,7 @@ import {
     PasswordInput,
     BooleanInput,
     required,
-    email
+    email, minLength, maxLength, regex
 } from 'react-admin';
 
 function UserCreate(props) {
@@ -15,8 +15,8 @@ function UserCreate(props) {
         <Create {...props}>
             <SimpleForm onSubmit={() => {}}>
                 <TextInput source="email" type="email" validate={[required(), email()]} />
-                <PasswordInput source="password" validate={required()} />
-                <TextInput source="name" validate={required()} />
+                <PasswordInput source="password" validate={[required(), minLength(8), maxLength(50), regex(/^([A-Za-z0-9.$\\/[\]\-_@])/)]} />
+                <TextInput source="name" validate={[required(), minLength(2), maxLength(50)]} />
                 <ReferenceInput source="course" reference="courses">
                     <SelectInput optionText="name" validate={required()} />
                 </ReferenceInput>

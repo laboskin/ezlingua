@@ -1,11 +1,11 @@
-import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput, required} from 'react-admin';
+import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput, required, minLength, maxLength} from 'react-admin';
 
 function CourseEdit(props) {
     return (
         <Edit {...props}>
             <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
-                <TextInput source="name" validate={required()} />
+                <TextInput source="name" validate={[required(), minLength(2), maxLength(50)]} />
                 <ReferenceInput label="Source Language" source="sourceLanguage" reference="languages">
                     <SelectInput optionText="name" validate={required()}/>
                 </ReferenceInput>

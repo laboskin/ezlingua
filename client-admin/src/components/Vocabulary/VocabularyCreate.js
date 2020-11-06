@@ -8,7 +8,7 @@ import {
     ImageInput,
     FormDataConsumer,
     SimpleFormIterator,
-    ArrayInput, required
+    ArrayInput, required, minLength, maxLength
 } from 'react-admin';
 import React from "react";
 
@@ -16,7 +16,7 @@ function VocabularyCreate(props) {
     return (
         <Create {...props}>
             <SimpleForm onSubmit={() => {}}>
-                <TextInput source="name" validate={required()} />
+                <TextInput source="name" validate={[required(), minLength(2), maxLength(50)]} />
                 <ReferenceInput source="course" reference="courses">
                     <SelectInput optionText="name" validate={required()} />
                 </ReferenceInput>
@@ -38,8 +38,8 @@ function VocabularyCreate(props) {
                 </FormDataConsumer>
                 <ArrayInput source="words">
                     <SimpleFormIterator>
-                        <TextInput source="original" label="Original" validate={required()}  />
-                        <TextInput source="translation" label="Translation" validate={required()}  />
+                        <TextInput source="original" label="Original" validate={[required(), minLength(1), maxLength(50)]}  />
+                        <TextInput source="translation" label="Translation" validate={[required(), minLength(1), maxLength(50)]}  />
                     </SimpleFormIterator>
                 </ArrayInput>
             </SimpleForm>

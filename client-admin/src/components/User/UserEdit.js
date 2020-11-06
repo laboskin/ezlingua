@@ -11,7 +11,7 @@ import {
     ArrayInput,
     ReferenceArrayInput,
     SelectArrayInput,
-    ChipField, required, email
+    ChipField, required, email, minLength, maxLength, regex
 } from 'react-admin';
 import React from 'react';
 
@@ -22,8 +22,8 @@ function UserEdit(props) {
             <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
                 <TextInput source="email" type="email" validate={[required(), email()]} />
-                <PasswordInput source="password" validate={required()} />
-                <TextInput source="name" validate={required()} />
+                <PasswordInput source="password" validate={[minLength(8), maxLength(50), regex(/^([A-Za-z0-9.$\\/[\]\-_@])/)]} />
+                <TextInput source="name" validate={[required(), minLength(2), maxLength(50)]} />
                 <ReferenceInput source="course" reference="courses">
                     <SelectInput optionText="name" validate={required()} />
                 </ReferenceInput>

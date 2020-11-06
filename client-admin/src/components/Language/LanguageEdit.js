@@ -15,7 +15,7 @@ function LanguageEdit(props) {
         <Edit {...props}>
             <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
-                <TextInput source="name" validate={required()} />
+                <TextInput source="name" validate={[required(), minLength(2), maxLength(20)]} />
                 <TextInput source="code" validate={[required(), minLength(2), maxLength(2)]} />
                 <ImageInput source="image" accept="image/*">
                     <ImageField source="src" title="title" />

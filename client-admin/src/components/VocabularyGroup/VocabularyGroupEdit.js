@@ -1,4 +1,4 @@
-import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput, required} from 'react-admin';
+import {Edit, SimpleForm, TextInput, SelectInput, ReferenceInput, required, minLength, maxLength} from 'react-admin';
 import React from "react";
 
 function VocabularyGroupEdit(props) {
@@ -6,7 +6,7 @@ function VocabularyGroupEdit(props) {
         <Edit {...props}>
             <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
-                <TextInput source="name" validate={required()}  />
+                <TextInput source="name" validate={[required(), minLength(2), maxLength(50)]}  />
                 <ReferenceInput source="course" reference="courses">
                     <SelectInput optionText="name" validate={required()}  />
                 </ReferenceInput>

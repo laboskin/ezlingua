@@ -8,7 +8,7 @@ import {
     ImageInput,
     FormDataConsumer,
     ArrayInput,
-    SimpleFormIterator, required
+    SimpleFormIterator, required, minLength, maxLength
 } from 'react-admin';
 import React from "react";
 
@@ -17,7 +17,7 @@ function VocabularyEdit(props) {
         <Edit {...props}>
             <SimpleForm onSubmit={() => {}}>
                 <TextInput disabled source="id" />
-                <TextInput source="name" validate={required()}  />
+                <TextInput source="name" validate={[required(), minLength(2), maxLength(50)]}  />
                 <ReferenceInput source="course" reference="courses">
                     <SelectInput optionText="name" validate={required()}  />
                 </ReferenceInput>
@@ -39,8 +39,8 @@ function VocabularyEdit(props) {
                 </FormDataConsumer>
                 <ArrayInput source="words">
                     <SimpleFormIterator>
-                        <TextInput source="original" label="Original" validate={required()}  />
-                        <TextInput source="translation" label="Translation" validate={required()}  />
+                        <TextInput source="original" label="Original" validate={[required(), minLength(1), maxLength(50)]}  />
+                        <TextInput source="translation" label="Translation" validate={[required(), minLength(1), maxLength(50)]}  />
                     </SimpleFormIterator>
                 </ArrayInput>
             </SimpleForm>

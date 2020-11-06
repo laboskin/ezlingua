@@ -6,14 +6,14 @@ import {
     ReferenceInput,
     ImageField,
     ImageInput,
-    required
+    required, minLength, maxLength
 } from 'react-admin';
 
 function StoryCreate(props) {
     return (
         <Create {...props}>
             <SimpleForm onSubmit={() => {}}>
-                <TextInput source="name" validate={required()} />
+                <TextInput source="name" validate={[required(), minLength(2), maxLength(50)]} />
                 <ReferenceInput source="course" reference="courses">
                     <SelectInput optionText="name" validate={required()} />
                 </ReferenceInput>
