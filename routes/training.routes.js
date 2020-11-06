@@ -1,14 +1,18 @@
 const {Router} = require('express');
 const router = Router();
-const jwt = require('express-jwt');
-const config = require('config');
-const jwtConfig = config.get('jwtConfig')
+const {param} = require('express-validator');
+const jwtValidationMiddleware = require('../middleware/jwtValidationMiddleware');
+const validationResultsCheckMiddleware = require('../middleware/validationResultsCheckMiddleware');
+const {checkIfVocabularyExists} = require('../middleware/documentExistanceMiddleware');
 const User = require('../models/User');
 const Word = require('../models/Word');
 
-router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }))
+router.use(jwtValidationMiddleware());
 
-router.get('/words-count/:id?',
+router.get('/words-count/:id?', [
+        param('id').isMongoId().custom(checkIfVocabularyExists).optional(),
+        validationResultsCheckMiddleware
+    ],
     async (req, res) => {
         try {
             const user = await User.findById(req.user.id).populate('words.model', 'course');
@@ -29,7 +33,6 @@ router.get('/words-count/:id?',
             res.status(500).json({message: 'Server error'});
         }
     });
-
 router.get('/available-vocabularies/',
     async (req, res) => {
         try {
@@ -52,7 +55,10 @@ router.get('/available-vocabularies/',
         }
     });
 
-router.get('/cards/:id?',
+router.get('/cards/:id?', [
+        param('id').isMongoId().custom(checkIfVocabularyExists).optional(),
+        validationResultsCheckMiddleware
+    ],
     async (req, res) => {
         try {
             const user = await User.findById(req.user.id).populate('words.model');
@@ -81,8 +87,10 @@ router.get('/cards/:id?',
             res.status(500).json({message: 'Server error'});
         }
     });
-
-router.get('/constructor/:id?',
+router.get('/constructor/:id?', [
+        param('id').isMongoId().custom(checkIfVocabularyExists).optional(),
+        validationResultsCheckMiddleware
+    ],
     async (req, res) => {
         try {
             const user = await User.findById(req.user.id).populate('words.model');
@@ -119,8 +127,10 @@ router.get('/constructor/:id?',
             res.status(500).json({message: 'Server error'});
         }
     });
-
-router.get('/word-translation/:id?',
+router.get('/word-translation/:id?', [
+        param('id').isMongoId().custom(checkIfVocabularyExists).optional(),
+        validationResultsCheckMiddleware
+    ],
     async (req, res) => {
         try {
             const user = await User.findById(req.user.id).populate('words.model');
@@ -154,8 +164,10 @@ router.get('/word-translation/:id?',
             res.status(500).json({message: 'Server error'});
         }
     });
-
-router.get('/translation-word/:id?',
+router.get('/translation-word/:id?', [
+        param('id').isMongoId().custom(checkIfVocabularyExists).optional(),
+        validationResultsCheckMiddleware
+    ],
     async (req, res) => {
         try {
             const user = await User.findById(req.user.id).populate('words.model');
@@ -171,9 +183,10 @@ router.get('/translation-word/:id?',
             userWords.every(word => {
                 if (result.length >= 10)
                     return false;
-
-                const options = shuffleArray(sameCourseWords.filter(w => w.original !== word.model.original && w.translation !== word.model.translation)).slice(0, 3).map(w => w.original);
-
+                const options = shuffleArray(sameCourseWords
+                    .filter(w => w.original !== word.model.original && w.translation !== word.model.translation))
+                    .slice(0, 3)
+                    .map(w => w.original);
                 result.push({
                     id: word.id,
                     original: word.model.original,
@@ -189,8 +202,10 @@ router.get('/translation-word/:id?',
             res.status(500).json({message: 'Server error'});
         }
     });
-
-router.get('/listening/:id?',
+router.get('/listening/:id?', [
+        param('id').isMongoId().custom(checkIfVocabularyExists).optional(),
+        validationResultsCheckMiddleware
+    ],
     async (req, res) => {
         try {
             const user = await User.findById(req.user.id).populate('words.model');
@@ -206,9 +221,10 @@ router.get('/listening/:id?',
             userWords.every(word => {
                 if (result.length >= 10)
                     return false;
-
-                const options = shuffleArray(sameCourseWords.filter(w => w.original !== word.model.original && w.translation !== word.model.translation)).slice(0, 3).map(w => w.translation);
-
+                const options = shuffleArray(sameCourseWords
+                    .filter(w => w.original !== word.model.original && w.translation !== word.model.translation))
+                    .slice(0, 3)
+                    .map(w => w.translation);
                 result.push({
                     id: word.id,
                     original: word.model.original,
@@ -225,7 +241,10 @@ router.get('/listening/:id?',
         }
     });
 
-router.post('/:trainingName/',
+router.post('/:trainingName/', [
+        param('trainingName').exists().isIn(['cards', 'constructor', 'listening', 'translation-word', 'word-translation']),
+        validationResultsCheckMiddleware
+    ],
     async (req, res) => {
         try {
             let fieldName;
@@ -246,7 +265,7 @@ router.post('/:trainingName/',
                     fieldName = 'trainingWordTranslation';
                     break;
                 default:
-                    throw new Error('Wrong training name');
+                    res.status(400).json({message: 'Wrong training name'});
             }
 
             const user = await User.findById(req.user.id);

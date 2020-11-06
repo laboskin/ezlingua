@@ -1,17 +1,19 @@
 const {Router} = require('express');
 const router = Router();
-const jwt = require('express-jwt');
-const config = require('config');
-const jwtConfig = config.get('jwtConfig');
-const azureConfig = config.get('azure');
-const User = require('../models/User');
-const Story = require('../models/Story');
-const Course = require('../models/Course');
-const Word = require('../models/Word');
 const axios = require("axios");
 const { v4: uuidv4 } = require('uuid');
+const config = require('config');
+const azureConfig = config.get('azure');
+const {body, param} = require('express-validator');
+const jwtValidationMiddleware = require('../middleware/jwtValidationMiddleware');
+const validationResultsCheckMiddleware = require('../middleware/validationResultsCheckMiddleware');
+const {checkIfCourseExists, checkIfStoryExists} = require('../middleware/documentExistanceMiddleware');
+const Course = require('../models/Course');
+const Story = require('../models/Story');
+const User = require('../models/User');
+const Word = require('../models/Word');
 
-router.use(jwt({ secret: jwtConfig.secret, algorithms: ['HS256'] }))
+router.use(jwtValidationMiddleware());
 
 router.get('/all',
     async (req, res) => {
@@ -33,13 +35,14 @@ router.get('/all',
         }
     });
 
-router.get('/:id',
+router.get('/:id', [
+        param('id').isMongoId().custom(checkIfStoryExists),
+        validationResultsCheckMiddleware
+    ],
     async (req, res) => {
         try {
             const user = await User.findById(req.user.id);
             const story = await Story.findOne({course: user.course, _id: req.params.id});
-            if (!story)
-                return res.status(404).json({message: 'Story not found'});
 
             const result = {
                 id: story.id,
@@ -56,7 +59,11 @@ router.get('/:id',
         }
     });
 
-router.post('/get-translations',
+router.post('/get-translations', [
+        body('courseId').isMongoId().custom(checkIfCourseExists),
+        body('text').isString().trim().isLength({min: 1, max: 50}),
+        validationResultsCheckMiddleware
+    ],
     async (req, res) => {
         try {
             const course = await Course.findById(req.body.courseId)
@@ -78,36 +85,34 @@ router.post('/get-translations',
         }
     });
 
-router.post('/complete/:id',
+router.post('/complete/:id', [
+        param('id').isMongoId().custom(checkIfStoryExists),
+        body('*.original').isString().trim().isLength({min: 1, max: 50}),
+        body('*.translation').isString().trim().isLength({min: 1, max: 50}),
+        validationResultsCheckMiddleware
+    ],
     async (req, res) => {
         try {
             const user = await User.findById(req.user.id);
-            const story = await Story.findOne({course: user.course, _id: req.params.id});
-            if (!story)
-                return res.status(404).json({message: 'Story not found'});
+            const story = await Story.findById(req.params.id);
+            const words = await Word.find({course: story.course});
 
-            const words = await Story.find({course: story.course});
             const addedWords = req.body;
             for (const addedWord of addedWords) {
-                const candidate = words.find(word => word.original === addedWord.original && word.translation === addedWord.translation);
-                let wordId;
-                if (candidate)
-                    wordId = candidate.id
-                else {
-                    const newWord = new Word({
+                let candidate = words.find(word => word.original === addedWord.original && word.translation === addedWord.translation);
+                if (!candidate)
+                    candidate = await (new Word({
                         original: addedWord.original,
                         translation: addedWord.translation,
                         course: story.course
-                    });
-                    await newWord.save();
-                    wordId = newWord.id;
-                }
+                    })).save();
                 user.words.push({
-                    model: wordId
+                    model: candidate.id
                 });
             }
+            if (!user.stories.find(userStory => userStory.toString() === story.id.toString()))
+                user.stories.push(story.id);
 
-            user.stories.push(story.id);
             await user.save();
 
             res.json({message: 'Story was successfully completed'});
@@ -125,13 +130,13 @@ async function getTranslations(langFrom, langTo, text) {
             'X-ClientTraceId': uuidv4()
         }
     });
+    if (!response)
+        throw new Error();
     return response.data[0].translations.map(translation => ({
         text: translation.normalizedTarget,
         confidence: translation.confidence
-    }))
-        .sort((a, b) => b.confidence - a.confidence).filter((translation, idx) => idx < 5);
+    })).sort((a, b) => b.confidence - a.confidence).filter((translation, idx) => idx < 5);
 }
-
 async function getTranslation(langFrom, langTo, text) {
     const response = await axios.post(`${azureConfig.endpoint}/translate?api-version=3.0&from=${langFrom}&to=${langTo}`, [{Text: text}], {
         headers: {
@@ -140,11 +145,12 @@ async function getTranslation(langFrom, langTo, text) {
             'X-ClientTraceId': uuidv4()
         }
     });
+    if (!response)
+        throw new Error();
     return {
         text: response.data[0].translations[0].text,
         confidence: 1
     };
 }
-
 
 module.exports = router;

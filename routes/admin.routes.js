@@ -4,12 +4,13 @@ const axios = require("axios");
 const { v4: uuidv4 } = require('uuid');
 const responseRange = require('express-response-range');
 const bcrypt = require("bcrypt");
-const { body, param, validationResult } = require('express-validator');
-const jwt = require('express-jwt');
-const jwtEncode = require('jsonwebtoken');
+const {body, param} = require('express-validator');
+const jwt = require('jsonwebtoken');
 const config = require('config');
 const jwtConfig = config.get('jwtConfig');
 const azureConfig = config.get('azure');
+const validationResultsCheckMiddleware = require('../middleware/validationResultsCheckMiddleware');
+const jwtValidationMiddleware = require('../middleware/jwtValidationMiddleware');
 const Course = require('../models/Course');
 const Language = require('../models/Language');
 const RefreshToken = require('../models/RefreshToken');
@@ -18,28 +19,24 @@ const User = require('../models/User');
 const Vocabulary = require('../models/Vocabulary');
 const VocabularyGroup = require('../models/VocabularyGroup');
 const Word = require('../models/Word');
-
-const checkIfCourseExist = async courseId => (await Course.findById(courseId))?Promise.resolve():Promise.reject('Course not found');
-const checkIfLanguageExist = async languageId => (await Language.findById(languageId))?Promise.resolve():Promise.reject('Language not found');
-const checkIfUserExist = async userId => (await User.findById(userId))?Promise.resolve():Promise.reject('User not found');
-const checkIfVocabularyGroupExist = async vocabularyGroupId => (await VocabularyGroup.findById(vocabularyGroupId))?Promise.resolve():Promise.reject('User not found');
-const sendResponseIfValidationError = (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty())
-        return res.status(400).json({ errors: errors.array() });
-    next();
-}
+const {
+    checkIfCourseExists,
+    checkIfLanguageExists,
+    checkIfUserExists,
+    checkIfVocabularyGroupExists
+} = require('../middleware/documentExistanceMiddleware');
 
 // Middleware
 router.use(responseRange({
     alwaysSendRange: true
 }));
-router.use(jwt({ secret: jwtConfig.adminSecret, algorithms: ['HS256'] }).unless({path: ['/api/admin/login']}));
+router.use(jwtValidationMiddleware(true, ['/api/admin/login']));
 
 // Login
 router.post('/login', [
         body('email').isString().trim().isEmail().normalizeEmail(),
         body('password').isString().notEmpty(),
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -50,7 +47,7 @@ router.post('/login', [
             if (!(user && (await bcrypt.compare(password, user.password)) && user.isAdmin))
                 return res.status(400).json({message: 'Wrong email or password'});
 
-            const accessToken = jwtEncode.sign({
+            const accessToken = jwt.sign({
                     id: user.id,
                     email: user.email,
                     name: user.name,
@@ -59,8 +56,7 @@ router.post('/login', [
                 jwtConfig.adminSecret,
                 {expiresIn: jwtConfig.accessTokenAge});
 
-            res.status(200)
-                .json({accessToken, accessTokenAge: jwtConfig.accessTokenAge});
+            res.json({accessToken, accessTokenAge: jwtConfig.accessTokenAge});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});
@@ -82,7 +78,7 @@ router.get('/courses',
     });
 router.get('/courses/:id', [
     param('id').isMongoId(),
-    sendResponseIfValidationError
+    validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -95,9 +91,9 @@ router.get('/courses/:id', [
     });
 router.post('/courses', [
         body('name').isString().trim().isLength({min: 2, max: 50}),
-        body('goalLanguage').isMongoId().custom(checkIfLanguageExist),
-        body('sourceLanguage').isMongoId().custom(checkIfLanguageExist),
-        sendResponseIfValidationError
+        body('goalLanguage').isMongoId().custom(checkIfLanguageExists),
+        body('sourceLanguage').isMongoId().custom(checkIfLanguageExists),
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -117,9 +113,9 @@ router.post('/courses', [
 router.put('/courses/:id', [
         param('id').isMongoId(),
         body('name').isString().trim().isLength({min: 2, max: 50}),
-        body('goalLanguage').isMongoId().custom(checkIfLanguageExist),
-        body('sourceLanguage').isMongoId().custom(checkIfLanguageExist),
-        sendResponseIfValidationError
+        body('goalLanguage').isMongoId().custom(checkIfLanguageExists),
+        body('sourceLanguage').isMongoId().custom(checkIfLanguageExists),
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -138,7 +134,7 @@ router.put('/courses/:id', [
     });
 router.delete('/courses/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -168,7 +164,7 @@ router.get('/languages',
     });
 router.get('/languages/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -185,7 +181,7 @@ router.post('/languages', [
         body('image').exists(),
         body('image.src').isBase64(),
         body('image.ext').isString().trim().notEmpty(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -209,7 +205,7 @@ router.put('/languages/:id', [
         body('image').optional(),
         body('image.src').if(body('image').exists()).isBase64(),
         body('image.ext').if(body('image').exists()).isString().trim().notEmpty(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -228,7 +224,7 @@ router.put('/languages/:id', [
     });
 router.delete('/languages/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -258,7 +254,7 @@ router.get('/refresh-tokens',
     });
 router.get('/refresh-tokens/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -270,15 +266,13 @@ router.get('/refresh-tokens/:id', [
         }
     });
 router.post('/refresh-tokens', [
-        body('refreshToken').isString().trim().notEmpty(),
-        body('user').isMongoId().custom(checkIfUserExist),
+        body('user').isMongoId().custom(checkIfUserExists),
         body('issuedAt').isRFC3339().isBefore(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
             const refreshToken = new RefreshToken({
-                refreshToken: req.body.refreshToken,
                 user: req.body.user,
                 issuedAt: req.body.issuedAt
             });
@@ -292,15 +286,13 @@ router.post('/refresh-tokens', [
     });
 router.put('/refresh-tokens/:id', [
         param('id').isMongoId(),
-        body('refreshToken').isString().trim().notEmpty(),
-        body('user').isMongoId().custom(checkIfUserExist),
+        body('user').isMongoId().custom(checkIfUserExists),
         body('issuedAt').isRFC3339().isBefore(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
             const refreshToken = await RefreshToken.findById(req.params.id);
-            refreshToken.refreshToken = req.body.refreshToken;
             refreshToken.user = req.body.user;
             refreshToken.issuedAt = req.body.issuedAt;
 
@@ -314,7 +306,7 @@ router.put('/refresh-tokens/:id', [
     });
 router.delete('/refresh-tokens/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -344,7 +336,7 @@ router.get('/stories',
     });
 router.get('/stories/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -360,9 +352,9 @@ router.post('/stories', [
         body('image').optional(),
         body('image.src').if(body('image').exists()).isBase64(),
         body('image.ext').if(body('image').exists()).isString().notEmpty(),
-        body('course').isMongoId().custom(checkIfCourseExist),
+        body('course').isMongoId().custom(checkIfCourseExists),
         body('text').isString().trim().notEmpty(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
     try {
@@ -387,9 +379,9 @@ router.put('/stories/:id', [
         body('image').optional(),
         body('image.src').if(body('image').exists()).isBase64(),
         body('image.ext').if(body('image').exists()).isString().notEmpty(),
-        body('course').isMongoId().custom(checkIfCourseExist),
+        body('course').isMongoId().custom(checkIfCourseExists),
         body('text').isString().trim().notEmpty(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -409,7 +401,7 @@ router.put('/stories/:id', [
     });
 router.delete('/stories/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -448,7 +440,7 @@ router.get('/users',
     });
 router.get('/users/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -472,8 +464,8 @@ router.post('/users', [
         body('name').isString().trim().isLength({min: 2, max: 50}),
         body('email').isString().trim().isEmail().normalizeEmail(),
         body('password').isString().isLength({min: 8, max: 50}).matches(/^([A-Za-z0-9.$\\/[\]\-_@])/),
-        body('course').isMongoId().custom(checkIfCourseExist),
-        sendResponseIfValidationError
+        body('course').isMongoId().custom(checkIfCourseExists),
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -508,7 +500,7 @@ router.put('/users/:id', [
         body('name').isString().trim().isLength({min: 2, max: 50}),
         body('email').isString().trim().isEmail().normalizeEmail(),
         body('password').isString().isLength({min: 8, max: 50}).matches(/^([A-Za-z0-9.$\\/[\]\-_@])/).optional(),
-        body('course').isMongoId().custom(checkIfCourseExist),
+        body('course').isMongoId().custom(checkIfCourseExists),
         body('stories').isArray().optional(),
         body('stories.*').if(body('stories').exists()).isMongoId(),
         body('words').isArray().optional(),
@@ -518,7 +510,7 @@ router.put('/users/:id', [
         body('words.*.trainingListening').if(body('words').exists()).isBoolean(),
         body('words.*.trainingTranslationWord').if(body('words').exists()).isBoolean(),
         body('words.*.trainingWordTranslation').if(body('words').exists()).isBoolean(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -566,7 +558,7 @@ router.put('/users/:id', [
     });
 router.delete('/users/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -596,7 +588,7 @@ router.get('/vocabularies',
     });
 router.get('/vocabularies/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -613,12 +605,12 @@ router.post('/vocabularies', [
         body('image').optional(),
         body('image.src').if(body('image').exists()).isBase64(),
         body('image.ext').if(body('image').exists()).isString().notEmpty(),
-        body('course').isMongoId().custom(checkIfCourseExist),
+        body('course').isMongoId().custom(checkIfCourseExists),
         body('words').isArray().optional(),
         body('words.*.original').if(body('words').exists()).isString().trim().notEmpty(),
         body('words.*.translation').if(body('words').exists()).isString().trim().notEmpty(),
-        body('vocabularyGroup').isMongoId().custom(checkIfVocabularyGroupExist),
-        sendResponseIfValidationError
+        body('vocabularyGroup').isMongoId().custom(checkIfVocabularyGroupExists),
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -645,12 +637,12 @@ router.put('/vocabularies/:id', [
         body('image').optional(),
         body('image.src').if(body('image').exists()).isBase64(),
         body('image.ext').if(body('image').exists()).isString().notEmpty(),
-        body('course').isMongoId().custom(checkIfCourseExist),
+        body('course').isMongoId().custom(checkIfCourseExists),
         body('words').isArray().optional(),
         body('words.*.original').if(body('words').exists()).isString().trim().notEmpty(),
         body('words.*.translation').if(body('words').exists()).isString().trim().notEmpty(),
-        body('vocabularyGroup').isMongoId().custom(checkIfVocabularyGroupExist),
-        sendResponseIfValidationError
+        body('vocabularyGroup').isMongoId().custom(checkIfVocabularyGroupExists),
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -672,7 +664,7 @@ router.put('/vocabularies/:id', [
     });
 router.delete('/vocabularies/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -702,7 +694,7 @@ router.get('/vocabulary-groups',
     });
 router.get('/vocabulary-groups/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -715,8 +707,8 @@ router.get('/vocabulary-groups/:id', [
     });
 router.post('/vocabulary-groups', [
         body('name').isString().trim().isLength({min: 2, max: 50}),
-        body('course').isMongoId().custom(checkIfCourseExist),
-        sendResponseIfValidationError
+        body('course').isMongoId().custom(checkIfCourseExists),
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -735,8 +727,8 @@ router.post('/vocabulary-groups', [
 router.put('/vocabulary-groups/:id', [
         param('id').isMongoId(),
         body('name').isString().trim().isLength({min: 2, max: 50}),
-        body('course').isMongoId().custom(checkIfCourseExist),
-        sendResponseIfValidationError
+        body('course').isMongoId().custom(checkIfCourseExists),
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -754,7 +746,7 @@ router.put('/vocabulary-groups/:id', [
     });
 router.delete('/vocabulary-groups/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -784,7 +776,7 @@ router.get('/words',
     });
 router.get('/words/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -796,10 +788,10 @@ router.get('/words/:id', [
         }
     });
 router.post('/words', [
-        body('original').isString().trim().isLength({min: 2, max: 20}),
-        body('translation').isString().trim().isLength({min: 2, max: 20}),
-        body('course').isMongoId().custom(checkIfCourseExist),
-        sendResponseIfValidationError
+        body('original').isString().trim().isLength({min: 1, max: 50}),
+        body('translation').isString().trim().isLength({min: 1, max: 50}),
+        body('course').isMongoId().custom(checkIfCourseExists),
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -820,10 +812,10 @@ router.post('/words', [
     });
 router.put('/words/:id', [
         param('id').isMongoId(),
-        body('original').isString().trim().isLength({min: 2, max: 20}),
-        body('translation').isString().trim().isLength({min: 2, max: 20}),
-        body('course').isMongoId().custom(checkIfCourseExist),
-        sendResponseIfValidationError
+        body('original').isString().trim().isLength({min: 1, max: 50}),
+        body('translation').isString().trim().isLength({min: 1, max: 50}),
+        body('course').isMongoId().custom(checkIfCourseExists),
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -846,7 +838,7 @@ router.put('/words/:id', [
     });
 router.delete('/words/:id', [
         param('id').isMongoId(),
-        sendResponseIfValidationError
+        validationResultsCheckMiddleware
     ],
     async (req, res) => {
         try {
@@ -876,7 +868,6 @@ const mapLanguageToResponse = language => ({
 });
 const mapRefreshTokenToResponse = refreshToken => ({
     id: refreshToken._id,
-    refreshToken: refreshToken.refreshToken,
     user: refreshToken.user,
     issuedAt: refreshToken.issuedAt
 });

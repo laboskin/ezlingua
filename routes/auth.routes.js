@@ -1,30 +1,38 @@
 const {Router} = require('express');
-const bcrypt = require('bcrypt');
-const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const RefreshToken = require('../models/RefreshToken');
 const router = Router();
+const bcrypt = require('bcrypt');
 const config = require('config');
-const jwtConfig = config.get('jwtConfig')
+const jwtConfig = config.get('jwtConfig');
+const {body, cookie} = require('express-validator');
+const validationResultsCheckMiddleware = require('../middleware/validationResultsCheckMiddleware');
+const {checkIfCourseExists} = require('../middleware/documentExistanceMiddleware');
+const RefreshToken = require('../models/RefreshToken');
+const User = require('../models/User');
 
-router.post('/register', async (req, res) => {
+router.post('/register', [
+        body('name').isString().trim().isLength({min: 2, max: 50}),
+        body('email').isString().trim().isEmail().normalizeEmail(),
+        body('password').isString().isLength({min: 8, max: 50}).matches(/^([A-Za-z0-9.$\\/[\]\-_@])/),
+        body('course').isMongoId().custom(checkIfCourseExists),
+        validationResultsCheckMiddleware
+    ],
+    async (req, res) => {
     try {
         const {email, password, name, language} = req.body;
 
+        // Check if email is already in use
         if (await User.findOne({email}))
             return res.status(400).json({message: 'User with this email already exist'});
 
-        const passwordHash = await bcrypt.hash(password, 10);
-        const user = new User({email, password: passwordHash, name, course: language});
+        // Create and save new user
+        const user = new User({email, password: await bcrypt.hash(password, 10), name, course: language});
         user.save();
 
-        // Generate access token
-        const accessToken = generateAccessToken(getAccessPayloadFromUserModel(user));
+        // Generate access and refresh tokens
+        const accessToken = createAccessToken(user);
+        const refreshToken = await createRefreshToken(user);
 
-        // Generate and save refresh token
-        const refreshToken = uuidv4();
-        new RefreshToken({refreshToken, user: user.id, issuedAt: new Date()}).save();
         // Send response
         res.cookie('refreshToken', refreshToken, {
             maxAge: jwtConfig.refreshTokenAge,
@@ -38,97 +46,112 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
-    try {
-        // Check email/password
-        const {email, password} = req.body;
-        const user = await User.findOne({email});
-        if (!user)
-            return res.status(400).json({message: 'Wrong email or password'});
-        if (!(await bcrypt.compare(password, user.password)))
-            return res.status(400).json({message: 'Wrong email or password'});
+router.post('/login', [
+        body('email').isString().trim().isEmail().normalizeEmail(),
+        body('password').isString().isLength({min: 8, max: 50}).matches(/^([A-Za-z0-9.$\\/[\]\-_@])/),
+        validationResultsCheckMiddleware
+    ],
+    async (req, res) => {
+        try {
+            const {email, password} = req.body;
 
-        // Generate access token
-        const accessToken = generateAccessToken(getAccessPayloadFromUserModel(user));
+            // Check email/password
+            const user = await User.findOne({email});
+            if (!user)
+                return res.status(400).json({message: 'Wrong email or password'});
+            if (!(await bcrypt.compare(password, user.password)))
+                return res.status(400).json({message: 'Wrong email or password'});
 
-        // Generate and save refresh token
-        const refreshToken = uuidv4();
-        new RefreshToken({refreshToken, user: user.id, issuedAt: new Date()}).save();
-        // Send response
-        res.cookie('refreshToken', refreshToken, {
-            maxAge: jwtConfig.refreshTokenAge,
-            httpOnly: true
-        })
-            .status(200)
-            .json({accessToken, refreshToken, accessTokenAge: jwtConfig.accessTokenAge});
-    } catch (e) {
-        res.status(500).json({message: 'Server error'});
-    }
-});
+            // Generate access and refresh tokens
+            const accessToken = createAccessToken(user);
+            const refreshToken = await createRefreshToken(user);
 
-router.post('/refresh', async (req, res) => {
-    try {
-        const refreshToken = req.cookies['refreshToken'];
-
-        // Check if refresh token is provided
-        if (!refreshToken)
-            return res.status(204).json({message: 'Refresh token was not provided'});
-
-        // Check if refresh token is not expired
-        const refreshTokenModel = await RefreshToken.findOne({refreshToken});
-        if (!refreshTokenModel || new Date().getTime() - refreshTokenModel.issuedAt.getTime() > jwtConfig.refreshTokenAge) {
-            refreshTokenModel && refreshTokenModel.remove();
-            return res.status(204).clearCookie('refreshToken').json({message: 'Refresh token is expired'});
+            // Send response
+            res.cookie('refreshToken', refreshToken, {
+                maxAge: jwtConfig.refreshTokenAge,
+                httpOnly: true
+            })
+                .status(200)
+                .json({accessToken, refreshToken, accessTokenAge: jwtConfig.accessTokenAge});
+        } catch (e) {
+            res.status(500).json({message: 'Server error'});
         }
+    });
 
-        setTimeout(() => refreshTokenModel.remove(), 5*1000);
+router.post('/refresh', [
+        cookie('refreshToken').isMongoId(),
+        validationResultsCheckMiddleware
+    ],
+    async (req, res) => {
+        try {
+            // Check if refresh token is valid
+            const oldRefreshTokenDocument = await RefreshToken.findById(req.cookies['refreshToken']);
+            if (!oldRefreshTokenDocument || new Date().getTime() - oldRefreshTokenDocument.issuedAt.getTime() > jwtConfig.refreshTokenAge) {
+                if(oldRefreshTokenDocument)
+                    oldRefreshTokenDocument.remove();
+                return res.status(204).clearCookie('refreshToken').json({message: 'Refresh token is expired'});
+            }
 
-        const user = await User.findOne(refreshTokenModel.user);
-        const newAccessToken = generateAccessToken(getAccessPayloadFromUserModel(user));
-        const newRefreshToken = uuidv4();
-        new RefreshToken({refreshToken: newRefreshToken, user: user.id, issuedAt: new Date() }).save();
+            // Generate access and refresh tokens
+            const user = await User.findOne(oldRefreshTokenDocument.user);
+            const accessToken = createAccessToken(user);
+            const refreshToken = await createRefreshToken(user);
 
-        res.cookie('refreshToken', newRefreshToken, {
-            maxAge: jwtConfig.refreshTokenAge,
-            httpOnly: true
-        })
-            .status(200)
-            .json({accessToken: newAccessToken, refreshToken: newRefreshToken, accessTokenAge: jwtConfig.accessTokenAge});
-    } catch (e) {
-        console.log(e)
-        res.status(500).json({message: 'Server error'});
-    }
-});
+            setTimeout(() => oldRefreshTokenDocument.remove(), 5*1000);
 
-router.post('/logout', async (req, res) => {
-    try {
-        const refreshToken = req.cookies['refreshToken'];
-        const refreshTokenModel = await RefreshToken.findOne({refreshToken});
-        refreshTokenModel.remove();
-        res.clearCookie('refreshToken')
-            .status(200)
-            .json({message: "Logout success"});
-    } catch (e) {
-        res.status(500).json({message: 'Server error'});
-    }
-});
+            res.cookie('refreshToken', refreshToken, {
+                maxAge: jwtConfig.refreshTokenAge,
+                httpOnly: true
+            })
+                .status(200)
+                .json({accessToken, refreshToken, accessTokenAge: jwtConfig.accessTokenAge});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
 
-function generateAccessToken(payload) {
+router.post('/logout', [
+        cookie('refreshToken').isMongoId().optional(),
+        validationResultsCheckMiddleware
+    ],
+    async (req, res) => {
+        try {
+            const refreshToken = req.cookies['refreshToken'];
+
+            // Delete refresh token from DB if it exists
+            if (refreshToken) {
+                const refreshTokenModel = await RefreshToken.findById(refreshToken);
+                refreshTokenModel.remove();
+            }
+            res.clearCookie('refreshToken')
+                .status(200)
+                .json({message: "Logout success"});
+        } catch (e) {
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+
+// Helpers
+function createAccessToken(user) {
     return jwt.sign(
-        payload,
+        {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            isAdmin: user.isAdmin
+        },
         jwtConfig.secret,
         {
             expiresIn: jwtConfig.accessTokenAge
         });
 }
-
-function getAccessPayloadFromUserModel(user) {
-    return {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        isAdmin: user.isAdmin
-    }
+async function createRefreshToken(user) {
+    const refreshToken = new RefreshToken({user: user.id, issuedAt: new Date() });
+    await refreshToken.save();
+    return refreshToken.id;
 }
+
 
 module.exports = router;
