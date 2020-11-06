@@ -53,7 +53,7 @@ const schema = new Schema({
     password: {
         type: String,
         required: true,
-        minLength: 7,
+        minLength: 8,
         maxLength: 50,
         match: /^([A-Za-z0-9.$\\/[\]\-_@])/
     },
