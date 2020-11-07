@@ -53,13 +53,14 @@ router.get('/user-courses',
     try {
         const user = await User.findById(req.user.id).populate('words.model', 'course').populate('course', 'id sourceLanguage');
         const allCourses = (await Course.find({sourceLanguage: user.course.sourceLanguage})
-            .populate('goalLanguage', 'image')
+            .populate('goalLanguage', 'image code')
             .populate('sourceLanguage', 'code'))
             .map(course => ({
                 id: course.id,
                 name: course.name,
                 image: course.goalLanguage.imageLink,
-                code: course.sourceLanguage.code
+                code: course.sourceLanguage.code,
+                goalCode: course.goalLanguage.code
             }));
 
         const userCourseIds = user.words.map(word => word.model.course);
@@ -87,7 +88,9 @@ router.post('/change-user-course', [
             const allCourses = (await Course.find({sourceLanguage: user.course.sourceLanguage}).populate('goalLanguage', 'image')).map(course => ({
                 id: course.id,
                 name: course.name,
-                image: course.goalLanguage.imageLink
+                image: course.goalLanguage.imageLink,
+                code: course.sourceLanguage.code,
+                goalCode: course.goalLanguage.code
             }));
 
             user.course = newCourseId;

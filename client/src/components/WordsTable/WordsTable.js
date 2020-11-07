@@ -8,17 +8,19 @@ import IconProgressLowHorizontal from "../../icons/progress/IconProgressLowHoriz
 import IconProgressMiddleHorizontal
     from "../../icons/progress/IconProgressMiddleHorizontal/IconProgressMiddleHorizontal";
 import {learnWordFromVocabulary, removeWord} from "../../store/actions/dictionary";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import IconPlus from "../../icons/IconPlus/IconPlus";
+import speak from "../../utils/speechkitSpeak";
 
 function WordsTable(props) {
     const dispatch = useDispatch();
+    const pronunciationLanguage = useSelector(state => state.user.courses.currentCourse.goalCode);
     return (
         <div className="words-table">
             {
                 props.words.map(word => (
                     <div className="words-row" key={word.id}>
-                        <div className="word-audio">
+                        <div className="word-audio" onClick={() => speak(word.original, pronunciationLanguage)}>
                             <IconSpeaker />
                         </div>
                         <div className="word-text">
@@ -51,7 +53,7 @@ function WordsTable(props) {
                                 </div>
                             </React.Fragment>
                             )}
-                        {(props.vocabularyId && !word.userWords) && (
+                        {(props.vocabularyId && !word.isUserWord) && (
                             <div className="word-actions-add" onClick={() => dispatch(learnWordFromVocabulary(word.id, props.vocabularyId))}>
                                 <IconPlus />
                             </div>

@@ -13,12 +13,13 @@ import {
     selectOption, startTraining
 } from "../../store/actions/training";
 import {useTranslation} from "react-i18next";
+import speak from '../../utils/speechkitSpeak';
 
 function TrainingQuiz() {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const history = useHistory();
-    const currentCourse = useSelector(state => state.user.currentCourse);
+    const currentCourse = useSelector(state => state.user.courses.currentCourse);
     const trainingName = useLocation().pathname.split('/')[2];
     const {id: vocabularyId = ''} = useParams();
     const words = useSelector(state => state.training.words);
@@ -129,7 +130,7 @@ function TrainingQuiz() {
                 {trainingName === 'listening' && (
                     <React.Fragment>
                         {!isAnswered && (
-                            <div className="TrainingQuiz-Audio">
+                            <div className="TrainingQuiz-Audio" onClick={() => speak(word.original, currentCourse.goalCode)}>
                                 <IconSpeaker />
                             </div>
                         )}

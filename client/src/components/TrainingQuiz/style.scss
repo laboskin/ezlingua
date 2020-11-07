@@ -49,8 +49,9 @@
       width: 40px;
       margin: 0 auto;
       fill: #afafaf;
+      cursor: pointer;
 
-      &hover{
+      &:hover{
         fill: #2582e7;
       }
     }
