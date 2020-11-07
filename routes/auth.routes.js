@@ -79,7 +79,7 @@ router.post('/login', [
     });
 
 router.post('/refresh', [
-        cookie('refreshToken').isMongoId(),
+        cookie('refreshToken').isMongoId().optional(),
         validationResultsCheckMiddleware
     ],
     async (req, res) => {
@@ -89,7 +89,7 @@ router.post('/refresh', [
             if (!oldRefreshTokenDocument || new Date().getTime() - oldRefreshTokenDocument.issuedAt.getTime() > jwtConfig.refreshTokenAge) {
                 if(oldRefreshTokenDocument)
                     oldRefreshTokenDocument.remove();
-                return res.status(204).clearCookie('refreshToken').json({message: 'Refresh token is expired'});
+                return res.clearCookie('refreshToken').json({message: 'Refresh token is expired'});
             }
 
             // Generate access and refresh tokens

@@ -10,10 +10,13 @@ export const request = async (url, method = 'GET', body = null, headers = {}, to
         }
 
         const response = await fetch(url, {method, body, headers});
+        if (response.status === 401) {
+            throw new Error(`${response.status} Unauthorized`);
+        }
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.message || 'Request error');
+            throw new Error(`${response.status} ${data.message || 'Request error'}`);
         }
         return data;
     } catch (e) {

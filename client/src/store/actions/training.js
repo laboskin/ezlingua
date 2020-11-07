@@ -10,21 +10,31 @@ import {
     TRAINING_ANSWER_MISTAKE,
     TRAINING_ANSWER_SKIP,
     TRAINING_ANSWER_CLEAR_LETTER_MISTAKE,
-    TRAINING_ANSWER_LETTER_MISTAKE, TRAINING_ANSWER_LETTER_CORRECT
+    TRAINING_ANSWER_LETTER_MISTAKE, TRAINING_ANSWER_LETTER_CORRECT,
 
 
 } from './actionTypes';
 import {request} from "../../utils/request";
+import {logout} from "./user";
 
 export function loadCount(vocabularyId = null) {
     return async (dispatch, getState) => {
-        const {user: {token}} = getState();
-        const response = await request(`/api/training/words-count/${vocabularyId || ''}`, 'GET', null, {}, token);
-        if (response) {
-            dispatch({
-                type: TRAINING_SET_COUNT,
-                count: response
-            })
+        try {
+            const {user: {token}} = getState();
+            const response = await request(`/api/training/words-count/${vocabularyId || ''}`, 'GET', null, {}, token);
+            if (response) {
+                dispatch({
+                    type: TRAINING_SET_COUNT,
+                    count: response
+                })
+            }
+        } catch (e) {
+            const status = e.message.split(' ')[0];
+            if (status === '401') {
+                dispatch(logout());
+            } else {
+                console.log(e);
+            }
         }
     }
 }
@@ -36,13 +46,22 @@ export function clearCount() {
 
 export function loadAvailableVocabularies(){
     return async (dispatch, getState) => {
-        const {user: {token}} = getState();
-        const response = await request('/api/training/available-vocabularies/', 'GET', null, {}, token);
-        if (response) {
-            dispatch({
-                type: TRAINING_SET_AVAILABLE_VOCABULARIES,
-                vocabularies: response
-            })
+        try {
+            const {user: {token}} = getState();
+            const response = await request('/api/training/available-vocabularies/', 'GET', null, {}, token);
+            if (response) {
+                dispatch({
+                    type: TRAINING_SET_AVAILABLE_VOCABULARIES,
+                    vocabularies: response
+                })
+            }
+        } catch (e) {
+            const status = e.message.split(' ')[0];
+            if (status === '401') {
+                dispatch(logout());
+            } else {
+                console.log(e);
+            }
         }
     }
 }
@@ -54,13 +73,22 @@ export function clearAvailableVocabularies(){
 
 export function startTraining(trainingName, vocabularyId = null){
     return async (dispatch, getState) => {
-        const {user: {token}} = getState();
-        const response = await request(`/api/training/${trainingName}/${vocabularyId || ''}`, 'GET', null, {}, token);
-        if (response) {
-            dispatch({
-                type: TRAINING_START,
-                words: response
-            });
+        try {
+            const {user: {token}} = getState();
+            const response = await request(`/api/training/${trainingName}/${vocabularyId || ''}`, 'GET', null, {}, token);
+            if (response) {
+                dispatch({
+                    type: TRAINING_START,
+                    words: response
+                });
+            }
+        } catch (e) {
+            const status = e.message.split(' ')[0];
+            if (status === '401') {
+                dispatch(logout());
+            } else {
+                console.log(e);
+            }
         }
     }
 }
@@ -104,13 +132,22 @@ export function answerSkip() {
 }
 export function completeTraining(trainingName) {
     return async (dispatch, getState) => {
-        const {auth: {token}, training: {words}} = getState();
-        const answers = words.filter(word => word.correct).map(word => word.id);
-        const response = await request(`/api/training/${trainingName}/`, 'POST', answers, {}, token);
-        if (response) {
-            dispatch({
-                type: TRAINING_COMPLETE
-            });
+        try {
+            const {auth: {token}, training: {words}} = getState();
+            const answers = words.filter(word => word.correct).map(word => word.id);
+            const response = await request(`/api/training/${trainingName}/`, 'POST', answers, {}, token);
+            if (response) {
+                dispatch({
+                    type: TRAINING_COMPLETE
+                });
+            }
+        } catch (e) {
+            const status = e.message.split(' ')[0];
+            if (status === '401') {
+                dispatch(logout());
+            } else {
+                console.log(e);
+            }
         }
     }
 }
