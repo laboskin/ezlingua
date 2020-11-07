@@ -6,6 +6,7 @@ const validationResultsCheckMiddleware = require('../middleware/validationResult
 const {checkIfCourseExists} = require('../middleware/documentExistanceMiddleware');
 const Course = require('../models/Course');
 const User = require('../models/User');
+const bcrypt = require("bcrypt");
 
 router.use(jwtValidationMiddleware(false, ['/api/user/homepage-courses']));
 
@@ -100,6 +101,52 @@ router.post('/change-user-course', [
             };
 
             res.json(result);
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+router.post('/change-contacts', [
+        body('name').isString().trim().isLength({min: 2, max: 50}),
+        body('email').isString().trim().isEmail().normalizeEmail(),
+        validationResultsCheckMiddleware
+    ],
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.id);
+
+            const userWithSameEmail = await User.findOne({email: req.body.email});
+            if (userWithSameEmail && userWithSameEmail.id.toString() !== user.id.toString())
+                return res.status(400).json({message: 'User with this email already exists'});
+
+            user.email = req.body.email;
+            user.name = req.body.name;
+            await user.save();
+
+            res.json({message: 'Contacts have been successfully updated!'});
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'});
+        }
+    });
+
+router.post('/change-password', [
+        body('currentPassword').isString().isLength({min: 8, max: 50}).matches(/^([A-Za-z0-9.$\\/[\]\-_@])/),
+        body('newPassword').isString().isLength({min: 8, max: 50}).matches(/^([A-Za-z0-9.$\\/[\]\-_@])/),
+        validationResultsCheckMiddleware
+    ],
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.user.id);
+
+            if (!(await bcrypt.compare(req.body.currentPassword, user.password)))
+                return res.status(400).json({message: 'Wrong password'});
+
+            user.password = await bcrypt.hash(req.body.newPassword, 10);
+            await user.save();
+
+            res.json({message: 'Password has been successfully updated!'});
         } catch (e) {
             console.log(e)
             res.status(500).json({message: 'Server error'});

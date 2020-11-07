@@ -24,7 +24,7 @@ function RegisterForm() {
         name: yup.string()
             .trim()
             .min(2, t('registerForm.errors.nameMore') + ' 1')
-            .max(49, t('registerForm.errors.nameLess') + ' 50'),
+            .max(50, t('registerForm.errors.nameLess') + ' 51'),
         email: yup.string()
             .trim()
             .lowercase()
@@ -32,8 +32,8 @@ function RegisterForm() {
             .email(t('registerForm.errors.validEmail')),
         password: yup.string()
             .trim()
-            .min(7, t('registerForm.errors.passwordMore') + ' 6')
-            .max(49, t('registerForm.errors.passwordLess') + ' 50')
+            .min(8, t('registerForm.errors.passwordMore') + ' 7')
+            .max(50, t('registerForm.errors.passwordLess') + ' 51')
             .matches(/^([A-Za-z0-9.$\\/[\]\-_@])/, t('registerForm.errors.passwordForbiddenCharacters'))
     });
     const { register, handleSubmit, errors } = useForm({
@@ -48,7 +48,7 @@ function RegisterForm() {
             if (response) {
                 dispatch(hideModal());
                 dispatch(login(response.accessToken));
-                setTimeout(() => dispatch(refresh()), response.accessTokenAge - 60);
+                setTimeout(() => dispatch(refresh()), (response.accessTokenAge - 60) * 1000);
             }
         }
         catch (e) {}

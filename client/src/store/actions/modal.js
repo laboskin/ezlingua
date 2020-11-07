@@ -2,11 +2,13 @@ import {
     MODAL_SHOW,
     MODAL_HIDE
 } from './actionTypes'
+import React from "react";
+import i18n from 'i18next';
 import RegisterForm from "../../components/forms/RegisterForm/RegisterForm";
 import LoginForm from "../../components/forms/LoginForm/LoginForm";
-import React from "react";
 import CourseSelectForm from "../../components/forms/CourseSelectForm/CourseSelectForm";
-import i18n from 'i18next';
+import ContactsChangeForm from "../../components/forms/ContactsChangeForm/ContactsChangeForm";
+import PasswordChangeForm from "../../components/forms/PasswordChangeForm/PasswordChangeForm";
 
 export function showModal(title, content) {
     return {
@@ -25,6 +27,14 @@ export function showRegisterModal() {
 }
 export function showCourseSelectModal() {
     return dispatch => dispatch(showModal(i18n.t('courseSelectForm.availableCourses'), <CourseSelectForm />));
+}
+export function showSettingsModal() {
+    return dispatch => dispatch(showModal(i18n.t('contactsChangeForm.settings'), (
+        <React.Fragment>
+            <ContactsChangeForm />
+            <PasswordChangeForm />
+        </React.Fragment>
+    )));
 }
 
 export function hideModal() {

@@ -1,0 +1,23 @@
+.ContactsChangeForm{
+  &-Submit{
+    width: 100%;
+    margin-top: 10px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    background-color: #2582e7;
+
+    cursor: pointer;
+    outline: none;
+    border: none;
+
+    text-align: center;
+    color: #fff;
+    font-size: 16px;
+    line-height: 16px;
+    font-weight: 400;
+
+    &[disabled]{
+      opacity: 0.7;
+    }
+  }
+}

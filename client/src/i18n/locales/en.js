@@ -152,5 +152,27 @@ export default {
     },
     courseSelectForm: {
         availableCourses: 'Available courses'
+    },
+    contactsChangeForm: {
+        settings: 'Settings',
+        name: 'Name',
+        email: 'Email',
+        save: 'Save',
+        errors: {
+            emailIsRequired: 'Email is required',
+            validEmail: 'Please enter valid email',
+            nameMore: 'Password length must be more than',
+            nameLess: 'Password length must be less than',
+        }
+    },
+    passwordChangeForm: {
+        currentPassword: 'Current password',
+        newPassword: 'New password',
+        save: 'Save',
+        errors: {
+            passwordMore: 'Password length must be more than',
+            passwordLess: 'Password length must be less than',
+            passwordForbiddenCharacters: 'Password contains forbidden characters',
+        }
     }
 }

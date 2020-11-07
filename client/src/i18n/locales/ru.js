@@ -170,5 +170,27 @@ export default {
     },
     courseSelectForm: {
         availableCourses: 'Доступные курсы'
+    },
+    contactsChangeForm: {
+        settings: 'Настройки',
+        name: 'Имя',
+        email: 'Электронная почта',
+        save: 'Сохранить',
+        errors: {
+            emailIsRequired: 'Введите электронную почту',
+            validEmail: 'Введите корректный адрес',
+            nameMore: 'Длина имени должна быть больше чем',
+            nameLess: 'Длина имени должна быть меньше чем',
+        }
+    },
+    passwordChangeForm: {
+        currentPassword: 'Текущий пароль',
+        newPassword: 'Новый пароль',
+        save: 'Сохранить',
+        errors: {
+            passwordMore: 'Длина пароля должна быть больше чем',
+            passwordLess: 'Длина пароля должна быть меньше чем',
+            passwordForbiddenCharacters: 'Пароль содержит запрещенные символы'
+        }
     }
 }

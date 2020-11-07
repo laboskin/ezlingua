@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, NavLink} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import './style.scss';
 import logo from './logo.png';
@@ -11,7 +11,7 @@ import {changeCourse, logout} from "../../store/actions/user";
 
 
 import userAvatar from './avatar.jpg';
-import {showCourseSelectModal} from "../../store/actions/modal";
+import {showCourseSelectModal, showSettingsModal} from "../../store/actions/modal";
 import {useTranslation} from "react-i18next";
 
 function Header() {
@@ -101,15 +101,15 @@ function Header() {
                                         </a>
                                     )
                                     }
-                                    <Link className="Header-ProfilePopupItem"
-                                             to="user/settings">
+                                    <div className="Header-ProfilePopupItem"
+                                         onClick={() => dispatch(showSettingsModal())}>
                                         <div className="Header-ProfilePopupItemIcon">
                                             <IconSettings />
                                         </div>
                                         <span className="Header-ProfilePopupItemText">
                                             {t('header.settings')}
                                         </span>
-                                    </Link>
+                                    </div>
                                     <div className="Header-ProfilePopupItem"
                                        onClick={() => dispatch(logout())}>
                                         <div className="Header-ProfilePopupItemIcon">

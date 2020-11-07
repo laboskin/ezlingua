@@ -20,8 +20,8 @@ function LoginForm() {
             .email(t('loginForm.errors.validEmail')),
         password: yup.string()
             .trim()
-            .min(7, t('loginForm.errors.passwordMore') + ' 6')
-            .max(49, t('loginForm.errors.passwordLess') + ' 50')
+            .min(8, t('loginForm.errors.passwordMore') + ' 7')
+            .max(50, t('loginForm.errors.passwordLess') + ' 51')
             .matches(/^([A-Za-z0-9.$\\/[\]\-_@])/, t('loginForm.errors.passwordForbiddenCharacters'))
     });
     const { register, handleSubmit, errors } = useForm({
@@ -36,7 +36,7 @@ function LoginForm() {
             if (response) {
                 dispatch(hideModal());
                 dispatch(login(response.accessToken));
-                setTimeout(() => dispatch(refresh()), response.accessTokenAge - 60);
+                setTimeout(() => dispatch(refresh()), (response.accessTokenAge - 60) * 1000);
             }
         }
         catch (e) {
