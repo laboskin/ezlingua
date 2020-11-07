@@ -21,9 +21,20 @@ function VocabularyEdit(props) {
                 <ReferenceInput source="course" reference="courses">
                     <SelectInput optionText="name" validate={required()}  />
                 </ReferenceInput>
-                <ReferenceInput source="vocabularyGroup" reference="vocabulary-groups">
-                    <SelectInput optionText="name" validate={required()}  />
-                </ReferenceInput>
+
+                <FormDataConsumer>
+                    {({ formData }) => {
+                        if (formData.course)
+                            return (
+                                <ReferenceInput source="vocabularyGroup"
+                                                reference="vocabulary-groups"
+                                                filter={{course: formData.course}}>
+                                    <SelectInput optionText="name" validate={required()}  />
+                                </ReferenceInput>
+                            )
+                        return null;
+                    }}
+                </FormDataConsumer>
                 <ImageInput source="image" accept="image/*">
                     <ImageField source="src" title="title" />
                 </ImageInput>

@@ -67,9 +67,10 @@ router.post('/login', [
 router.get('/courses',
     async (req, res) => {
         try {
-            const result = (await Course.find().skip(req.range.offset).limit(req.range.limit))
+            const {filter, sort} = getSortAndFilterFromRequest(req);
+            const result = (await Course.find(filter).sort(sort).skip(req.range.offset).limit(req.range.limit))
                 .map(mapCourseToResponse);
-            const count = await Course.countDocuments();
+            const count = await Course.countDocuments(filter);
             res.sendRange(result, count);
         } catch (e) {
             console.log(e)
@@ -153,9 +154,10 @@ router.delete('/courses/:id', [
 router.get('/languages',
     async (req, res) => {
         try {
-            const result = (await Language.find().skip(req.range.offset).limit(req.range.limit))
+            const {filter, sort} = getSortAndFilterFromRequest(req);
+            const result = (await Language.find(filter).sort(sort).skip(req.range.offset).limit(req.range.limit))
                 .map(mapLanguageToResponse);
-            const count = await Language.countDocuments();
+            const count = await Language.countDocuments(filter);
             res.sendRange(result, count);
         } catch (e) {
             console.log(e)
@@ -243,9 +245,10 @@ router.delete('/languages/:id', [
 router.get('/refresh-tokens',
     async (req, res) => {
         try {
-            const result = (await RefreshToken.find().skip(req.range.offset).limit(req.range.limit))
+            const {filter, sort} = getSortAndFilterFromRequest(req);
+            const result = (await RefreshToken.find(filter).sort(sort).skip(req.range.offset).limit(req.range.limit))
                 .map(mapRefreshTokenToResponse);
-            const count = await RefreshToken.countDocuments();
+            const count = await RefreshToken.countDocuments(filter);
             res.sendRange(result, count);
         } catch (e) {
             console.log(e)
@@ -325,9 +328,10 @@ router.delete('/refresh-tokens/:id', [
 router.get('/stories',
     async (req, res) => {
         try {
-            const result = (await Story.find().skip(req.range.offset).limit(req.range.limit))
+            const {filter, sort} = getSortAndFilterFromRequest(req);
+            const result = (await Story.find(filter).sort(sort).skip(req.range.offset).limit(req.range.limit))
                 .map(mapStoryToResponse);
-            const count = await Story.countDocuments();
+            const count = await Story.countDocuments(filter);
             res.sendRange(result, count);
         } catch (e) {
             console.log(e)
@@ -420,7 +424,8 @@ router.delete('/stories/:id', [
 router.get('/users',
     async (req, res) => {
         try {
-            const result = (await User.find().skip(req.range.offset).limit(req.range.limit)
+            const {filter, sort} = getSortAndFilterFromRequest(req);
+            const result = (await User.find(filter).sort(sort).skip(req.range.offset).limit(req.range.limit)
                 .populate('words.vocabulary', 'name')
                 .populate({
                     path: 'words.model',
@@ -431,7 +436,7 @@ router.get('/users',
                     }
                 }))
                 .map(mapUserToResponse);
-            const count = await User.countDocuments();
+            const count = await User.countDocuments(filter);
             res.sendRange(result, count);
         } catch (e) {
             console.log(e)
@@ -577,9 +582,10 @@ router.delete('/users/:id', [
 router.get('/vocabularies',
     async (req, res) => {
         try {
-            const result = (await Vocabulary.find().skip(req.range.offset).limit(req.range.limit).populate('words', 'original translation'))
+            const {filter, sort} = getSortAndFilterFromRequest(req);
+            const result = (await Vocabulary.find(filter).sort(sort).skip(req.range.offset).limit(req.range.limit).populate('words', 'original translation'))
                 .map(mapVocabularyToResponse);
-            const count = await Vocabulary.countDocuments();
+            const count = await Vocabulary.countDocuments(filter);
             res.sendRange(result, count);
         } catch (e) {
             console.log(e)
@@ -683,9 +689,10 @@ router.delete('/vocabularies/:id', [
 router.get('/vocabulary-groups',
     async (req, res) => {
         try {
-            const result = (await VocabularyGroup.find().skip(req.range.offset).limit(req.range.limit))
+            const {filter, sort} = getSortAndFilterFromRequest(req);
+            const result = (await VocabularyGroup.find(filter).sort(sort).skip(req.range.offset).limit(req.range.limit))
                 .map(mapVocabularyGroupToResponse);
-            const count = await VocabularyGroup.countDocuments();
+            const count = await VocabularyGroup.countDocuments(filter);
             res.sendRange(result, count);
         } catch (e) {
             console.log(e)
@@ -765,9 +772,10 @@ router.delete('/vocabulary-groups/:id', [
 router.get('/words',
     async (req, res) => {
         try {
-            const result = (await Word.find().skip(req.range.offset).limit(req.range.limit))
+            const {filter, sort} = getSortAndFilterFromRequest(req);
+            const result = (await Word.find(filter).sort(sort).skip(req.range.offset).limit(req.range.limit))
                 .map(mapWordToResponse);
-            const count = await Word.countDocuments();
+            const count = await Word.countDocuments(filter);
             res.sendRange(result, count);
         } catch (e) {
             console.log(e)
@@ -1024,6 +1032,15 @@ const splitTextIntoSentences = async text => {
     });
 
     return sentences;
+}
+const getSortAndFilterFromRequest = req => {
+    const filter = JSON.parse(req.query.filter);
+    if(filter.id) {
+        filter._id = filter.id;
+        delete filter.id;
+    }
+    const sort = req.query.sort?{[JSON.parse(req.query.sort)[0]]: JSON.parse(req.query.sort)[1]}:{};
+    return {filter, sort}
 }
 
 module.exports = router;
