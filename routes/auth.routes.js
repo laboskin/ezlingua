@@ -23,7 +23,7 @@ router.post('/register', [
 
         // Check if email is already in use
         if (await User.findOne({email}))
-            return res.status(400).json({message: 'User with this email already exist'});
+            return res.status(400).json({message: 'User with this email already exists'});
 
         // Create and save new user
         const user = new User({email, password: await bcrypt.hash(password, 10), name, course: language});

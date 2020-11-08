@@ -1,4 +1,5 @@
 import React from "react";
+import Select from "react-select";
 import './style.scss';
 
 
@@ -10,17 +11,7 @@ function FormInput({error, name, id, label, type, register, placeholder, options
     return (
         <div className={classNames.join(' ')}>
             {type === 'select' && (
-                <select className="FormGroup-Input"
-                    name={name}
-                    id={id}
-                    ref={register}>
-                    {options.map(option => (
-                        <option value={option.value}>
-                            {option.text}
-                        </option>
-                        )
-                    )}
-                </select>
+                <Select options={options} />
             )}
             {type !== 'select' && (
                 <input className="FormGroup-Input" {...props}

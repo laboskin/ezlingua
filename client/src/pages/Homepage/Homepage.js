@@ -43,6 +43,9 @@ function Homepage() {
                             <div className="Homepage-HeaderLanguageButtonText">
                                 {t('homepage.websiteLanguage')}: {currentLanguage.name}
                             </div>
+                            <div className="Homepage-HeaderLanguageButtonFlag">
+                                <img src={currentLanguage.image} alt=""/>
+                            </div>
                             <IconArrowDown />
                             <div className="Homepage-HeaderLanguagePopup">
                                 <div className="Homepage-HeaderLanguagePopupContainer">

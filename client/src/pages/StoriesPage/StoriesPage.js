@@ -1,7 +1,15 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import {useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {addWord, clearStory, completeStory, loadStory, selectWord, unselectWord} from "../../store/actions/stories";
+import {
+    addWord,
+    clearStory,
+    completeStory,
+    loadStory,
+    removeWord,
+    selectWord,
+    unselectWord
+} from "../../store/actions/stories";
 import MainContainer from "../../hoc/MainContainer/MainContainer";
 import './style.scss';
 import {useParams} from "react-router-dom";
@@ -111,7 +119,8 @@ function StoriesPage() {
                                                                 <div className="StoriesPage-PopoverTranslationText">
                                                                     {translation.text}
                                                                 </div >
-                                                                <div className="StoriesPage-PopoverTranslationDelete">
+                                                                <div className="StoriesPage-PopoverTranslationDelete"
+                                                                     onClick={() => dispatch(removeWord(part.text.toLowerCase(), translation.text))}>
                                                                     {isTranslationAdded && <IconTrash />}
                                                                 </div>
                                                             </div>

@@ -29,6 +29,12 @@ function TrainingQuiz() {
     useEffect(() => {
         dispatch(startTraining(trainingName, vocabularyId));
     }, [dispatch, trainingName, vocabularyId, currentCourse]);
+    useEffect(() => {
+        if (words && trainingName === 'listening') {
+            speak(words[step-1].original, currentCourse.goalCode);
+        }
+    })
+
     if (!words) {
         return null;
     }
@@ -36,6 +42,7 @@ function TrainingQuiz() {
         setTimeout(() => history.push('/training/'), 0);
         return null;
     }
+
 
     const word = words[step - 1];
     let title;

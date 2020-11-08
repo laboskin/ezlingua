@@ -17,7 +17,7 @@ function RegisterForm() {
     const languages = courses.filter(course => course.sourceLanguage.id === currentLanguage.id)
         .map(course => ({
             value: course.id,
-            text: course.name
+            label: course.name
         }));
     const validationSchema = yup.object().shape({
         language: yup.string(),

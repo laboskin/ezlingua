@@ -27,13 +27,13 @@ app.use('/api/admin', adminRouter);
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 if (process.env.NODE_ENV === 'production') {
-    app.use('/', express.static(path.join(__dirname, 'client', 'build')));
-
-    app.get('/admin', (req, res) => {
+    app.use('/admin/', express.static(path.join(__dirname, 'client-admin', 'build')));
+    app.get('/admin/*', (req, res) => {
         res.sendFile(path.resolve(__dirname, 'client-admin', 'build', 'index.html'));
     });
 
-    app.get('*', (req, res) => {
+    app.use('/', express.static(path.join(__dirname, 'client', 'build')));
+    app.get('/*', (req, res) => {
         res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
     });
 }
@@ -52,5 +52,3 @@ async function start() {
     }
 }
 start();
-
-// TODO node-cron for removing old refresh tokens from db

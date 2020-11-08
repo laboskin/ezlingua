@@ -133,7 +133,7 @@ export function answerSkip() {
 export function completeTraining(trainingName) {
     return async (dispatch, getState) => {
         try {
-            const {auth: {token}, training: {words}} = getState();
+            const {user: {token}, training: {words}} = getState();
             const answers = words.filter(word => word.correct).map(word => word.id);
             const response = await request(`/api/training/${trainingName}/`, 'POST', answers, {}, token);
             if (response) {

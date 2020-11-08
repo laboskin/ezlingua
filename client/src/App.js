@@ -12,7 +12,6 @@ import TrainingPage from "./pages/TrainingPage/TrainingPage";
 import StoriesIndex from "./pages/StoriesIndex/StoriesIndex";
 import StoriesPage from "./pages/StoriesPage/StoriesPage";
 import Modal from "./hoc/Modal/Modal";
-import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import {refresh} from "./store/actions/user";
 
 function App() {
@@ -44,8 +43,7 @@ function App() {
                         <Route path="/training/word-translation/:id?" component={TrainingPage}/>
                         <Route path="/training/:id?" component={TrainingIndex}/>
 
-                        <Redirect from="/" to="/dictionary"/>
-                        <Route path="/" component={ErrorPage}/>
+                        <Redirect to="/dictionary"/>
                     </Switch>
                 </MainLayout>
             )}

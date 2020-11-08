@@ -44,9 +44,7 @@ function Header() {
                                     <div className="Header-LanguagePopupContainer">
                                         <div className="Header-LanguagePopupItem Header-LanguagePopupItem_current">
                                             <div className="Header-LanguagePopupItemImage">
-                                                <img className=""
-                                                     src={currentCourse.image}
-                                                     alt=""/>
+                                                <img src={currentCourse.image} alt=""/>
                                             </div>
                                             <span className="Header-LanguagePopupItemText">
                                             {currentCourse.name}
@@ -91,7 +89,7 @@ function Header() {
                                 <div className="Header-ProfilePopupContainer">
                                     { isAdmin && (
                                         <a className="Header-ProfilePopupItem"
-                                                 href="/admin">
+                                                 href="/admin" target="_blank">
                                             <div className="Header-ProfilePopupItemIcon">
                                                 <IconAdmin />
                                             </div>
