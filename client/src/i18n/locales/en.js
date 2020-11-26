@@ -1,4 +1,4 @@
-export default {
+const locale =  {
     homepage: {
         websiteLanguage: 'Website language',
         start: 'Start',
@@ -143,8 +143,8 @@ export default {
         errors: {
             emailIsRequired: 'Email is required',
             validEmail: 'Please enter valid email',
-            nameMore: 'Password length must be more than',
-            nameLess: 'Password length must be less than',
+            nameMore: 'Name length must be more than',
+            nameLess: 'Name length must be less than',
             passwordMore: 'Password length must be more than',
             passwordLess: 'Password length must be less than',
             passwordForbiddenCharacters: 'Password contains forbidden characters',
@@ -161,8 +161,8 @@ export default {
         errors: {
             emailIsRequired: 'Email is required',
             validEmail: 'Please enter valid email',
-            nameMore: 'Password length must be more than',
-            nameLess: 'Password length must be less than',
+            nameMore: 'Name length must be more than',
+            nameLess: 'Name length must be less than',
         }
     },
     passwordChangeForm: {
@@ -176,3 +176,5 @@ export default {
         }
     }
 }
+
+export default locale

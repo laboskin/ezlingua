@@ -14,7 +14,7 @@ router.post('/register', [
         body('name').isString().trim().isLength({min: 2, max: 50}),
         body('email').isString().trim().isEmail().normalizeEmail(),
         body('password').isString().isLength({min: 8, max: 50}).matches(/^([A-Za-z0-9.$\\/[\]\-_@])/),
-        body('course').isMongoId().custom(checkIfCourseExists),
+        body('language').isMongoId().custom(checkIfCourseExists),
         validationResultsCheckMiddleware
     ],
     async (req, res) => {

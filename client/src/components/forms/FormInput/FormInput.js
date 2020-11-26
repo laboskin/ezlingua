@@ -3,15 +3,25 @@ import Select from "react-select";
 import './style.scss';
 
 
-function FormInput({error, name, id, label, type, register, placeholder, options, ...props}) {
+function FormInput({error, name, id, label, type, register, placeholder, options, handleSelectChange, ...props}) {
     const classNames = ['FormGroup']
     if (error)
         classNames.push('FormGroup_hasError');
 
+    if (type === 'select') {
+        register(id);
+        handleSelectChange(options[0]);
+    }
+
     return (
         <div className={classNames.join(' ')}>
             {type === 'select' && (
-                <Select options={options} />
+                <Select
+                    id={id}
+                    name={name}
+                    onChange={handleSelectChange}
+                    options={options}
+                    defaultValue={options[0]}/>
             )}
             {type !== 'select' && (
                 <input className="FormGroup-Input" {...props}

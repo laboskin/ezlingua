@@ -57,7 +57,6 @@ function LoginForm() {
                        id="password"
                        type="password"
                        label={t('loginForm.password')}
-                       ref={register}
                        onChange={clearServerError}
                        register={register} />
             <button disabled={isLoading} type="submit" className="LoginForm-Submit">

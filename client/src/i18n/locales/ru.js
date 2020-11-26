@@ -1,4 +1,4 @@
-export default {
+const locale = {
     homepage: {
         websiteLanguage: 'Язык сайта',
         start: 'Начать',
@@ -194,3 +194,5 @@ export default {
         }
     }
 }
+
+export default locale

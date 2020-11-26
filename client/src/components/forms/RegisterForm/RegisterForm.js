@@ -36,7 +36,7 @@ function RegisterForm() {
             .max(50, t('registerForm.errors.passwordLess') + ' 51')
             .matches(/^([A-Za-z0-9.$\\/[\]\-_@])/, t('registerForm.errors.passwordForbiddenCharacters'))
     });
-    const { register, handleSubmit, errors } = useForm({
+    const { register, handleSubmit, errors, setValue } = useForm({
         mode: 'onTouched',
         resolver: yupResolver(validationSchema)
     });
@@ -44,6 +44,7 @@ function RegisterForm() {
     const {request, isLoading, error: serverError, clearError: clearServerError} = useRequest(false);
     const onSubmit = async ({language, name, email, password}) => {
         try {
+            console.log(language)
             const response = await request('/api/auth/register', 'POST', {language, name, email, password});
             if (response) {
                 dispatch(hideModal());
@@ -61,32 +62,34 @@ function RegisterForm() {
                        id="language"
                        type="select"
                        label={t('registerForm.language')}
-                       placeholder="I want to learn..."
-                       onChange={clearServerError}
                        register={register}
-                       options={languages} />
+                       options={languages}
+                       handleSelectChange={e => setValue('language', e.value)}
+            />
             <FormInput error={serverError || errors.name?.message}
                        name="name"
                        id="name"
                        type="text"
                        label={t('registerForm.name')}
                        onChange={clearServerError}
-                       register={register} />
+                       register={register}
+            />
             <FormInput error={serverError || errors.email?.message}
                        name="email"
                        id="email"
                        type="text"
                        label={t('registerForm.email')}
                        onChange={clearServerError}
-                       register={register} />
+                       register={register}
+            />
             <FormInput error={errors.password?.message}
                        name="password"
                        id="password"
                        type="password"
                        label={t('registerForm.password')}
-                       ref={register}
                        onChange={clearServerError}
-                       register={register} />
+                       register={register}
+            />
             <button disabled={isLoading} type="submit" className="RegisterForm-Submit">
                 {t('registerForm.signUp')}
             </button>
