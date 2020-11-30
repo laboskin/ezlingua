@@ -179,7 +179,7 @@ router.get('/languages/:id', [
     });
 router.post('/languages', [
         body('name').isString().trim().isLength({min: 2, max: 20}),
-        body('code').trim().isISO31661Alpha2(),
+        body('code').isString().trim().isLength({min: 2, max: 2}),
         body('image').exists(),
         body('image.src').isBase64(),
         body('image.ext').isString().trim().notEmpty(),
@@ -203,10 +203,10 @@ router.post('/languages', [
 router.put('/languages/:id', [
         param('id').isMongoId(),
         body('name').isString().trim().isLength({min: 2, max: 20}),
-        body('code').trim().isISO31661Alpha2(),
+        body('code').isString().trim().isLength({min: 2, max: 2}),
         body('image').optional(),
-        body('image.src').if(body('image').exists()).isBase64(),
-        body('image.ext').if(body('image').exists()).isString().trim().notEmpty(),
+        body('image.src').if(body('image.src').exists()).isBase64(),
+        body('image.ext').if(body('image.src').exists()).isString().trim().notEmpty(),
         validationResultsCheckMiddleware
     ],
     async (req, res) => {
@@ -354,8 +354,8 @@ router.get('/stories/:id', [
 router.post('/stories', [
         body('name').isString().trim().isLength({min: 2, max: 50}),
         body('image').optional(),
-        body('image.src').if(body('image').exists()).isBase64(),
-        body('image.ext').if(body('image').exists()).isString().notEmpty(),
+        body('image.src').if(body('image.src').exists()).isBase64(),
+        body('image.ext').if(body('image.src').exists()).isString().trim().notEmpty(),
         body('course').isMongoId().custom(checkIfCourseExists),
         body('text').isString().trim().notEmpty(),
         validationResultsCheckMiddleware
@@ -381,8 +381,8 @@ router.put('/stories/:id', [
         param('id').isMongoId(),
         body('name').isString().trim().isLength({min: 2, max: 50}),
         body('image').optional(),
-        body('image.src').if(body('image').exists()).isBase64(),
-        body('image.ext').if(body('image').exists()).isString().notEmpty(),
+        body('image.src').if(body('image.src').exists()).isBase64(),
+        body('image.ext').if(body('image.src').exists()).isString().trim().notEmpty(),
         body('course').isMongoId().custom(checkIfCourseExists),
         body('text').isString().trim().notEmpty(),
         validationResultsCheckMiddleware
@@ -609,8 +609,8 @@ router.get('/vocabularies/:id', [
 router.post('/vocabularies', [
         body('name').isString().trim().isLength({min: 2, max: 50}),
         body('image').optional(),
-        body('image.src').if(body('image').exists()).isBase64(),
-        body('image.ext').if(body('image').exists()).isString().notEmpty(),
+        body('image.src').if(body('image.src').exists()).isBase64(),
+        body('image.ext').if(body('image.src').exists()).isString().trim().notEmpty(),
         body('course').isMongoId().custom(checkIfCourseExists),
         body('words').isArray().optional(),
         body('words.*.original').if(body('words').exists()).isString().trim().notEmpty(),
@@ -641,8 +641,8 @@ router.put('/vocabularies/:id', [
         param('id').isMongoId(),
         body('name').isString().trim().isLength({min: 2, max: 50}),
         body('image').optional(),
-        body('image.src').if(body('image').exists()).isBase64(),
-        body('image.ext').if(body('image').exists()).isString().notEmpty(),
+        body('image.src').if(body('image.src').exists()).isBase64(),
+        body('image.ext').if(body('image.src').exists()).isString().trim().notEmpty(),
         body('course').isMongoId().custom(checkIfCourseExists),
         body('words').isArray().optional(),
         body('words.*.original').if(body('words').exists()).isString().trim().notEmpty(),
