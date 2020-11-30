@@ -44,7 +44,6 @@ function RegisterForm() {
     const {request, isLoading, error: serverError, clearError: clearServerError} = useRequest(false);
     const onSubmit = async ({language, name, email, password}) => {
         try {
-            console.log(language)
             const response = await request('/api/auth/register', 'POST', {language, name, email, password});
             if (response) {
                 dispatch(hideModal());
