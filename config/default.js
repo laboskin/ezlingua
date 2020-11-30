@@ -10,5 +10,9 @@ module.exports = {
     azure: {
         endpoint: process.env.AZURE_TRANSLATOR_ENDPOINT || 'AZURE_TRANSLATOR_ENDPOINT',
         key: process.env.AZURE_TRANSLATOR_KEY || 'AZURE_TRANSLATOR_KEY'
+    },
+    googleCloud: {
+        projectId: process.env.GOOGLE_CLOUD_PROJECT_ID || 'GOOGLE_CLOUD_PROJECT_ID',
+        storageBucket: process.env.GOOGLE_CLOUD_STORAGE_BUCKET || 'GOOGLE_CLOUD_STORAGE_BUCKET'
     }
 }

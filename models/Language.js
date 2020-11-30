@@ -1,7 +1,13 @@
 const {Schema, model} = require('mongoose');
-const fs = require('fs');
-const path = require('path');
+const config = require('config');
 const { v4: uuidv4 } = require('uuid');
+const {Storage} = require('@google-cloud/storage');
+const gcs = new Storage({
+    projectId: config.get('googleCloud.projectId'),
+    keyFilename: './googleCloudStorageKey.json'
+});
+const bucket = gcs.bucket(config.get('googleCloud.storageBucket'));
+
 
 const schema = new Schema({
     name: {
@@ -30,18 +36,17 @@ const schema = new Schema({
 });
 
 schema.virtual('imageLink').get(function() {
-    if (this.image && fs.existsSync(path.resolve('./public/img/flags/', this.image)))
-        return `/img/flags/${this.image}`;
-    return '/img/nophoto.svg';
+    if (this.image)
+        return `https://storage.googleapis.com/${config.get('googleCloud.projectId')}.appspot.com/flags/${this.image}`;
+    return `https://storage.googleapis.com/${config.get('googleCloud.projectId')}.appspot.com/nophoto.svg`;
 });
 
-schema.methods.deleteImageFile = function() {
-    if (this.image && fs.existsSync(path.resolve('./public/img/flags/', this.image)))
-        fs.unlinkSync(path.resolve('./public/img/flags/', this.image));
-}
-
 schema.pre('remove', async function() {
-    this.deleteImageFile();
+    if (this.image)
+        await bucket.file(`flags/${this.image}`).exists(async (data) => {
+            if (data[0])
+                await bucket.file(`flags/${this.image}`).delete();
+        });
 
     const courses = await require('./Course').find();
     for (const course of courses) {
@@ -52,10 +57,13 @@ schema.pre('remove', async function() {
 
 schema.pre('save', async function() {
     if(this._newImageBase64) {
-        fs.writeFileSync(path.resolve('./public/img/flags/', this.image), this._newImageBase64, {encoding: 'base64'});
-
-        if (this._previousImage && fs.existsSync(path.resolve('./public/img/flags/', this._previousImage)))
-            fs.unlinkSync(path.resolve('./public/img/flags/', this._previousImage));
+        const file = bucket.file(`flags/${this.image}`);
+        await file.save(Buffer.from(this._newImageBase64, 'base64'));
+        if (this._previousImage)
+            await bucket.file(`flags/${this._previousImage}`).exists(async (data) => {
+                if (data[0])
+                    await bucket.file(`flags/${this._previousImage}`).delete();
+            });
     }
 });
 

@@ -24,10 +24,4 @@ yarn-error.log*
 
 .idea/
 /config/local.js
-/public/img/stories/*
-/public/img/flags/*
-/public/img/vocabularies/*
-!/public/img/stories/.gitkeep
-!/public/img/flags/.gitkeep
-!/public/img/vocabularies/.gitkeep
-
+/googleCloudStorageKey.json

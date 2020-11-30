@@ -152,7 +152,7 @@ const locale = {
     },
     registerForm: {
         createNewAccount: 'Создать новый аккаунт',
-        language: 'Язык',
+        language: 'Я хочу изучать...',
         name: 'Имя',
         email: 'Электронная почта',
         password: 'Пароль',

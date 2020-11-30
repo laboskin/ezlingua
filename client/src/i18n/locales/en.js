@@ -134,7 +134,7 @@ const locale =  {
     },
     registerForm: {
         createNewAccount: 'Create new account',
-        language: 'Language',
+        language: 'I want to learn...',
         name: 'Name',
         email: 'Email',
         password: 'Password',

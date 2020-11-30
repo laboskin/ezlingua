@@ -2,7 +2,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const mongoose = require('mongoose');
-const config = require('config')
+const config = require('config');
 const authRouter = require('./routes/auth.routes');
 const userRouter = require('./routes/user.routes');
 const dictionaryRouter = require('./routes/dictionary.routes');
@@ -14,7 +14,7 @@ const app = express();
 const PORT = config.get('port');
 const MONGO_URI = config.get('mongoUri');
 
-app.use(express.json());
+app.use(express.json({limit: '10mb'}));
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
 

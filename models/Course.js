@@ -21,8 +21,6 @@ const schema = new Schema({
 });
 
 schema.pre('remove', async function() {
-    this.deleteImageFile();
-
     const words = await require('./Word').find({course: this.id});
     for (const word of words)
         await word.remove();
@@ -36,8 +34,6 @@ schema.pre('remove', async function() {
         user.course = user.words[0].model.course;
         await user.save();
     }
-
-
 });
 
 

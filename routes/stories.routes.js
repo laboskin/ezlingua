@@ -123,19 +123,23 @@ router.post('/complete/:id', [
     });
 
 async function getTranslations(langFrom, langTo, text) {
-    const response = await axios.post(`${azureConfig.endpoint}/dictionary/lookup?api-version=3.0&from=${langFrom}&to=${langTo}`, [{Text: text}], {
-        headers: {
-            'Content-type': 'application/json',
-            'Ocp-Apim-Subscription-Key': azureConfig.key,
-            'X-ClientTraceId': uuidv4()
-        }
-    });
-    if (!response)
-        throw new Error();
-    return response.data[0].translations.map(translation => ({
-        text: translation.normalizedTarget,
-        confidence: translation.confidence
-    })).sort((a, b) => b.confidence - a.confidence).filter((translation, idx) => idx < 5);
+    try {
+        const response = await axios.post(`${azureConfig.endpoint}/dictionary/lookup?api-version=3.0&from=${langFrom}&to=${langTo}`, [{Text: text}], {
+            headers: {
+                'Content-type': 'application/json',
+                'Ocp-Apim-Subscription-Key': azureConfig.key,
+                'X-ClientTraceId': uuidv4()
+            }
+        });
+        if (!response)
+            throw new Error();
+        return response.data[0].translations.map(translation => ({
+            text: translation.normalizedTarget,
+            confidence: translation.confidence
+        })).sort((a, b) => b.confidence - a.confidence).filter((translation, idx) => idx < 5);
+    } catch(e) {
+        return [];
+    }
 }
 async function getTranslation(langFrom, langTo, text) {
     const response = await axios.post(`${azureConfig.endpoint}/translate?api-version=3.0&from=${langFrom}&to=${langTo}`, [{Text: text}], {

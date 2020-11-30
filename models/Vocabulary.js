@@ -1,7 +1,12 @@
 const {Schema, model, Types} = require('mongoose');
-const fs = require('fs');
-const path = require('path');
+const config = require('config');
 const { v4: uuidv4 } = require('uuid');
+const {Storage} = require('@google-cloud/storage');
+const gcs = new Storage({
+    projectId: config.get('googleCloud.projectId'),
+    keyFilename: './googleCloudStorageKey.json'
+});
+const bucket = gcs.bucket(config.get('googleCloud.storageBucket'));
 const Course = require('./Course');
 const Word = require('./Word');
 const VocabularyGroup = require('./VocabularyGroup');
@@ -47,18 +52,17 @@ const schema = new Schema({
 });
 
 schema.virtual('imageLink').get(function() {
-    if (this.image && fs.existsSync(path.resolve('./public/img/vocabularies/', this.image)))
-        return `/img/vocabularies/${this.image}`;
-    return '/img/nophoto.svg';
+    if (this.image)
+        return `https://storage.googleapis.com/${config.get('googleCloud.projectId')}.appspot.com/vocabularies/${this.image}`;
+    return `https://storage.googleapis.com/${config.get('googleCloud.projectId')}.appspot.com/nophoto.svg`;
 });
 
-schema.methods.deleteImageFile = function() {
-    if (this.image && fs.existsSync(path.resolve('./public/img/vocabularies/', this.image)))
-        fs.unlinkSync(path.resolve('./public/img/vocabularies/', this.image));
-}
-
 schema.pre('remove', async function() {
-    this.deleteImageFile();
+    if (this.image)
+        await bucket.file(`vocabularies/${this.image}`).exists(async (data) => {
+            if (data[0])
+                await bucket.file(`vocabularies/${this.image}`).delete();
+        });
 
     if(this.words && this.words.length > 0) {
         const users = await require('./User').find({});
@@ -99,10 +103,13 @@ schema.pre('save', async function() {
     }
 
     if(this._newImageBase64) {
-        fs.writeFileSync(path.resolve('./public/img/vocabularies/', this.image), this._newImageBase64, {encoding: 'base64'});
-
-        if (this._previousImage && fs.existsSync(path.resolve('./public/img/vocabularies/', this._previousImage)))
-            fs.unlinkSync(path.resolve('./public/img/vocabularies/', this._previousImage));
+        const file = bucket.file(`vocabularies/${this.image}`);
+        await file.save(Buffer.from(this._newImageBase64, 'base64'));
+        if (this._previousImage)
+            await bucket.file(`vocabularies/${this._previousImage}`).exists(async (data) => {
+                if (data[0])
+                    await bucket.file(`vocabularies/${this._previousImage}`).delete();
+            });
     }
 });
 
